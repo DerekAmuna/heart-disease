@@ -8,6 +8,7 @@ dash = "*"
 plotly = "*"
 pandas = "*"
 numpy = "*"
+isort = "*"
 
 [dev-packages]
 pre-commit = "*"

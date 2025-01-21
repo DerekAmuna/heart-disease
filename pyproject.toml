@@ -19,3 +19,9 @@ good-names = ["i", "j", "k", "ex", "Run", "_", "df", "x", "y"]
 [build-system]
 requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.isort]
+profile = "black"
+line_length = 99
+combine_as_imports = true
+known_third_party = ["dash", "numpy", "pandas","plotly"]
