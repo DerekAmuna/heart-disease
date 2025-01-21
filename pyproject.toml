@@ -2,6 +2,14 @@
 line-length = 99
 target-version = ['py312']
 include = '\.pyi?$'
+exclude = '''
+/(
+.git
+| .venv
+| build
+| dist
+| migrations
+)/
 
 [tool.pylint.messages_control]
 disable = [

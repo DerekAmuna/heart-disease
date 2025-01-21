@@ -14,7 +14,8 @@ repos:
     rev: v3.0.3
     hooks:
       - id: pylint
-        args: ["--disable=C0114"]
+        additional_dependencies: ["pylint"]
+        args: ["--rcfile=pyproject.toml"]
 
   - repo: https://github.com/GitGuardian/ggshield
     rev: v1.22.0
