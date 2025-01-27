@@ -722,20 +722,10 @@ numeric_cols = [
 ]
 
 # Update categorical_cols
-categorical_cols = ["wb_income", "region", "statin_avail"]
+categorical_cols = ["wb_income", "region", "statin_availability"]
 
 
 def interpolate_series(group, col):
-    """
-    Interpolate numeric columns using cubic splines.
-
-    Args:
-        group (pd.DataFrame): Grouped DataFrame.
-        col (str): Column to interpolate.
-
-    Returns:
-        pd.Series: Interpolated series.
-    """
     mask = group[col].notnull()
     if mask.sum() > 3:  # Need at least 4 points for cubic spline
         x = group.index[mask].astype(float)
@@ -784,6 +774,52 @@ for entity in df["Entity"].unique():
                 result_df.loc[entity_data.index, col] = result_df.loc[
                     entity_data.index, col
                 ].fillna(mode_val)
+
+
+# Handle remaining missing values at year extremes
+def impute_extremes(group, col):
+    """Impute missing values at year extremes using entity-specific statistics"""
+    if group[col].isna().sum() == 0:
+        return group[col]
+
+    if col in categorical_cols:
+        # For categorical columns, use mode of the entity
+        fill_value = group[col].mode().iloc[0] if not group[col].mode().empty else None
+        if fill_value is not None:
+            return group[col].fillna(value=fill_value)
+        return group[col]  # Return original if no mode found
+    else:
+        # Sort by year and get forward/backward fills
+        sorted_data = group.sort_values("Year")[col]
+        fwd = sorted_data.fillna(method="ffill")
+        bwd = sorted_data.fillna(method="bfill")
+        # Use ewm in both directions
+        fwd_ewm = fwd.ewm(span=3, min_periods=1, adjust=False).mean()
+        bwd_ewm = bwd[::-1].ewm(span=3, min_periods=1, adjust=False).mean()[::-1]
+        # Combine both directions
+        filled = pd.concat([fwd_ewm, bwd_ewm], axis=1).mean(axis=1)
+        return filled[group.index]
+
+
+# Apply extreme value imputation
+for entity in result_df["Entity"].unique():
+    entity_mask = result_df["Entity"] == entity
+    entity_data = result_df[entity_mask].copy()
+
+    # Process numeric columns
+    for col in numeric_cols:
+        if col in entity_data.columns and entity_data[col].isna().any():
+            result_df.loc[entity_mask, col] = impute_extremes(entity_data, col)
+
+    # Process categorical columns
+    for col in categorical_cols:
+        if col in entity_data.columns and entity_data[col].isna().any():
+            result_df.loc[entity_mask, col] = impute_extremes(entity_data, col)
+
+# Print statistics about remaining missing values
+print("\nRemaining missing values after extreme imputation:\n")
+missing_stats = result_df[numeric_cols + categorical_cols].isnull().sum()
+print(missing_stats[missing_stats > 0].sort_values(ascending=False))
 
 original = final_df
 interpolated = result_df
