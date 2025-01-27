@@ -1,27 +1,15 @@
 #! usr/bin/env python3.12
 """
-This script performs data cleaning and merging operations on cardiovascular disease datasets.
-
-It combines data from multiple CSV files, standardizes country names, and merges various
-cardiovascular disease-related metrics such as death rates, prevalence, and risk factors.
-The script also handles data interpolation for missing values and renames columns for
-consistency.
-
-The main operations include:
-1. Loading data from multiple sources (CSV files)
-2. Standardizing country names using a mapping dictionary
-3. Merging datasets based on common identifiers (Entity, Code, Year)
-4. Interpolating missing values for time series data
-5. Renaming columns for clarity and consistency
-
-The resulting dataset provides a comprehensive view of cardiovascular disease statistics
-across different countries and years, suitable for further analysis and visualization.
+Data cleaning and merging script for cardiovascular disease datasets.
+Combines and standardizes data from multiple sources, handles missing values,
+and prepares a comprehensive dataset for analysis.
 """
 
 import numpy as np
 import pandas as pd
 from scipy.interpolate import CubicSpline
 
+# Data source paths
 ourworldindata = [
     "./cardiovascular-disease-death-rate-age-group-who-mdb/cardiovascular-disease-death-rate-age-group-who-mdb.csv",
     "./cardiovascular-disease-death-rate-males-vs-females/cardiovascular-disease-death-rate-males-vs-females.csv",
@@ -41,20 +29,20 @@ ourworldindata = [
     "./death-rate-from-hypertensive-heart-disease-who-ghe-age-standardized/death-rate-from-hypertensive-heart-disease-who-ghe-age-standardized.csv",
 ]
 
-df = pd.read_excel(
+# Load base dataset
+merged_df = pd.read_excel(
     "./cardiovascular-death-rate-vs-gdp-per-capita/Cardiovascular Death Rate vs GDP per Capita.xlsx"
 )
 
-for file in ourworldindata[1:]:
-    if "xlsx" in file:
-        temp = pd.read_excel(file)
-    else:
-        temp = pd.read_csv(file)
+# Merge additional datasets
+for source_file in ourworldindata:
+    temp_df = pd.read_excel(source_file) if "xlsx" in source_file else pd.read_csv(source_file)
+    merged_df = pd.merge(merged_df, temp_df, on=["Entity", "Code", "Year"], how="outer")
 
-    df = pd.merge(df, temp, on=["Entity", "Code", "Year"], how="outer")
+# Load IHME dataset
+ihme_data = pd.read_csv("./IHME-GBD_2021_DATA-7438e2ae-1.csv")
 
-ihme_df = pd.read_csv("./IHME-GBD_2021_DATA-7438e2ae-1.csv")
-
+# Country name mapping
 name_mapping = {
     "American Samoa": "American Samoa",
     "Antigua and Barbuda": "Antigua and Barbuda",
@@ -259,9 +247,13 @@ name_mapping = {
     "occupied Palestinian territory, including east Jerusalem": "Palestine",
 }
 
-ihme_df["location"] = ihme_df["location"].replace(name_mapping)
-deaths_df = ihme_df[ihme_df["measure"] == "Deaths"].copy()
-prev_df = ihme_df[ihme_df["measure"] == "Prevalence"].copy()
+ihme_data["location"] = ihme_data["location"].replace(name_mapping)
+
+# Deaths and prevalence data
+deaths_df = ihme_data[ihme_data["measure"] == "Deaths"].copy()
+prev_df = ihme_data[ihme_data["measure"] == "Prevalence"].copy()
+
+# Merge deaths and prevalence data
 wide_ihme = pd.merge(
     deaths_df,
     prev_df,
@@ -269,10 +261,11 @@ wide_ihme = pd.merge(
     how="outer",
     suffixes=("_deaths", "_prev"),
 )
-wide_ihme = wide_ihme.drop(
-    ["measure_deaths", "measure_prev", "cause_deaths", "cause_prev", "age"], axis=1
-)
 
+# Clean up column names
+wide_ihme = wide_ihme.drop(["measure_deaths", "measure_prev", "cause_deaths", "cause_prev", "age"], axis=1)
+
+# Rename columns
 wide_ihme = wide_ihme.rename(
     columns={
         "sex": "gender",
@@ -283,7 +276,10 @@ wide_ihme = wide_ihme.rename(
     }
 )
 
-primary_df = wide_ihme.merge(df, on=["Entity", "Year"], how="outer")
+# Merge with main dataset
+primary_df = wide_ihme.merge(merged_df, on=["Entity", "Year"], how="outer")
+
+# Drop unnecessary columns
 primary_df = primary_df.drop(
     [
         "Total deaths from cardiovascular diseases among both sexes_x",
@@ -295,25 +291,19 @@ primary_df = primary_df.drop(
     axis=1,
 )
 
-
+# Load additional datasets
 add4 = pd.read_csv("./Cleaned-Secondary-Data/Global_CVD_Deaths.csv")
 add4["Entity"] = "Global"
 
-add4["Total_Number_of_Deaths"] = (
-    add4["Total_Number_of_Deaths"].str.replace(",", "").astype(int)
-)
-add4["Gender"] = add4["Gender"].replace(
-    {"Total": "Both", "Males": "Male", "Females": "Female"}
-)
+add4["Total_Number_of_Deaths"] = add4["Total_Number_of_Deaths"].str.replace(",", "").astype(int)
+add4["Gender"] = add4["Gender"].replace({"Total": "Both", "Males": "Male", "Females": "Female"})
 add4 = add4.rename(
     columns={
         "Gender": "gender",
     }
 )
 
-primary_df = primary_df.merge(
-    add4, on=["Entity", "Year", "gender"], how="outer", suffixes=("", "_global_deaths")
-)
+primary_df = primary_df.merge(add4, on=["Entity", "Year", "gender"], how="outer", suffixes=("", "_global_deaths"))
 
 add5 = pd.read_csv("./Cleaned-Secondary-Data/Global_WHO_data.csv")
 add5 = add5[
@@ -333,17 +323,11 @@ add5 = add5[
         ]
     )
 ]
-add5 = add5.rename(
-    columns={"Country": "Entity", "WHO_Region": "Region", "Gender": "gender"}
-)
+add5 = add5.rename(columns={"Country": "Entity", "WHO_Region": "Region", "Gender": "gender"})
 
-primary_df = primary_df.rename(
-    columns={"World Bank's income classification": "WB_Income"}
-)
+primary_df = primary_df.rename(columns={"World Bank's income classification": "WB_Income"})
 
-primary_df = primary_df.merge(
-    add5, on=["Entity", "Year", "gender", "Region", "WB_Income"], how="outer"
-)
+primary_df = primary_df.merge(add5, on=["Entity", "Year", "gender", "Region", "WB_Income"], how="outer")
 primary_df.drop(["indicator_name", "indicator_abbr"], axis=1, inplace=True)
 
 add6 = pd.read_csv("./Cleaned-Secondary-Data/Our-World-Cleaned/CT_Units.csv")
@@ -351,9 +335,7 @@ add6 = add6.rename(columns={"Country": "Entity"})
 
 primary_df = primary_df.merge(add6, on=["Entity", "Year"], how="outer")
 
-add7 = pd.read_csv(
-    "./Cleaned-Secondary-Data/Our-World-Cleaned/Ischaemic_Death_Rate.csv"
-)
+add7 = pd.read_csv("./Cleaned-Secondary-Data/Our-World-Cleaned/Ischaemic_Death_Rate.csv")
 add7 = add7.rename(columns={"Country": "Entity"})
 
 primary_df = primary_df.merge(add7, on=["Entity", "Year"], how="outer")
@@ -363,16 +345,12 @@ add8 = add8.rename(columns={"Country": "Entity"})
 
 primary_df = primary_df.merge(add8, on=["Entity", "Year"], how="outer")
 
-add9 = pd.read_csv(
-    "./Cleaned-Secondary-Data/Our-World-Cleaned/Pacemaker_Implantations_per_1M.csv"
-)
+add9 = pd.read_csv("./Cleaned-Secondary-Data/Our-World-Cleaned/Pacemaker_Implantations_per_1M.csv")
 add9 = add9.rename(columns={"Country": "Entity"})
 
 primary_df = primary_df.merge(add9, on=["Entity", "Year"], how="outer")
 
-add10 = pd.read_csv(
-    "./Cleaned-Secondary-Data/Our-World-Cleaned/Rheumatic_Death_Rate.csv"
-)
+add10 = pd.read_csv("./Cleaned-Secondary-Data/Our-World-Cleaned/Rheumatic_Death_Rate.csv")
 add10 = add10.rename(columns={"Country": "Entity"})
 
 primary_df = primary_df.merge(add10, on=["Entity", "Year"], how="outer")
@@ -386,6 +364,7 @@ add12 = add12.rename(columns={"Country": "Entity"})
 
 primary_df = primary_df.merge(add12, on=["Entity", "Code", "Year"], how="outer")
 
+# Select relevant columns
 keep_cols = [
     "Entity",
     "Code",
@@ -418,6 +397,7 @@ keep_cols = [
 
 final_df = primary_df[keep_cols]
 
+# Pivot table for deaths and prevalence
 pivot_df = final_df.pivot_table(
     index=["Entity", "Year", "gender"],  # Keep minimal index
     columns=["metric"],
@@ -425,11 +405,8 @@ pivot_df = final_df.pivot_table(
     aggfunc="first",
 ).reset_index()
 
-
 # Clean up column names
-pivot_df.columns = [
-    "".join(col).strip() if isinstance(col, tuple) else col for col in pivot_df.columns
-]
+pivot_df.columns = ["".join(col).strip() if isinstance(col, tuple) else col for col in pivot_df.columns]
 
 # Rename to more intuitive names
 pivot_df = pivot_df.rename(
@@ -442,15 +419,15 @@ pivot_df = pivot_df.rename(
         "prevalence_Rate": "prevalence_rate",
     }
 )
-pivot_df.head()
-# Join back to original dataframe
-final_df = final_df.merge(pivot_df, on=["Entity", "Year", "gender"], how="left")
-final_df["deathsNumber"].isna().sum()
 
-# # Drop the original deaths and prevalence columns and metric column
+# Merge with original dataframe
+final_df = final_df.merge(pivot_df, on=["Entity", "Year", "gender"], how="left")
+
+# Drop original deaths and prevalence columns and metric column
 cols_to_drop = ["deaths", "prevalence", "metric"]
 final_df = final_df.drop(columns=cols_to_drop)
 
+# Pivot table for gender
 gender_pivot = final_df.pivot_table(
     index=["Entity", "Year"],  # Remove gender from index since we're pivoting it
     columns=["gender"],
@@ -467,21 +444,14 @@ gender_pivot = final_df.pivot_table(
 
 # Clean up column names
 gender_pivot.columns = [
-    (
-        "".join(str(col) for col in col_tuple).strip()
-        if isinstance(col_tuple, tuple)
-        else col_tuple
-    )
+    ("".join(str(col) for col in col_tuple).strip() if isinstance(col_tuple, tuple) else col_tuple)
     for col_tuple in gender_pivot.columns
 ]
 
-# Show sample of the pivoted data before joining
-print("Sample of pivoted data:\n")
-print(gender_pivot.head(3))
-
+# Merge with original dataframe
 final_df = final_df.merge(gender_pivot, on=["Entity", "Year"], how="left")
 
-# Drop the original columns, gender column, and unnamed index
+# Drop original columns, gender column, and unnamed index
 cols_to_drop = [
     "Unnamed: 0",
     "gender",
@@ -495,10 +465,9 @@ cols_to_drop = [
 
 final_df = final_df.drop(columns=cols_to_drop)
 
-# Remove duplicates
 final_df = final_df.drop_duplicates()
 
-# Pivot the Indicator Name for numeric columns
+# Pivot table for indicator name
 indicator_pivot = final_df.pivot_table(
     index=["Entity", "Year"],
     columns=["Indicator Name"],
@@ -510,12 +479,7 @@ indicator_pivot = final_df.pivot_table(
 indicator_pivot.columns = [
     (
         "".join(
-            str(col)
-            .replace(" ", "_")
-            .replace("-", "_")
-            .replace(",", "")
-            .replace("(", "")
-            .replace(")", "")
+            str(col).replace(" ", "_").replace("-", "_").replace(",", "").replace("(", "").replace(")", "")
             for col in col_tuple
         ).strip()
         if isinstance(col_tuple, tuple)
@@ -524,15 +488,14 @@ indicator_pivot.columns = [
     for col_tuple in indicator_pivot.columns
 ]
 
-# Join back to original dataframe
-final_df = df.merge(indicator_pivot, on=["Entity", "Year"], how="left")
+# Merge with original dataframe
+final_df = final_df.merge(indicator_pivot, on=["Entity", "Year"], how="left")
 
-# Drop the original columns
+# Drop original columns
 cols_to_drop = ["Indicator Name", "Numeric_Females", "Numeric_Males", "Numeric_Total"]
 final_df = final_df.drop(columns=cols_to_drop)
 final_df = final_df.dropna(axis=1, how="all")
 
-# Remove duplicates
 final_df = final_df.drop_duplicates()
 
 # Set first 7 columns as index
@@ -545,66 +508,187 @@ final_df = final_df.dropna(how="all")
 final_df = final_df.reset_index()
 
 
-print(final_df.isna().sum())
+def interpolate_series(group_data, column_name):
+    """
+    Interpolate missing values in a time series using cubic spline.
+    Returns interpolated values for the given group and column.
+    """
+    years = group_data["Year"].values
+    values = group_data[column_name].values
+    mask = ~np.isnan(values)
 
-df = final_df.copy()
-# Set up interpolation columns
-numeric_cols = [
-    "deaths_total",
-    "deaths_female",
-    "deaths_male",
-    "deaths_pct_total",
-    "deaths_pct_female",
-    "deaths_pct_male",
-    "death_rate_total",
-    "death_rate_female",
-    "death_rate_male",
-    "prev_total",
-    "prev_female",
-    "prev_male",
-    "prev_pct_total",
-    "prev_pct_female",
-    "prev_pct_male",
-    "prev_rate_total",
-    "prev_rate_female",
-    "prev_rate_male",
-    "obesity_rate%",
-    "ct_units",
-    "ischemic_death_rate",
-    "pacemaker_per_1m",
-    "rheumatic_death_rate",
-    "statin_use_k",
-    "hypertensive_death_rate",
-    "ischemic_death_rate_std",
-    "rheumatic_death_rate_std",
-    "cvd_death_share",
-    "f_cvd_death_rate_std",
-    "f_hypertension_controlled",
-    "f_hypertension_diagnosed",
-    "f_hypertension",
-    "f_cvd_deaths_under_70_pct",
-    "f_high_bp",
-    "f_hypertension_treated",
-    "m_cvd_death_rate_std",
-    "m_hypertension_controlled",
-    "m_hypertension_diagnosed",
-    "m_hypertension",
-    "m_cvd_deaths_under_70_pct",
-    "m_high_bp",
-    "m_hypertension_treated",
-    "t_cvd_death_rate_std",
-    "t_hypertension_controlled",
-    "t_hypertension_diagnosed",
-    "t_hypertension",
-    "t_cvd_deaths_under_70_pct",
-    "t_high_bp",
-    "t_hypertension_treated",
-]
+    if sum(mask) < 2:
+        return values
 
-# Update categorical_cols
-categorical_cols = ["wb_income", "region_owid", "statin_availability"]
+    try:
+        spline = CubicSpline(years[mask], values[mask], extrapolate=False)
+        interpolated_values = spline(years)
+        return np.where(mask, values, interpolated_values)
+    except ValueError:
+        return values
 
-# Clean up column names before saving
+
+def impute_extremes(group_data, column_name):
+    if group_data[column_name].isna().sum() == 0:
+        return group_data[column_name]
+
+    if column_name in categorical_cols:
+        fill_value = group_data[column_name].mode().iloc[0] if not group_data[column_name].mode().empty else None
+        if fill_value is not None:
+            return group_data[column_name].fillna(value=fill_value)
+        return group_data[column_name]
+
+    sorted_data = group_data.sort_values("Year")[column_name]
+    fwd = sorted_data.fillna(method="ffill")
+    bwd = sorted_data.fillna(method="bfill")
+    fwd_ewm = fwd.ewm(span=3, min_periods=1, adjust=False).mean()
+    bwd_ewm = bwd[::-1].ewm(span=3, min_periods=1, adjust=False).mean()[::-1]
+    filled = pd.concat([fwd_ewm, bwd_ewm], axis=1).mean(axis=1)
+    return filled[group_data.index]
+
+
+# Process data
+result_df = final_df.copy()
+
+# Process each entity separately
+for entity in result_df["Entity"].unique():
+    entity_data = result_df[result_df["Entity"] == entity].sort_values("Year")
+
+    # Interpolate numeric columns
+    for col in [
+        "deaths_total",
+        "deaths_female",
+        "deaths_male",
+        "deaths_pct_total",
+        "deaths_pct_female",
+        "deaths_pct_male",
+        "death_rate_total",
+        "death_rate_female",
+        "death_rate_male",
+        "prev_total",
+        "prev_female",
+        "prev_male",
+        "prev_pct_total",
+        "prev_pct_female",
+        "prev_pct_male",
+        "prev_rate_total",
+        "prev_rate_female",
+        "prev_rate_male",
+        "obesity_rate%",
+        "ct_units",
+        "ischemic_death_rate",
+        "pacemaker_per_1m",
+        "rheumatic_death_rate",
+        "statin_use_k",
+        "hypertensive_death_rate",
+        "ischemic_death_rate_std",
+        "rheumatic_death_rate_std",
+        "cvd_death_share",
+        "f_cvd_death_rate_std",
+        "f_hypertension_controlled",
+        "f_hypertension_diagnosed",
+        "f_hypertension",
+        "f_cvd_deaths_under_70_pct",
+        "f_high_bp",
+        "f_hypertension_treated",
+        "m_cvd_death_rate_std",
+        "m_hypertension_controlled",
+        "m_hypertension_diagnosed",
+        "m_hypertension",
+        "m_cvd_deaths_under_70_pct",
+        "m_high_bp",
+        "m_hypertension_treated",
+        "t_cvd_death_rate_std",
+        "t_hypertension_controlled",
+        "t_hypertension_diagnosed",
+        "t_hypertension",
+        "t_cvd_deaths_under_70_pct",
+        "t_high_bp",
+        "t_hypertension_treated",
+    ]:
+        if col in entity_data.columns:
+            result_df.loc[entity_data.index, col] = interpolate_series(entity_data, col)
+            result_df.loc[entity_data.index, col] = impute_extremes(entity_data, col)
+
+# Print statistics about remaining missing values
+print("\nRemaining missing values after extreme imputation:\n")
+missing_stats = (
+    result_df[
+        [
+            "deaths_total",
+            "deaths_female",
+            "deaths_male",
+            "deaths_pct_total",
+            "deaths_pct_female",
+            "deaths_pct_male",
+            "death_rate_total",
+            "death_rate_female",
+            "death_rate_male",
+            "prev_total",
+            "prev_female",
+            "prev_male",
+            "prev_pct_total",
+            "prev_pct_female",
+            "prev_pct_male",
+            "prev_rate_total",
+            "prev_rate_female",
+            "prev_rate_male",
+            "obesity_rate%",
+            "ct_units",
+            "ischemic_death_rate",
+            "pacemaker_per_1m",
+            "rheumatic_death_rate",
+            "statin_use_k",
+            "hypertensive_death_rate",
+            "ischemic_death_rate_std",
+            "rheumatic_death_rate_std",
+            "cvd_death_share",
+            "f_cvd_death_rate_std",
+            "f_hypertension_controlled",
+            "f_hypertension_diagnosed",
+            "f_hypertension",
+            "f_cvd_deaths_under_70_pct",
+            "f_high_bp",
+            "f_hypertension_treated",
+            "m_cvd_death_rate_std",
+            "m_hypertension_controlled",
+            "m_hypertension_diagnosed",
+            "m_hypertension",
+            "m_cvd_deaths_under_70_pct",
+            "m_high_bp",
+            "m_hypertension_treated",
+            "t_cvd_death_rate_std",
+            "t_hypertension_controlled",
+            "t_hypertension_diagnosed",
+            "t_hypertension",
+            "t_cvd_deaths_under_70_pct",
+            "t_high_bp",
+            "t_hypertension_treated",
+        ]
+    ]
+    .isnull()
+    .sum()
+)
+print(missing_stats[missing_stats > 0].sort_values(ascending=False))
+
+# Load population data
+pop = pd.read_excel(
+    "/Users/dna/Library/CloudStorage/GoogleDrive-dna@reallygreattech.com/Shared drives/Heart Disease Data/Primary Data/Derek/cardiovascular-death-rate-vs-gdp-per-capita/Cardiovascular Death Rate vs GDP per Capita.xlsx"
+)
+
+# Rename columns in pop dataframe for consistency
+pop = pop.rename(columns={"Country": "Entity", "Population (historical)": "Population"})
+
+# Merge population data with interpolated dataframe
+result_df = result_df.merge(pop[["Entity", "Year", "Population"]], on=["Entity", "Year"], how="left")
+
+# Update the Population column, keeping the original values where no match is found
+result_df["Population"] = result_df["Population_y"].fillna(result_df["Population_x"])
+
+# Drop the temporary columns
+result_df = result_df.drop(["Population_x", "Population_y"], axis=1)
+
+# Final column renaming for better programmatic handling
 column_mapping = {
     "Age-standardized death rate from cardiovascular diseases among both sexes": "cvd_death_std",
     "GDP per capita, PPP (constant 2017 international $)": "gdp_pc",
@@ -666,7 +750,7 @@ column_mapping = {
 }
 
 # Rename columns
-result_df = df.rename(columns=column_mapping)
+result_df = result_df.rename(columns=column_mapping)
 
 # Update numeric_cols with new names
 numeric_cols = [
@@ -724,32 +808,9 @@ numeric_cols = [
 # Update categorical_cols
 categorical_cols = ["wb_income", "region", "statin_availability"]
 
-
-def interpolate_series(group, col):
-    mask = group[col].notnull()
-    if mask.sum() > 3:  # Need at least 4 points for cubic spline
-        x = group.index[mask].astype(float)
-        y = group[col][mask]
-        if len(x) != len(set(x)):  # Check for duplicates
-            return group[col].interpolate(method="linear", limit_direction="both")
-        try:
-            cs = CubicSpline(x, y, bc_type="natural")
-            return pd.Series(cs(group.index.astype(float)), index=group.index)
-        except:
-            return group[col].interpolate(method="linear", limit_direction="both")
-    elif mask.sum() > 1:  # Use linear interpolation if 2-3 points
-        return group[col].interpolate(method="linear", limit_direction="both")
-    else:
-        return (
-            group[col].fillna(method="ffill").fillna(method="bfill")
-        )  # Fill remaining gaps
-
-
-result_df = df.copy()
-
 # Process each entity separately
-for entity in df["Entity"].unique():
-    entity_data = df[df["Entity"] == entity].sort_values("Year")
+for entity in result_df["Entity"].unique():
+    entity_data = result_df[result_df["Entity"] == entity].sort_values("Year")
 
     # Interpolate numeric columns
     for col in numeric_cols:
@@ -758,48 +819,14 @@ for entity in df["Entity"].unique():
 
     # Fill 'Code' column with forward and backward fill
     if "Code" in entity_data.columns:
-        result_df.loc[entity_data.index, "Code"] = (
-            entity_data["Code"].fillna(method="ffill").fillna(method="bfill")
-        )
+        result_df.loc[entity_data.index, "Code"] = entity_data["Code"].fillna(method="ffill").fillna(method="bfill")
 
     # Fill other categorical columns with mode
     for col in categorical_cols:
         if col in entity_data.columns:
-            mode_val = (
-                entity_data[col].mode().iloc[0]
-                if not entity_data[col].mode().empty
-                else None
-            )
+            mode_val = entity_data[col].mode().iloc[0] if not entity_data[col].mode().empty else None
             if mode_val is not None:
-                result_df.loc[entity_data.index, col] = result_df.loc[
-                    entity_data.index, col
-                ].fillna(mode_val)
-
-
-# Handle remaining missing values at year extremes
-def impute_extremes(group, col):
-    """Impute missing values at year extremes using entity-specific statistics"""
-    if group[col].isna().sum() == 0:
-        return group[col]
-
-    if col in categorical_cols:
-        # For categorical columns, use mode of the entity
-        fill_value = group[col].mode().iloc[0] if not group[col].mode().empty else None
-        if fill_value is not None:
-            return group[col].fillna(value=fill_value)
-        return group[col]  # Return original if no mode found
-    else:
-        # Sort by year and get forward/backward fills
-        sorted_data = group.sort_values("Year")[col]
-        fwd = sorted_data.fillna(method="ffill")
-        bwd = sorted_data.fillna(method="bfill")
-        # Use ewm in both directions
-        fwd_ewm = fwd.ewm(span=3, min_periods=1, adjust=False).mean()
-        bwd_ewm = bwd[::-1].ewm(span=3, min_periods=1, adjust=False).mean()[::-1]
-        # Combine both directions
-        filled = pd.concat([fwd_ewm, bwd_ewm], axis=1).mean(axis=1)
-        return filled[group.index]
-
+                result_df.loc[entity_data.index, col] = result_df.loc[entity_data.index, col].fillna(mode_val)
 
 # Apply extreme value imputation
 for entity in result_df["Entity"].unique():
@@ -825,20 +852,10 @@ original = final_df
 interpolated = result_df
 
 print("Original missing values:\n")
-print(
-    original[numeric_cols + categorical_cols]
-    .isnull()
-    .sum()
-    .sort_values(ascending=False)
-)
+print(original[numeric_cols + categorical_cols].isnull().sum().sort_values(ascending=False))
 
 print("\nInterpolated missing values:\n")
-print(
-    interpolated[numeric_cols + categorical_cols]
-    .isnull()
-    .sum()
-    .sort_values(ascending=False)
-)
+print(interpolated[numeric_cols + categorical_cols].isnull().sum().sort_values(ascending=False))
 
 # Calculate improvement
 print("\nImprovement in missing values:\n")
@@ -857,9 +874,7 @@ pop = pd.read_excel(
 pop = pop.rename(columns={"Country": "Entity", "Population (historical)": "Population"})
 result_df = interpolated
 # Merge population data with interpolated dataframe
-result_df = result_df.merge(
-    pop[["Entity", "Year", "Population"]], on=["Entity", "Year"], how="left"
-)
+result_df = result_df.merge(pop[["Entity", "Year", "Population"]], on=["Entity", "Year"], how="left")
 
 # Update the Population column, keeping the original values where no match is found
 result_df["Population"] = result_df["Population_y"].fillna(result_df["Population_x"])
