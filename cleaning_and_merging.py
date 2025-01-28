@@ -263,7 +263,9 @@ wide_ihme = pd.merge(
 )
 
 # Clean up column names
-wide_ihme = wide_ihme.drop(["measure_deaths", "measure_prev", "cause_deaths", "cause_prev", "age"], axis=1)
+wide_ihme = wide_ihme.drop(
+    ["measure_deaths", "measure_prev", "cause_deaths", "cause_prev", "age"], axis=1
+)
 
 # Rename columns
 wide_ihme = wide_ihme.rename(
@@ -303,7 +305,9 @@ add4 = add4.rename(
     }
 )
 
-primary_df = primary_df.merge(add4, on=["Entity", "Year", "gender"], how="outer", suffixes=("", "_global_deaths"))
+primary_df = primary_df.merge(
+    add4, on=["Entity", "Year", "gender"], how="outer", suffixes=("", "_global_deaths")
+)
 
 add5 = pd.read_csv("./Cleaned-Secondary-Data/Global_WHO_data.csv")
 add5 = add5[
@@ -327,7 +331,9 @@ add5 = add5.rename(columns={"Country": "Entity", "WHO_Region": "Region", "Gender
 
 primary_df = primary_df.rename(columns={"World Bank's income classification": "WB_Income"})
 
-primary_df = primary_df.merge(add5, on=["Entity", "Year", "gender", "Region", "WB_Income"], how="outer")
+primary_df = primary_df.merge(
+    add5, on=["Entity", "Year", "gender", "Region", "WB_Income"], how="outer"
+)
 primary_df.drop(["indicator_name", "indicator_abbr"], axis=1, inplace=True)
 
 add6 = pd.read_csv("./Cleaned-Secondary-Data/Our-World-Cleaned/CT_Units.csv")
@@ -406,7 +412,9 @@ pivot_df = final_df.pivot_table(
 ).reset_index()
 
 # Clean up column names
-pivot_df.columns = ["".join(col).strip() if isinstance(col, tuple) else col for col in pivot_df.columns]
+pivot_df.columns = [
+    "".join(col).strip() if isinstance(col, tuple) else col for col in pivot_df.columns
+]
 
 # Rename to more intuitive names
 pivot_df = pivot_df.rename(
@@ -479,7 +487,12 @@ indicator_pivot = final_df.pivot_table(
 indicator_pivot.columns = [
     (
         "".join(
-            str(col).replace(" ", "_").replace("-", "_").replace(",", "").replace("(", "").replace(")", "")
+            str(col)
+            .replace(" ", "_")
+            .replace("-", "_")
+            .replace(",", "")
+            .replace("(", "")
+            .replace(")", "")
             for col in col_tuple
         ).strip()
         if isinstance(col_tuple, tuple)
@@ -533,7 +546,11 @@ def impute_extremes(group_data, column_name):
         return group_data[column_name]
 
     if column_name in categorical_cols:
-        fill_value = group_data[column_name].mode().iloc[0] if not group_data[column_name].mode().empty else None
+        fill_value = (
+            group_data[column_name].mode().iloc[0]
+            if not group_data[column_name].mode().empty
+            else None
+        )
         if fill_value is not None:
             return group_data[column_name].fillna(value=fill_value)
         return group_data[column_name]
@@ -680,7 +697,9 @@ pop = pd.read_excel(
 pop = pop.rename(columns={"Country": "Entity", "Population (historical)": "Population"})
 
 # Merge population data with interpolated dataframe
-result_df = result_df.merge(pop[["Entity", "Year", "Population"]], on=["Entity", "Year"], how="left")
+result_df = result_df.merge(
+    pop[["Entity", "Year", "Population"]], on=["Entity", "Year"], how="left"
+)
 
 # Update the Population column, keeping the original values where no match is found
 result_df["Population"] = result_df["Population_y"].fillna(result_df["Population_x"])
@@ -819,14 +838,20 @@ for entity in result_df["Entity"].unique():
 
     # Fill 'Code' column with forward and backward fill
     if "Code" in entity_data.columns:
-        result_df.loc[entity_data.index, "Code"] = entity_data["Code"].fillna(method="ffill").fillna(method="bfill")
+        result_df.loc[entity_data.index, "Code"] = (
+            entity_data["Code"].fillna(method="ffill").fillna(method="bfill")
+        )
 
     # Fill other categorical columns with mode
     for col in categorical_cols:
         if col in entity_data.columns:
-            mode_val = entity_data[col].mode().iloc[0] if not entity_data[col].mode().empty else None
+            mode_val = (
+                entity_data[col].mode().iloc[0] if not entity_data[col].mode().empty else None
+            )
             if mode_val is not None:
-                result_df.loc[entity_data.index, col] = result_df.loc[entity_data.index, col].fillna(mode_val)
+                result_df.loc[entity_data.index, col] = result_df.loc[
+                    entity_data.index, col
+                ].fillna(mode_val)
 
 # Apply extreme value imputation
 for entity in result_df["Entity"].unique():
@@ -874,7 +899,9 @@ pop = pd.read_excel(
 pop = pop.rename(columns={"Country": "Entity", "Population (historical)": "Population"})
 result_df = interpolated
 # Merge population data with interpolated dataframe
-result_df = result_df.merge(pop[["Entity", "Year", "Population"]], on=["Entity", "Year"], how="left")
+result_df = result_df.merge(
+    pop[["Entity", "Year", "Population"]], on=["Entity", "Year"], how="left"
+)
 
 # Update the Population column, keeping the original values where no match is found
 result_df["Population"] = result_df["Population_y"].fillna(result_df["Population_x"])

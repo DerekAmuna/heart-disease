@@ -57,3 +57,4 @@ t_htn          ,Total hypertension prevalence               ,Yes      ,Risk Fact
 t_cvd_u70%     ,Total CVD deaths under 70%                  ,Yes      ,Main Data   ,percent   ,58.13                ,True
 t_high_bp      ,Total high blood pressure prevalence        ,Yes      ,Risk Factor ,percent   ,34.57                ,True
 t_htn_rx       ,Total hypertension treatment rate           ,Yes      ,Risk Factor ,percent   ,45.6                 ,True
+Total Percent Null: 52.02%
