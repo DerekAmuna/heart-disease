@@ -4,18 +4,20 @@ target-version = ['py312']
 include = '\.pyi?$'
 exclude = '''
 /(
-.git
-| .venv
-| build
-| dist
-| migrations
+    .git
+    | .venv
+    | build
+    | dist
+    | migrations
 )/
+'''
 
 [tool.pylint.messages_control]
 disable = [
     "C0114",  # missing-module-docstring
     "C0115",  # missing-class-docstring
     "C0116",  # missing-function-docstring
+    "C0301",  # line-too-long
 ]
 
 [tool.pylint.format]
@@ -30,6 +32,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.isort]
 profile = "black"
-line_length = 99
+line_length = 120
 combine_as_imports = true
-known_third_party = ["dash", "numpy", "pandas","plotly"]
+known_third_party = ["dash", "numpy", "pandas", "plotly"]

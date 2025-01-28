@@ -9,6 +9,7 @@ plotly = "*"
 pandas = "*"
 numpy = "*"
 isort = "*"
+scipy = "*"
 
 [dev-packages]
 pre-commit = "*"
