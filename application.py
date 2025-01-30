@@ -1,5 +1,4 @@
 import os
-
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
@@ -9,10 +8,10 @@ from components.sidebar import create_sidebar
 #  FontAwesome for icons
 FA = "https://use.fontawesome.com/releases/v5.15.4/css/all.css"
 
-# Initialize the Dash app
+# Initialize the Dash app with proper server name for Elastic Beanstalk
 application = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, FA])
 
-# Expose the Flask server variable
+# Expose the Flask server variable for WSGI
 server = application.server
 
 # main content
@@ -48,7 +47,7 @@ application.layout = html.Div(
 )
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))
+    port = int(os.environ.get("PORT", 8080))
     application.run_server(
         debug=True, host="0.0.0.0", port=port, dev_tools_hot_reload=True, dev_tools_ui=True
     )
