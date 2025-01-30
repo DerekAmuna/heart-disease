@@ -11,12 +11,6 @@ def create_sidebar():
                         className="navbar-toggler",
                         id="navbar-toggle",
                     ),
-                    html.Button(
-                        html.I(className="fas fa-times"),
-                        className="navbar-toggler",
-                        id="sidebar-toggle",
-                        style={"display": "none"},
-                    ),
                 ],
                 className="sidebar-header",
             ),
