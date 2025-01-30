@@ -11,6 +11,7 @@ isort = "*"
 scipy = "*"
 dash = "*"
 dash-bootstrap-components = "*"
+gunicorn = "*"
 
 [dev-packages]
 pre-commit = "*"
