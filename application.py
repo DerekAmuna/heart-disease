@@ -8,9 +8,14 @@ from components.sidebar import create_sidebar
 #  FontAwesome for icons
 FA = "https://use.fontawesome.com/releases/v5.15.4/css/all.css"
 
-server = Flask(__name__)
-application = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, FA], server = server )
 
+server = Flask(__name__)
+app = dash.Dash(
+    __name__,
+    server=server,
+    external_stylesheets=[dbc.themes.BOOTSTRAP, FA]
+)
+application = app
 
 # main content
 main_content = html.Div(
@@ -39,13 +44,16 @@ main_content = html.Div(
 )
 
 # main app layout
-application.layout = html.Div(
+app.layout = html.Div(
     [dcc.Location(id="url", refresh=False), create_sidebar(), main_content],
     style={"position": "relative"},
 )
 
 if __name__ == "__main__":
-    application.run_server(
-        debug=True,  host="0.0.0.0", port=int(os.environ.get("PORT", 8080)),
-        dev_tools_hot_reload=True, dev_tools_ui=True
+    app.run_server(
+        debug=True,
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 8080)),
+        dev_tools_hot_reload=True,
+        dev_tools_ui=True
     )
