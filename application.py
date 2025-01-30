@@ -1,13 +1,28 @@
+import os
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
-from dash.dependencies import Input, Output, State
+from flask import Flask
 
 from components.sidebar import create_sidebar
 
 #  FontAwesome for icons
 FA = "https://use.fontawesome.com/releases/v5.15.4/css/all.css"
-application = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, FA])
+
+
+# Initialize Flask server
+server = Flask(__name__)
+
+# Initialize Dash app with Flask server
+app = dash.Dash(
+    __name__,
+    server=server,
+    external_stylesheets=[dbc.themes.BOOTSTRAP, FA]
+)
+
+# For AWS Elastic Beanstalk
+application = app.server
+
 
 # main content
 main_content = html.Div(
@@ -36,10 +51,17 @@ main_content = html.Div(
 )
 
 # main app layout
-application.layout = html.Div(
+app.layout = html.Div(
+
     [dcc.Location(id="url", refresh=False), create_sidebar(), main_content],
     style={"position": "relative"},
 )
 
 if __name__ == "__main__":
-    application.run_server(debug=True, dev_tools_hot_reload=True, dev_tools_ui=True)
+    app.run_server(
+        debug=True,
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 8080)),
+        dev_tools_hot_reload=True,
+        dev_tools_ui=True
+    )
