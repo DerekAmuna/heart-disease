@@ -15,7 +15,7 @@ def create_world_map_tab():
 
 
 @callback(Output("world-map-container", "children"), Input("year-slider", "value"))
-def update_map():
+def update_map(select_year):
     fig = px.choropleth(
         locations=["USA", "GBR", "CAN"],
         locationmode="ISO-3",
