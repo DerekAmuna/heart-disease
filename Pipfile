@@ -4,18 +4,21 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-dash = "*"
 plotly = "*"
 pandas = "*"
 numpy = "*"
 isort = "*"
 scipy = "*"
+dash = "*"
+dash-bootstrap-components = "*"
+gunicorn = "*"
 
 [dev-packages]
 pre-commit = "*"
 black = "*"
 pylint = "*"
 ggshield = "*"
+
 
 [requires]
 python_version = "3.12"

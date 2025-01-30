@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b95fc1aeff40a0398862fa9564d38748593fd6b70cf48124110520b728495b54"
+            "sha256": "e8a0b2a529ccb4d4c95011f8ed8e0d047c99e1a141a4ab9cfe4800b190790985"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -148,6 +148,15 @@
             "markers": "python_version >= '3.8'",
             "version": "==2.18.2"
         },
+        "dash-bootstrap-components": {
+            "hashes": [
+                "sha256:30d48340d6dc89831d6c06e400cd4236f0d5363562c05b2a922f21545695a082",
+                "sha256:5e8eae7ee1d013f69e272c68c1015b53ab71802460152088f33fffa90d245199"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.9' and python_version < '4'",
+            "version": "==1.7.1"
+        },
         "dash-core-components": {
             "hashes": [
                 "sha256:52b8e8cce13b18d0802ee3acbc5e888cb1248a04968f962d63d070400af2e346",
@@ -176,6 +185,15 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==3.0.3"
+        },
+        "gunicorn": {
+            "hashes": [
+                "sha256:ec400d38950de4dfd418cff8328b2c8faed0edb0d517d3394e457c317908ca4d",
+                "sha256:f014447a0101dc57e294f6c18ca6b40227a4c90e9bdb586042628030cba004ec"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==23.0.0"
         },
         "idna": {
             "hashes": [
@@ -284,6 +302,14 @@
             ],
             "markers": "python_version >= '3.9'",
             "version": "==3.0.2"
+        },
+        "narwhals": {
+            "hashes": [
+                "sha256:b09b8253d945f23cdb683a84685abf3afb9f96114d89e9f35dc876e143f65007",
+                "sha256:d8983fe14851c95d60576ddca37c094bd4ed24ab9ea98396844fb20ad9aaf184"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==1.24.1"
         },
         "nest-asyncio": {
             "hashes": [
@@ -414,12 +440,12 @@
         },
         "plotly": {
             "hashes": [
-                "sha256:dbc8ac8339d248a4bcc36e08a5659bacfe1b079390b8953533f4eb22169b4bae",
-                "sha256:f67073a1e637eb0dc3e46324d9d51e2fe76e9727c892dde64ddf1e1b51f29089"
+                "sha256:c4aad38b8c3d65e4a5e7dd308b084143b9025c2cc9d5317fc1f1d30958db87d3",
+                "sha256:f708871c3a9349a68791ff943a5781b1ec04de7769ea69068adcd9202e57653a"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==5.24.1"
+            "version": "==6.0.0"
         },
         "python-dateutil": {
             "hashes": [
