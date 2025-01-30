@@ -1,0 +1,16 @@
+.git
+.gitignore
+.env
+*.pyc
+__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+.env.local
+venv/
+.venv/
