@@ -1,4 +1,3 @@
-import dash_bootstrap_components as dbc
 from dash import dcc, html
 
 
@@ -34,7 +33,8 @@ def create_sidebar():
                                 options=[
                                     {"label": "All Regions", "value": "all"},
                                     {"label": "Africa", "value": "africa"},
-                                    {"label": "Americas", "value": "americas"},
+                                    {"label": "North America", "value": "north_america"},
+                                    {"label": "South America", "value": "south_america"},
                                     {"label": "Asia", "value": "asia"},
                                     {"label": "Europe", "value": "europe"},
                                     {"label": "Oceania", "value": "oceania"},
