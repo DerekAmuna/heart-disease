@@ -15,7 +15,9 @@ app = dash.Dash(
     server=server,
     external_stylesheets=[dbc.themes.BOOTSTRAP, FA]
 )
-application = app
+
+# For gunicorn
+application = server
 
 # main content
 main_content = html.Div(
