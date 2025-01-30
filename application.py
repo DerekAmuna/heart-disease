@@ -3,6 +3,7 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 from flask import Flask
+
 from components.sidebar import create_sidebar
 
 #  FontAwesome for icons
@@ -21,6 +22,7 @@ app = dash.Dash(
 
 # For AWS Elastic Beanstalk
 application = app.server
+
 
 # main content
 main_content = html.Div(
@@ -50,6 +52,7 @@ main_content = html.Div(
 
 # main app layout
 app.layout = html.Div(
+
     [dcc.Location(id="url", refresh=False), create_sidebar(), main_content],
     style={"position": "relative"},
 )
