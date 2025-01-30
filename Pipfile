@@ -4,12 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-dash = "*"
 plotly = "*"
 pandas = "*"
 numpy = "*"
 isort = "*"
 scipy = "*"
+dash = "*"
+dash-bootstrap-components = "*"
 
 [dev-packages]
 pre-commit = "*"
