@@ -18,6 +18,7 @@ disable = [
     "C0115",  # missing-class-docstring
     "C0116",  # missing-function-docstring
     "C0301",  # line-too-long
+    "E0401",  # import error
 ]
 
 [tool.pylint.format]
