@@ -3,30 +3,25 @@ import os
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
+from dash.dependencies import Input, Output, State
 from flask import Flask
 
-# from components.common.navbar import create_navbar
-from components.common.filter_slider import create_filter_slider
-from components.common.plots import create_plots
-from components.common.year_slider import create_year_slider
 from components.sidebar import create_sidebar
+from components.tabs.geo_eco import create_geo_eco_tab
 from components.tabs.healthcare import create_healthcare_tab
+from components.tabs.trends import create_trends_tab
+from components.tabs.world_map import create_world_map_tab
 
 #  FontAwesome for icons
 FA = "https://use.fontawesome.com/releases/v5.15.4/css/all.css"
 
-
-# Initialize Flask server
 server = Flask(__name__)
-
-# Initialize Dash app with Flask server
 app = dash.Dash(
     __name__,
     server=server,
-    external_stylesheets=[dbc.themes.ZEPHYR, FA]
+    external_stylesheets=[dbc.themes.ZEPHYR, FA],
+    suppress_callback_exceptions=True,
 )
-
-# For AWS Elastic Beanstalk
 application = app.server
 
 # Navbar Component
@@ -36,10 +31,12 @@ navbar = dbc.Navbar(
             dbc.NavbarBrand("HEART DISEASE DATA VISUALIZATION ", className="ms-2"),
             dbc.Nav(
                 [
-                    dbc.NavItem(dbc.NavLink("Choropleth Visualization 🌐", href="#")),
-                    dbc.NavItem(dbc.NavLink("GEO-ECO Features 💰", href="#")),
-                    dbc.NavItem(dbc.NavLink("Healthcare Features 🏥", href="#")),
-                    dbc.NavItem(dbc.NavLink("Trends 📈", href="#")),
+                    dbc.NavItem(
+                        dbc.NavLink("Choropleth Visualization 🌐", id="tab-1-link", active=True)
+                    ),
+                    dbc.NavItem(dbc.NavLink("GEO-ECO Features 💰", id="tab-2-link")),
+                    dbc.NavItem(dbc.NavLink("Healthcare Features 🏥", id="tab-3-link")),
+                    dbc.NavItem(dbc.NavLink("Trends 📈", id="tab-4-link")),
                 ],
                 className="ms-auto",
             ),
@@ -56,28 +53,73 @@ app.layout = html.Div(
         navbar,
         dbc.Row(
             [
-                dbc.Col(create_sidebar(), width=2),
+                # Sidebar
+                dbc.Col(create_sidebar(), width="auto", className="p-0"),
+                # Main content area
                 dbc.Col(
                     [
                         html.Div(
                             [
                                 html.Br(),
-                                create_filter_slider(),
-                                html.Br(),
-                                create_plots(),
-                                html.Br(),
-                                create_year_slider(),
+                                # Tab content with loading state
+                                dbc.Spinner(
+                                    dcc.Store(id="tab-store", data={}),
+                                    color="primary",
+                                ),
+                                html.Div(id="tab-content"),
                             ],
-                            style={"padding": "20px", "background-color": "#f8f9fa"},
+                            style={
+                                "padding": "20px",
+                                "padding-left": "80px",  # extra padding for collapsed sidebar
+                                "background-color": "#f8f9fa",
+                                "min-height": "calc(100vh - 56px)",  # Full height minus navbar
+                            },
                         )
                     ],
-                    width=10,
+                    className="ms-auto",
                 ),
             ],
             className="g-0",
         ),
     ]
 )
+
+
+# Callback to update active tab links
+@app.callback(
+    [Output(f"tab-{i}-link", "active") for i in range(1, 5)],
+    [Input(f"tab-{i}-link", "n_clicks") for i in range(1, 5)],
+)
+def update_active_tab(*args):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        return True, False, False, False
+    clicked_tab = ctx.triggered[0]["prop_id"].split(".")[0]
+    return [f"tab-{i}-link" == clicked_tab for i in range(1, 5)]
+
+
+# Callback to update tab content
+@app.callback(
+    Output("tab-content", "children"),
+    [Input(f"tab-{i}-link", "active") for i in range(1, 5)],
+    [State("tab-store", "data")],
+)
+def render_tab_content(tab1_active, tab2_active, tab3_active, tab4_active, store_data):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        # Default to first tab
+        return create_world_map_tab()
+
+    if tab1_active:
+        return create_world_map_tab()
+    elif tab2_active:
+        return create_geo_eco_tab()
+    elif tab3_active:
+        return create_healthcare_tab()
+    elif tab4_active:
+        return create_trends_tab()
+
+    return "No tab selected"
 
 
 if __name__ == "__main__":

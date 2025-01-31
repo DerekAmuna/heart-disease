@@ -10,9 +10,8 @@ def create_filter_slider():
                 min=10,
                 max=100,
                 step=10,
-                value=60,
+                value=5,
                 marks={i: str(i) for i in range(10, 110, 10)},
             ),
-            html.Br(),
         ]
     )

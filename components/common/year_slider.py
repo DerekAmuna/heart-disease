@@ -1,5 +1,5 @@
 import dash_bootstrap_components as dbc
-from dash import dcc, html
+from dash import Input, Output, State, callback, dcc, html
 
 
 def create_year_slider(min_year=1950, max_year=2023, default=2021):
@@ -9,8 +9,22 @@ def create_year_slider(min_year=1950, max_year=2023, default=2021):
                 [
                     dbc.Col(
                         [
-                            html.Button("▶️", id="play-button", n_clicks=0),
-                            dcc.Interval(id="animation-interval", interval=1000, disabled=True),
+                            html.Button(
+                                "▶️",
+                                id="play-button",
+                                n_clicks=0,
+                                style={
+                                    "border": "none",
+                                    "background": "none",
+                                    "font-size": "20px",
+                                    "cursor": "pointer",
+                                },
+                            ),
+                            dcc.Interval(
+                                id="animation-interval",
+                                interval=1000,  # 1 second between frames increase if loading to chloroplth is intensive
+                                disabled=True,
+                            ),
                         ],
                         width=1,
                     ),
@@ -37,3 +51,37 @@ def create_year_slider(min_year=1950, max_year=2023, default=2021):
             )
         ]
     )
+
+
+@callback(
+    Output("animation-interval", "disabled"),
+    Output("play-button", "children"),
+    Input("play-button", "n_clicks"),
+    State("animation-interval", "disabled"),
+)
+def toggle_animation(n_clicks, disabled):
+    if n_clicks is None:
+        return True, "▶️"
+
+    if disabled:
+        return False, "⏸️"  # Play -> Pause
+    else:
+        return True, "▶️"  # Pause -> Play
+
+
+@callback(
+    Output("year-slider", "value"),
+    Input("animation-interval", "n_intervals"),
+    State("year-slider", "value"),
+    State("year-slider", "min"),
+    State("year-slider", "max"),
+)
+def update_year_on_interval(n_intervals, current_year, min_year, max_year):
+    if current_year is None or n_intervals is None:
+        return min_year
+
+    next_year = current_year + 1
+    if next_year > max_year:
+        next_year = min_year
+
+    return next_year
