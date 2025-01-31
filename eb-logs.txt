@@ -1,0 +1,656 @@
+----------------------------------------
+/var/log/web.stdout.log
+----------------------------------------
+Jan 30 12:29:32 ip-172-31-91-158 web[7334]: [2025-01-30 12:29:32 +0000] [7334] [ERROR] Reason: App failed to load.
+Jan 30 12:29:32 ip-172-31-91-158 web[7387]: [2025-01-30 12:29:32 +0000] [7387] [INFO] Starting gunicorn 21.2.0
+Jan 30 12:29:32 ip-172-31-91-158 web[7387]: [2025-01-30 12:29:32 +0000] [7387] [INFO] Listening at: http://127.0.0.1:8000 (7387)
+Jan 30 12:29:32 ip-172-31-91-158 web[7387]: [2025-01-30 12:29:32 +0000] [7387] [INFO] Using worker: sync
+Jan 30 12:29:32 ip-172-31-91-158 web[7391]: [2025-01-30 12:29:32 +0000] [7391] [INFO] Booting worker with pid: 7391
+Jan 30 12:29:33 ip-172-31-91-158 web[7391]: Failed to find attribute 'server' in 'application'.
+Jan 30 12:29:33 ip-172-31-91-158 web[7391]: [2025-01-30 12:29:33 +0000] [7391] [INFO] Worker exiting (pid: 7391)
+Jan 30 12:29:33 ip-172-31-91-158 web[7387]: [2025-01-30 12:29:33 +0000] [7387] [ERROR] Worker (pid:7391) exited with code 4
+Jan 30 12:29:33 ip-172-31-91-158 web[7387]: [2025-01-30 12:29:33 +0000] [7387] [ERROR] Shutting down: Master
+Jan 30 12:29:33 ip-172-31-91-158 web[7387]: [2025-01-30 12:29:33 +0000] [7387] [ERROR] Reason: App failed to load.
+Jan 30 12:29:33 ip-172-31-91-158 web[7393]: [2025-01-30 12:29:33 +0000] [7393] [INFO] Starting gunicorn 21.2.0
+Jan 30 12:29:33 ip-172-31-91-158 web[7393]: [2025-01-30 12:29:33 +0000] [7393] [INFO] Listening at: http://127.0.0.1:8000 (7393)
+Jan 30 12:29:33 ip-172-31-91-158 web[7393]: [2025-01-30 12:29:33 +0000] [7393] [INFO] Using worker: sync
+Jan 30 12:29:33 ip-172-31-91-158 web[7398]: [2025-01-30 12:29:33 +0000] [7398] [INFO] Booting worker with pid: 7398
+Jan 30 12:29:33 ip-172-31-91-158 web[7398]: Failed to find attribute 'server' in 'application'.
+Jan 30 12:29:33 ip-172-31-91-158 web[7398]: [2025-01-30 12:29:33 +0000] [7398] [INFO] Worker exiting (pid: 7398)
+Jan 30 12:29:33 ip-172-31-91-158 web[7393]: [2025-01-30 12:29:33 +0000] [7393] [ERROR] Worker (pid:7398) exited with code 4
+Jan 30 12:29:33 ip-172-31-91-158 web[7393]: [2025-01-30 12:29:33 +0000] [7393] [ERROR] Shutting down: Master
+Jan 30 12:29:33 ip-172-31-91-158 web[7393]: [2025-01-30 12:29:33 +0000] [7393] [ERROR] Reason: App failed to load.
+Jan 30 12:29:34 ip-172-31-91-158 web[7403]: [2025-01-30 12:29:34 +0000] [7403] [INFO] Starting gunicorn 21.2.0
+Jan 30 12:29:34 ip-172-31-91-158 web[7403]: [2025-01-30 12:29:34 +0000] [7403] [INFO] Listening at: http://127.0.0.1:8000 (7403)
+Jan 30 12:29:34 ip-172-31-91-158 web[7403]: [2025-01-30 12:29:34 +0000] [7403] [INFO] Using worker: sync
+Jan 30 12:29:34 ip-172-31-91-158 web[7407]: [2025-01-30 12:29:34 +0000] [7407] [INFO] Booting worker with pid: 7407
+Jan 30 12:29:34 ip-172-31-91-158 web[7407]: Failed to find attribute 'server' in 'application'.
+Jan 30 12:29:34 ip-172-31-91-158 web[7407]: [2025-01-30 12:29:34 +0000] [7407] [INFO] Worker exiting (pid: 7407)
+Jan 30 12:29:34 ip-172-31-91-158 web[7403]: [2025-01-30 12:29:34 +0000] [7403] [ERROR] Worker (pid:7407) exited with code 4
+Jan 30 12:29:34 ip-172-31-91-158 web[7403]: [2025-01-30 12:29:34 +0000] [7403] [ERROR] Shutting down: Master
+Jan 30 12:29:34 ip-172-31-91-158 web[7403]: [2025-01-30 12:29:34 +0000] [7403] [ERROR] Reason: App failed to load.
+Jan 30 12:29:35 ip-172-31-91-158 web[7409]: [2025-01-30 12:29:35 +0000] [7409] [INFO] Starting gunicorn 21.2.0
+Jan 30 12:29:35 ip-172-31-91-158 web[7409]: [2025-01-30 12:29:35 +0000] [7409] [INFO] Listening at: http://127.0.0.1:8000 (7409)
+Jan 30 12:29:35 ip-172-31-91-158 web[7409]: [2025-01-30 12:29:35 +0000] [7409] [INFO] Using worker: sync
+Jan 30 12:29:35 ip-172-31-91-158 web[7413]: [2025-01-30 12:29:35 +0000] [7413] [INFO] Booting worker with pid: 7413
+Jan 30 12:29:35 ip-172-31-91-158 web[7413]: Failed to find attribute 'server' in 'application'.
+Jan 30 12:29:35 ip-172-31-91-158 web[7413]: [2025-01-30 12:29:35 +0000] [7413] [INFO] Worker exiting (pid: 7413)
+Jan 30 12:29:35 ip-172-31-91-158 web[7409]: [2025-01-30 12:29:35 +0000] [7409] [ERROR] Worker (pid:7413) exited with code 4
+Jan 30 12:29:35 ip-172-31-91-158 web[7409]: [2025-01-30 12:29:35 +0000] [7409] [ERROR] Shutting down: Master
+Jan 30 12:29:35 ip-172-31-91-158 web[7409]: [2025-01-30 12:29:35 +0000] [7409] [ERROR] Reason: App failed to load.
+Jan 30 12:29:35 ip-172-31-91-158 web[7416]: [2025-01-30 12:29:35 +0000] [7416] [INFO] Starting gunicorn 21.2.0
+Jan 30 12:29:35 ip-172-31-91-158 web[7416]: [2025-01-30 12:29:35 +0000] [7416] [INFO] Listening at: http://127.0.0.1:8000 (7416)
+Jan 30 12:29:35 ip-172-31-91-158 web[7416]: [2025-01-30 12:29:35 +0000] [7416] [INFO] Using worker: sync
+Jan 30 12:29:35 ip-172-31-91-158 web[7420]: [2025-01-30 12:29:35 +0000] [7420] [INFO] Booting worker with pid: 7420
+Jan 30 12:29:36 ip-172-31-91-158 web[7420]: Failed to find attribute 'server' in 'application'.
+Jan 30 12:29:36 ip-172-31-91-158 web[7420]: [2025-01-30 12:29:36 +0000] [7420] [INFO] Worker exiting (pid: 7420)
+Jan 30 12:29:36 ip-172-31-91-158 web[7416]: [2025-01-30 12:29:36 +0000] [7416] [ERROR] Worker (pid:7420) exited with code 4
+Jan 30 12:29:36 ip-172-31-91-158 web[7416]: [2025-01-30 12:29:36 +0000] [7416] [ERROR] Shutting down: Master
+Jan 30 12:29:36 ip-172-31-91-158 web[7416]: [2025-01-30 12:29:36 +0000] [7416] [ERROR] Reason: App failed to load.
+Jan 30 12:45:19 ip-172-31-91-158 web[8533]: [2025-01-30 12:45:19 +0000] [8533] [INFO] Starting gunicorn 21.2.0
+Jan 30 12:45:19 ip-172-31-91-158 web[8533]: [2025-01-30 12:45:19 +0000] [8533] [INFO] Listening at: http://127.0.0.1:8000 (8533)
+Jan 30 12:45:19 ip-172-31-91-158 web[8533]: [2025-01-30 12:45:19 +0000] [8533] [INFO] Using worker: sync
+Jan 30 12:45:19 ip-172-31-91-158 web[8560]: [2025-01-30 12:45:19 +0000] [8560] [INFO] Booting worker with pid: 8560
+Jan 30 12:45:19 ip-172-31-91-158 web[8560]: Failed to find attribute 'server' in 'application'.
+Jan 30 12:45:19 ip-172-31-91-158 web[8560]: [2025-01-30 12:45:19 +0000] [8560] [INFO] Worker exiting (pid: 8560)
+Jan 30 12:45:19 ip-172-31-91-158 web[8533]: [2025-01-30 12:45:19 +0000] [8533] [ERROR] Worker (pid:8560) exited with code 4
+Jan 30 12:45:19 ip-172-31-91-158 web[8533]: [2025-01-30 12:45:19 +0000] [8533] [ERROR] Shutting down: Master
+Jan 30 12:45:19 ip-172-31-91-158 web[8533]: [2025-01-30 12:45:19 +0000] [8533] [ERROR] Reason: App failed to load.
+Jan 30 12:45:20 ip-172-31-91-158 web[8586]: [2025-01-30 12:45:20 +0000] [8586] [INFO] Starting gunicorn 21.2.0
+Jan 30 12:45:20 ip-172-31-91-158 web[8586]: [2025-01-30 12:45:20 +0000] [8586] [INFO] Listening at: http://127.0.0.1:8000 (8586)
+Jan 30 12:45:20 ip-172-31-91-158 web[8586]: [2025-01-30 12:45:20 +0000] [8586] [INFO] Using worker: sync
+Jan 30 12:45:20 ip-172-31-91-158 web[8590]: [2025-01-30 12:45:20 +0000] [8590] [INFO] Booting worker with pid: 8590
+Jan 30 12:45:20 ip-172-31-91-158 web[8590]: Failed to find attribute 'server' in 'application'.
+Jan 30 12:45:20 ip-172-31-91-158 web[8590]: [2025-01-30 12:45:20 +0000] [8590] [INFO] Worker exiting (pid: 8590)
+Jan 30 12:45:20 ip-172-31-91-158 web[8586]: [2025-01-30 12:45:20 +0000] [8586] [ERROR] Worker (pid:8590) exited with code 4
+Jan 30 12:45:20 ip-172-31-91-158 web[8586]: [2025-01-30 12:45:20 +0000] [8586] [ERROR] Shutting down: Master
+Jan 30 12:45:20 ip-172-31-91-158 web[8586]: [2025-01-30 12:45:20 +0000] [8586] [ERROR] Reason: App failed to load.
+Jan 30 12:45:20 ip-172-31-91-158 web[8593]: [2025-01-30 12:45:20 +0000] [8593] [INFO] Starting gunicorn 21.2.0
+Jan 30 12:45:20 ip-172-31-91-158 web[8593]: [2025-01-30 12:45:20 +0000] [8593] [INFO] Listening at: http://127.0.0.1:8000 (8593)
+Jan 30 12:45:20 ip-172-31-91-158 web[8593]: [2025-01-30 12:45:20 +0000] [8593] [INFO] Using worker: sync
+Jan 30 12:45:20 ip-172-31-91-158 web[8599]: [2025-01-30 12:45:20 +0000] [8599] [INFO] Booting worker with pid: 8599
+Jan 30 12:45:21 ip-172-31-91-158 web[8599]: Failed to find attribute 'server' in 'application'.
+Jan 30 12:45:21 ip-172-31-91-158 web[8599]: [2025-01-30 12:45:21 +0000] [8599] [INFO] Worker exiting (pid: 8599)
+Jan 30 12:45:21 ip-172-31-91-158 web[8593]: [2025-01-30 12:45:21 +0000] [8593] [ERROR] Worker (pid:8599) exited with code 4
+Jan 30 12:45:21 ip-172-31-91-158 web[8593]: [2025-01-30 12:45:21 +0000] [8593] [ERROR] Shutting down: Master
+Jan 30 12:45:21 ip-172-31-91-158 web[8593]: [2025-01-30 12:45:21 +0000] [8593] [ERROR] Reason: App failed to load.
+Jan 30 12:45:21 ip-172-31-91-158 web[8603]: [2025-01-30 12:45:21 +0000] [8603] [INFO] Starting gunicorn 21.2.0
+Jan 30 12:45:21 ip-172-31-91-158 web[8603]: [2025-01-30 12:45:21 +0000] [8603] [INFO] Listening at: http://127.0.0.1:8000 (8603)
+Jan 30 12:45:21 ip-172-31-91-158 web[8603]: [2025-01-30 12:45:21 +0000] [8603] [INFO] Using worker: sync
+Jan 30 12:45:21 ip-172-31-91-158 web[8607]: [2025-01-30 12:45:21 +0000] [8607] [INFO] Booting worker with pid: 8607
+Jan 30 12:45:21 ip-172-31-91-158 web[8607]: Failed to find attribute 'server' in 'application'.
+Jan 30 12:45:21 ip-172-31-91-158 web[8607]: [2025-01-30 12:45:21 +0000] [8607] [INFO] Worker exiting (pid: 8607)
+Jan 30 12:45:21 ip-172-31-91-158 web[8603]: [2025-01-30 12:45:21 +0000] [8603] [ERROR] Worker (pid:8607) exited with code 4
+Jan 30 12:45:21 ip-172-31-91-158 web[8603]: [2025-01-30 12:45:21 +0000] [8603] [ERROR] Shutting down: Master
+Jan 30 12:45:21 ip-172-31-91-158 web[8603]: [2025-01-30 12:45:21 +0000] [8603] [ERROR] Reason: App failed to load.
+Jan 30 12:45:22 ip-172-31-91-158 web[8610]: [2025-01-30 12:45:22 +0000] [8610] [INFO] Starting gunicorn 21.2.0
+Jan 30 12:45:22 ip-172-31-91-158 web[8610]: [2025-01-30 12:45:22 +0000] [8610] [INFO] Listening at: http://127.0.0.1:8000 (8610)
+Jan 30 12:45:22 ip-172-31-91-158 web[8610]: [2025-01-30 12:45:22 +0000] [8610] [INFO] Using worker: sync
+Jan 30 12:45:22 ip-172-31-91-158 web[8614]: [2025-01-30 12:45:22 +0000] [8614] [INFO] Booting worker with pid: 8614
+Jan 30 12:45:22 ip-172-31-91-158 web[8614]: Failed to find attribute 'server' in 'application'.
+Jan 30 12:45:22 ip-172-31-91-158 web[8614]: [2025-01-30 12:45:22 +0000] [8614] [INFO] Worker exiting (pid: 8614)
+Jan 30 12:45:22 ip-172-31-91-158 web[8610]: [2025-01-30 12:45:22 +0000] [8610] [ERROR] Worker (pid:8614) exited with code 4
+Jan 30 12:45:22 ip-172-31-91-158 web[8610]: [2025-01-30 12:45:22 +0000] [8610] [ERROR] Shutting down: Master
+Jan 30 12:45:22 ip-172-31-91-158 web[8610]: [2025-01-30 12:45:22 +0000] [8610] [ERROR] Reason: App failed to load.
+Jan 30 12:45:23 ip-172-31-91-158 web[8616]: [2025-01-30 12:45:23 +0000] [8616] [INFO] Starting gunicorn 21.2.0
+Jan 30 12:45:23 ip-172-31-91-158 web[8616]: [2025-01-30 12:45:23 +0000] [8616] [INFO] Listening at: http://127.0.0.1:8000 (8616)
+Jan 30 12:45:23 ip-172-31-91-158 web[8616]: [2025-01-30 12:45:23 +0000] [8616] [INFO] Using worker: sync
+Jan 30 12:45:23 ip-172-31-91-158 web[8620]: [2025-01-30 12:45:23 +0000] [8620] [INFO] Booting worker with pid: 8620
+Jan 30 12:45:23 ip-172-31-91-158 web[8620]: Failed to find attribute 'server' in 'application'.
+Jan 30 12:45:23 ip-172-31-91-158 web[8620]: [2025-01-30 12:45:23 +0000] [8620] [INFO] Worker exiting (pid: 8620)
+Jan 30 12:45:23 ip-172-31-91-158 web[8616]: [2025-01-30 12:45:23 +0000] [8616] [ERROR] Worker (pid:8620) exited with code 4
+Jan 30 12:45:23 ip-172-31-91-158 web[8616]: [2025-01-30 12:45:23 +0000] [8616] [ERROR] Shutting down: Master
+Jan 30 12:45:23 ip-172-31-91-158 web[8616]: [2025-01-30 12:45:23 +0000] [8616] [ERROR] Reason: App failed to load.
+
+
+----------------------------------------
+/var/log/eb-engine.log
+----------------------------------------
+2025/01/30 12:45:17.685185 [WARN] stopProcess Warning: process xray is not registered 
+2025/01/30 12:45:17.685260 [INFO] Running command: systemctl stop xray.service
+2025/01/30 12:45:17.697115 [INFO] Executing instruction: stop proxy
+2025/01/30 12:45:17.697148 [INFO] Running command: systemctl show -p PartOf httpd.service
+2025/01/30 12:45:17.709041 [WARN] deregisterProcess Warning: process httpd is not registered, skipping...
+
+2025/01/30 12:45:17.709076 [INFO] Running command: systemctl show -p PartOf nginx.service
+2025/01/30 12:45:17.719471 [INFO] Running command: systemctl is-active nginx.service
+2025/01/30 12:45:17.726058 [INFO] Running command: systemctl show -p PartOf nginx.service
+2025/01/30 12:45:17.734160 [INFO] Running command: systemctl stop nginx.service
+2025/01/30 12:45:17.864744 [INFO] Running command: systemctl disable nginx.service
+2025/01/30 12:45:18.071031 [INFO] Running command: systemctl daemon-reload
+2025/01/30 12:45:18.274312 [INFO] Running command: systemctl reset-failed
+2025/01/30 12:45:18.281539 [INFO] Executing instruction: FlipApplication
+2025/01/30 12:45:18.281566 [INFO] Fetching environment variables...
+2025/01/30 12:45:18.281723 [INFO] Purge old process...
+2025/01/30 12:45:18.281743 [INFO] Running command: systemctl stop eb-app.target
+2025/01/30 12:45:18.289360 [INFO] Running command: systemctl show -p ConsistsOf eb-app.target | cut -d= -f2
+2025/01/30 12:45:18.298069 [INFO] web.service
+
+2025/01/30 12:45:18.298096 [INFO] deregistering process: web
+2025/01/30 12:45:18.298106 [INFO] Running command: systemctl show -p PartOf web.service
+2025/01/30 12:45:18.307384 [INFO] Running command: systemctl is-active web.service
+2025/01/30 12:45:18.314134 [INFO] Running command: systemctl disable web.service
+2025/01/30 12:45:18.508001 [INFO] Removed "/etc/systemd/system/multi-user.target.wants/web.service".
+
+2025/01/30 12:45:18.508074 [INFO] Running command: systemctl daemon-reload
+2025/01/30 12:45:18.714136 [INFO] Running command: systemctl reset-failed
+2025/01/30 12:45:18.721715 [INFO] Running command: systemctl is-active web.service
+2025/01/30 12:45:18.728748 [INFO] Process web has been fully terminated
+2025/01/30 12:45:18.728774 [INFO] All processes have been fully terminated
+2025/01/30 12:45:18.728778 [INFO] Removing /var/app/current/ if it exists
+2025/01/30 12:45:18.729571 [INFO] Renaming /var/app/staging/ to /var/app/current/
+2025/01/30 12:45:18.729593 [INFO] Register application processes...
+2025/01/30 12:45:18.729597 [INFO] Registering the proc: web
+
+2025/01/30 12:45:18.729605 [INFO] Running command: systemctl show -p PartOf web.service
+2025/01/30 12:45:18.740538 [INFO] Running command: systemctl daemon-reload
+2025/01/30 12:45:18.934255 [INFO] Running command: systemctl reset-failed
+2025/01/30 12:45:18.941779 [INFO] Running command: systemctl is-enabled eb-app.target
+2025/01/30 12:45:18.949425 [INFO] Running command: systemctl enable eb-app.target
+2025/01/30 12:45:19.113313 [INFO] Running command: systemctl start eb-app.target
+2025/01/30 12:45:19.122021 [INFO] Running command: systemctl enable web.service
+2025/01/30 12:45:19.318434 [INFO] Created symlink /etc/systemd/system/multi-user.target.wants/web.service â†’ /etc/systemd/system/web.service.
+
+2025/01/30 12:45:19.318471 [INFO] Running command: systemctl show -p PartOf web.service
+2025/01/30 12:45:19.328414 [INFO] Running command: systemctl is-active web.service
+2025/01/30 12:45:19.335595 [INFO] Running command: systemctl start web.service
+2025/01/30 12:45:19.390157 [INFO] Executing instruction: start X-Ray
+2025/01/30 12:45:19.390182 [INFO] X-Ray is not enabled.
+2025/01/30 12:45:19.390186 [INFO] Executing instruction: start proxy with new configuration
+2025/01/30 12:45:19.390210 [INFO] Running command: /usr/sbin/nginx -t -c /var/proxy/staging/nginx/nginx.conf
+2025/01/30 12:45:19.409219 [INFO] nginx: [warn] could not build optimal types_hash, you should increase either types_hash_max_size: 1024 or types_hash_bucket_size: 64; ignoring types_hash_bucket_size
+nginx: the configuration file /var/proxy/staging/nginx/nginx.conf syntax is ok
+nginx: configuration file /var/proxy/staging/nginx/nginx.conf test is successful
+
+2025/01/30 12:45:19.409498 [INFO] Running command: cp -rp /var/proxy/staging/nginx/* /etc/nginx
+2025/01/30 12:45:19.412336 [INFO] Running command: systemctl show -p PartOf nginx.service
+2025/01/30 12:45:19.427777 [INFO] Running command: systemctl daemon-reload
+2025/01/30 12:45:19.664924 [INFO] Running command: systemctl reset-failed
+2025/01/30 12:45:19.675837 [INFO] Running command: systemctl show -p PartOf nginx.service
+2025/01/30 12:45:19.689496 [INFO] Running command: systemctl is-active nginx.service
+2025/01/30 12:45:19.699429 [INFO] Running command: systemctl start nginx.service
+2025/01/30 12:45:19.826410 [INFO] Executing instruction: configureSqsd
+2025/01/30 12:45:19.826434 [INFO] This is a web server environment instance, skip configure sqsd daemon ...
+2025/01/30 12:45:19.826438 [INFO] Executing instruction: startSqsd
+2025/01/30 12:45:19.826440 [INFO] This is a web server environment instance, skip start sqsd daemon ...
+2025/01/30 12:45:19.826443 [INFO] Executing instruction: Track pids in healthd
+2025/01/30 12:45:19.826446 [INFO] This is an enhanced health env...
+2025/01/30 12:45:19.826456 [INFO] Running command: systemctl show -p ConsistsOf aws-eb.target | cut -d= -f2
+2025/01/30 12:45:19.836601 [INFO] nginx.service cfn-hup.service healthd.service
+
+2025/01/30 12:45:19.836668 [INFO] Running command: systemctl show -p ConsistsOf eb-app.target | cut -d= -f2
+2025/01/30 12:45:19.847431 [INFO] web.service
+
+2025/01/30 12:45:19.847549 [WARN] failed to read file /var/pids/web.pid with error: open /var/pids/web.pid: no such file or directory
+2025/01/30 12:45:20.848810 [INFO] Executing instruction: RunAppDeployPostDeployHooks
+2025/01/30 12:45:20.848869 [INFO] Executing platform hooks in .platform/hooks/postdeploy/
+2025/01/30 12:45:20.848884 [INFO] The dir .platform/hooks/postdeploy/ does not exist
+2025/01/30 12:45:20.848887 [INFO] Finished running scripts in /var/app/current/.platform/hooks/postdeploy
+2025/01/30 12:45:20.848892 [INFO] Executing cleanup logic
+2025/01/30 12:45:20.848999 [INFO] CommandService Response: {"status":"SUCCESS","api_version":"1.0","results":[{"status":"SUCCESS","msg":"Engine execution has succeeded.","returncode":0,"events":[{"msg":"Instance deployment found multiple dependency files. Installed dependencies using only requirements.txt file.","timestamp":1738241115300,"severity":"INFO"},{"msg":"Instance deployment used the commands in your 'Procfile' to initiate startup of your application.","timestamp":1738241115300,"severity":"INFO"},{"msg":"Instance deployment completed successfully.","timestamp":1738241120848,"severity":"INFO"}]}]}
+
+2025/01/30 12:45:20.849856 [INFO] Platform Engine finished execution on command: app-deploy
+
+2025/01/30 12:46:25.752632 [INFO] Starting...
+2025/01/30 12:46:25.752691 [INFO] Starting EBPlatform-PlatformEngine
+2025/01/30 12:46:25.752712 [INFO] reading event message file
+2025/01/30 12:46:25.752987 [INFO] Engine received EB command cfn-hup-exec
+
+2025/01/30 12:46:25.804208 [INFO] Running command: /opt/aws/bin/cfn-get-metadata -s arn:aws:cloudformation:us-east-1:640168417711:stack/awseb-e-nkb4jvzqrp-stack/00200560-deff-11ef-a8b5-1215f66af8d3 -r AWSEBAutoScalingGroup --region us-east-1
+2025/01/30 12:46:26.098144 [INFO] Running command: /opt/aws/bin/cfn-get-metadata -s arn:aws:cloudformation:us-east-1:640168417711:stack/awseb-e-nkb4jvzqrp-stack/00200560-deff-11ef-a8b5-1215f66af8d3 -r AWSEBBeanstalkMetadata --region us-east-1
+2025/01/30 12:46:26.387871 [INFO] checking whether command tail-log is applicable to this instance...
+2025/01/30 12:46:26.387885 [INFO] this command is applicable to the instance, thus instance should execute command
+2025/01/30 12:46:26.387888 [INFO] Engine command: (tail-log)
+
+2025/01/30 12:46:26.387929 [INFO] Executing instruction: GetTailLogs
+2025/01/30 12:46:26.387932 [INFO] Tail Logs...
+2025/01/30 12:46:26.388256 [INFO] Running command: tail -n 100 /var/log/web.stdout.log
+2025/01/30 12:46:26.389971 [INFO] Running command: tail -n 100 /var/log/eb-engine.log
+
+
+----------------------------------------
+/var/log/eb-hooks.log
+----------------------------------------
+
+
+----------------------------------------
+/var/log/nginx/access.log
+----------------------------------------
+172.31.76.58 - - [30/Jan/2025:12:34:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:34:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:34:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:34:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:35:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:35:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:35:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:35:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:35:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:35:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:35:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:35:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:36:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:36:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:36:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:36:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:36:30 +0000] "GET / HTTP/1.1" 502 552 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.46" "95.214.55.43"
+172.31.76.58 - - [30/Jan/2025:12:36:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:36:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:36:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:36:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:37:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:37:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:37:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:37:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:37:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:37:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:37:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:37:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:38:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:38:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:38:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:38:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:38:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:38:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:38:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:38:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:39:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:39:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:39:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:39:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:39:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:39:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:39:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:39:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:39:59 +0000] "GET /api/session/properties HTTP/1.1" 502 552 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36" "45.156.128.47"
+172.31.76.58 - - [30/Jan/2025:12:40:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:40:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:40:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:40:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:40:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:40:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:40:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:40:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:41:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:41:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:41:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:41:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:41:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:41:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:41:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:41:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:42:03 +0000] "GET / HTTP/1.1" 502 150 "-" "-" "141.255.166.90"
+172.31.76.58 - - [30/Jan/2025:12:42:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:42:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:42:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:42:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:42:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:42:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:42:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:42:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:43:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:43:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:43:14 +0000] "GET / HTTP/1.1" 502 150 "-" "Mozilla/5.0 (BlackBerry; U; BlackBerry 9800; en) AppleWebKit/534.1  (KHTML, Like Gecko) Version/6.0.0.141 Mobile Safari/534.1" "35.92.69.250"
+172.31.76.58 - - [30/Jan/2025:12:43:20 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:43:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:43:35 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:43:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:43:50 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:43:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:44:05 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:44:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:44:20 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:44:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:44:35 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:44:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:44:50 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:44:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:45:05 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:45:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:45:20 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:45:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:45:35 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:45:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:45:50 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:45:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:46:05 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:46:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:46:20 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:46:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+
+
+----------------------------------------
+/var/log/nginx/error.log
+----------------------------------------
+2025/01/30 12:34:53 [error] 7376#7376: *92 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:04 [error] 7376#7376: *94 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:08 [error] 7376#7376: *96 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:19 [error] 7376#7376: *98 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:23 [error] 7376#7376: *100 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:34 [error] 7377#7377: *102 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:38 [error] 7377#7377: *104 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:49 [error] 7377#7377: *106 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:53 [error] 7377#7377: *108 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:04 [error] 7377#7377: *110 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:08 [error] 7377#7377: *112 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:19 [error] 7377#7377: *114 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:23 [error] 7377#7377: *116 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:30 [error] 7377#7377: *118 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "54.242.147.139"
+2025/01/30 12:36:34 [error] 7377#7377: *120 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:38 [error] 7377#7377: *122 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:49 [error] 7377#7377: *124 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:53 [error] 7377#7377: *126 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:04 [error] 7377#7377: *128 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:08 [error] 7377#7377: *130 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:19 [error] 7377#7377: *132 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:23 [error] 7376#7376: *134 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:34 [error] 7376#7376: *136 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:38 [error] 7376#7376: *138 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:49 [error] 7376#7376: *140 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:53 [error] 7376#7376: *142 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:04 [error] 7376#7376: *144 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:08 [error] 7376#7376: *146 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:19 [error] 7376#7376: *148 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:23 [error] 7376#7376: *150 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:34 [error] 7376#7376: *152 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:38 [error] 7376#7376: *154 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:49 [error] 7376#7376: *156 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:53 [error] 7376#7376: *158 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:04 [error] 7376#7376: *160 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:08 [error] 7376#7376: *162 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:19 [error] 7376#7376: *164 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:23 [error] 7377#7377: *166 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:34 [error] 7377#7377: *168 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:38 [error] 7377#7377: *170 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:49 [error] 7377#7377: *172 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:53 [error] 7377#7377: *174 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:59 [error] 7377#7377: *176 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET /api/session/properties HTTP/1.1", upstream: "http://127.0.0.1:8000/api/session/properties", host: "54.242.147.139"
+2025/01/30 12:40:04 [error] 7377#7377: *178 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:08 [error] 7377#7377: *180 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:19 [error] 7377#7377: *182 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:23 [error] 7377#7377: *184 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:34 [error] 7377#7377: *186 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:38 [error] 7377#7377: *188 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:49 [error] 7377#7377: *190 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:53 [error] 7377#7377: *192 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:04 [error] 7377#7377: *194 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:08 [error] 7377#7377: *196 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:19 [error] 7376#7376: *198 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:23 [error] 7376#7376: *200 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:34 [error] 7376#7376: *202 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:38 [error] 7376#7376: *204 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:49 [error] 7376#7376: *206 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:53 [error] 7376#7376: *208 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:03 [error] 7376#7376: *210 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "34.205.152.151"
+2025/01/30 12:42:04 [error] 7376#7376: *212 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:08 [error] 7376#7376: *214 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:19 [error] 7376#7376: *216 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:23 [error] 7376#7376: *218 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:34 [error] 7376#7376: *220 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:38 [error] 7376#7376: *222 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:49 [error] 7376#7376: *224 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:53 [error] 7376#7376: *226 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:04 [error] 7376#7376: *228 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:08 [error] 7377#7377: *230 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:14 [error] 7377#7377: *232 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "54.242.147.139"
+2025/01/30 12:43:20 [error] 7377#7377: *234 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:23 [error] 7377#7377: *236 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:35 [error] 7377#7377: *238 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:38 [error] 7377#7377: *240 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:50 [error] 7377#7377: *242 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:53 [error] 7377#7377: *244 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:05 [error] 7377#7377: *246 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:08 [error] 7377#7377: *248 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:20 [error] 7377#7377: *250 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:23 [error] 7377#7377: *252 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:35 [error] 7377#7377: *254 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:38 [error] 7377#7377: *256 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:50 [error] 7377#7377: *258 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:53 [error] 7377#7377: *260 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:05 [error] 7376#7376: *262 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:08 [error] 7376#7376: *264 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:19 [warn] 8537#8537: could not build optimal types_hash, you should increase either types_hash_max_size: 1024 or types_hash_bucket_size: 64; ignoring types_hash_bucket_size
+2025/01/30 12:45:19 [warn] 8571#8571: could not build optimal types_hash, you should increase either types_hash_max_size: 1024 or types_hash_bucket_size: 64; ignoring types_hash_bucket_size
+2025/01/30 12:45:19 [warn] 8572#8572: could not build optimal types_hash, you should increase either types_hash_max_size: 1024 or types_hash_bucket_size: 64; ignoring types_hash_bucket_size
+2025/01/30 12:45:20 [error] 8575#8575: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:23 [error] 8576#8576: *3 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:35 [error] 8575#8575: *5 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:38 [error] 8575#8575: *7 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:50 [error] 8575#8575: *9 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:53 [error] 8575#8575: *11 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:46:05 [error] 8575#8575: *13 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:46:08 [error] 8575#8575: *15 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:46:20 [error] 8575#8575: *17 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:46:23 [error] 8575#8575: *19 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+
+1/30 12:46:25.752632 [INFO] Starting...
+2025/01/30 12:46:25.752691 [INFO] Starting EBPlatform-PlatformEngine
+2025/01/30 12:46:25.752712 [INFO] reading event message file
+2025/01/30 12:46:25.752987 [INFO] Engine received EB command cfn-hup-exec
+
+2025/01/30 12:46:25.804208 [INFO] Running command: /opt/aws/bin/cfn-get-metadata -s arn:aws:cloudformation:us-east-1:640168417711:stack/awseb-e-nkb4jvzqrp-stack/00200560-deff-11ef-a8b5-1215f66af8d3 -r AWSEBAutoScalingGroup --region us-east-1
+2025/01/30 12:46:26.098144 [INFO] Running command: /opt/aws/bin/cfn-get-metadata -s arn:aws:cloudformation:us-east-1:640168417711:stack/awseb-e-nkb4jvzqrp-stack/00200560-deff-11ef-a8b5-1215f66af8d3 -r AWSEBBeanstalkMetadata --region us-east-1
+2025/01/30 12:46:26.387871 [INFO] checking whether command tail-log is applicable to this instance...
+2025/01/30 12:46:26.387885 [INFO] this command is applicable to the instance, thus instance should execute command
+2025/01/30 12:46:26.387888 [INFO] Engine command: (tail-log)
+
+2025/01/30 12:46:26.387929 [INFO] Executing instruction: GetTailLogs
+2025/01/30 12:46:26.387932 [INFO] Tail Logs...
+2025/01/30 12:46:26.388256 [INFO] Running command: tail -n 100 /var/log/web.stdout.log
+2025/01/30 12:46:26.389971 [INFO] Running command: tail -n 100 /var/log/eb-engine.log
+
+
+----------------------------------------
+/var/log/eb-hooks.log
+----------------------------------------
+
+
+----------------------------------------
+/var/log/nginx/access.log
+----------------------------------------
+172.31.76.58 - - [30/Jan/2025:12:34:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:34:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:34:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:34:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:35:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:35:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:35:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:35:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:35:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:35:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:35:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:35:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:36:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:36:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:36:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:36:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:36:30 +0000] "GET / HTTP/1.1" 502 552 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.46" "95.214.55.43"
+172.31.76.58 - - [30/Jan/2025:12:36:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:36:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:36:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:36:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:37:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:37:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:37:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:37:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:37:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:37:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:37:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:37:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:38:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:38:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:38:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:38:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:38:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:38:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:38:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:38:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:39:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:39:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:39:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:39:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:39:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:39:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:39:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:39:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:39:59 +0000] "GET /api/session/properties HTTP/1.1" 502 552 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36" "45.156.128.47"
+172.31.76.58 - - [30/Jan/2025:12:40:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:40:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:40:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:40:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:40:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:40:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:40:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:40:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:41:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:41:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:41:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:41:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:41:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:41:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:41:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:41:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:42:03 +0000] "GET / HTTP/1.1" 502 150 "-" "-" "141.255.166.90"
+172.31.76.58 - - [30/Jan/2025:12:42:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:42:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:42:19 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:42:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:42:34 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:42:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:42:49 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:42:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:43:04 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:43:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:43:14 +0000] "GET / HTTP/1.1" 502 150 "-" "Mozilla/5.0 (BlackBerry; U; BlackBerry 9800; en) AppleWebKit/534.1  (KHTML, Like Gecko) Version/6.0.0.141 Mobile Safari/534.1" "35.92.69.250"
+172.31.76.58 - - [30/Jan/2025:12:43:20 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:43:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:43:35 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:43:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:43:50 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:43:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:44:05 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:44:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:44:20 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:44:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:44:35 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:44:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:44:50 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:44:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:45:05 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:45:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:45:20 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:45:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:45:35 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:45:38 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:45:50 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:45:53 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:46:05 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:46:08 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.76.58 - - [30/Jan/2025:12:46:20 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+172.31.84.17 - - [30/Jan/2025:12:46:23 +0000] "GET / HTTP/1.1" 502 150 "-" "ELB-HealthChecker/2.0" "-"
+
+
+----------------------------------------
+/var/log/nginx/error.log
+----------------------------------------
+2025/01/30 12:34:53 [error] 7376#7376: *92 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:04 [error] 7376#7376: *94 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:08 [error] 7376#7376: *96 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:19 [error] 7376#7376: *98 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:23 [error] 7376#7376: *100 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:34 [error] 7377#7377: *102 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:38 [error] 7377#7377: *104 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:49 [error] 7377#7377: *106 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:35:53 [error] 7377#7377: *108 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:04 [error] 7377#7377: *110 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:08 [error] 7377#7377: *112 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:19 [error] 7377#7377: *114 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:23 [error] 7377#7377: *116 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:30 [error] 7377#7377: *118 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "54.242.147.139"
+2025/01/30 12:36:34 [error] 7377#7377: *120 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:38 [error] 7377#7377: *122 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:49 [error] 7377#7377: *124 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:36:53 [error] 7377#7377: *126 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:04 [error] 7377#7377: *128 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:08 [error] 7377#7377: *130 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:19 [error] 7377#7377: *132 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:23 [error] 7376#7376: *134 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:34 [error] 7376#7376: *136 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:38 [error] 7376#7376: *138 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:49 [error] 7376#7376: *140 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:37:53 [error] 7376#7376: *142 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:04 [error] 7376#7376: *144 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:08 [error] 7376#7376: *146 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:19 [error] 7376#7376: *148 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:23 [error] 7376#7376: *150 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:34 [error] 7376#7376: *152 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:38 [error] 7376#7376: *154 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:49 [error] 7376#7376: *156 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:38:53 [error] 7376#7376: *158 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:04 [error] 7376#7376: *160 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:08 [error] 7376#7376: *162 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:19 [error] 7376#7376: *164 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:23 [error] 7377#7377: *166 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:34 [error] 7377#7377: *168 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:38 [error] 7377#7377: *170 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:49 [error] 7377#7377: *172 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:53 [error] 7377#7377: *174 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:39:59 [error] 7377#7377: *176 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET /api/session/properties HTTP/1.1", upstream: "http://127.0.0.1:8000/api/session/properties", host: "54.242.147.139"
+2025/01/30 12:40:04 [error] 7377#7377: *178 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:08 [error] 7377#7377: *180 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:19 [error] 7377#7377: *182 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:23 [error] 7377#7377: *184 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:34 [error] 7377#7377: *186 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:38 [error] 7377#7377: *188 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:49 [error] 7377#7377: *190 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:40:53 [error] 7377#7377: *192 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:04 [error] 7377#7377: *194 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:08 [error] 7377#7377: *196 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:19 [error] 7376#7376: *198 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:23 [error] 7376#7376: *200 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:34 [error] 7376#7376: *202 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:38 [error] 7376#7376: *204 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:49 [error] 7376#7376: *206 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:41:53 [error] 7376#7376: *208 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:03 [error] 7376#7376: *210 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "34.205.152.151"
+2025/01/30 12:42:04 [error] 7376#7376: *212 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:08 [error] 7376#7376: *214 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:19 [error] 7376#7376: *216 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:23 [error] 7376#7376: *218 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:34 [error] 7376#7376: *220 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:38 [error] 7376#7376: *222 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:49 [error] 7376#7376: *224 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:42:53 [error] 7376#7376: *226 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:04 [error] 7376#7376: *228 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:08 [error] 7377#7377: *230 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:14 [error] 7377#7377: *232 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "54.242.147.139"
+2025/01/30 12:43:20 [error] 7377#7377: *234 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:23 [error] 7377#7377: *236 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:35 [error] 7377#7377: *238 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:38 [error] 7377#7377: *240 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:50 [error] 7377#7377: *242 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:43:53 [error] 7377#7377: *244 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:05 [error] 7377#7377: *246 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:08 [error] 7377#7377: *248 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:20 [error] 7377#7377: *250 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:23 [error] 7377#7377: *252 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:35 [error] 7377#7377: *254 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:38 [error] 7377#7377: *256 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:50 [error] 7377#7377: *258 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:44:53 [error] 7377#7377: *260 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:05 [error] 7376#7376: *262 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:08 [error] 7376#7376: *264 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:19 [warn] 8537#8537: could not build optimal types_hash, you should increase either types_hash_max_size: 1024 or types_hash_bucket_size: 64; ignoring types_hash_bucket_size
+2025/01/30 12:45:19 [warn] 8571#8571: could not build optimal types_hash, you should increase either types_hash_max_size: 1024 or types_hash_bucket_size: 64; ignoring types_hash_bucket_size
+2025/01/30 12:45:19 [warn] 8572#8572: could not build optimal types_hash, you should increase either types_hash_max_size: 1024 or types_hash_bucket_size: 64; ignoring types_hash_bucket_size
+2025/01/30 12:45:20 [error] 8575#8575: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:23 [error] 8576#8576: *3 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:35 [error] 8575#8575: *5 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:38 [error] 8575#8575: *7 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:50 [error] 8575#8575: *9 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:45:53 [error] 8575#8575: *11 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:46:05 [error] 8575#8575: *13 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:46:08 [error] 8575#8575: *15 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:46:20 [error] 8575#8575: *17 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.76.58, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+2025/01/30 12:46:23 [error] 8575#8575: *19 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.84.17, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "172.31.91.158"
+
+~≈
