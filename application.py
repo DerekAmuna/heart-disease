@@ -1,8 +1,8 @@
 import os
+
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
-from flask import Flask
 from flask import Flask
 
 # from components.common.navbar import create_navbar
@@ -23,7 +23,7 @@ server = Flask(__name__)
 app = dash.Dash(
     __name__,
     server=server,
-    external_stylesheets=[dbc.themes.BOOTSTRAP, FA]
+    external_stylesheets=[dbc.themes.ZEPHYR, FA]
 )
 
 # For AWS Elastic Beanstalk
@@ -86,5 +86,5 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=int(os.environ.get("PORT", 8080)),
         dev_tools_hot_reload=True,
-        dev_tools_ui=True
+        dev_tools_ui=True,
     )
