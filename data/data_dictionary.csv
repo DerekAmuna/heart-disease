@@ -37,24 +37,23 @@ prev_rate      ,CVD prevalence rate per 100k                ,Yes      ,Main Data
 f_prev_rate    ,Female CVD prevalence rate per 100k         ,Yes      ,Main Data   ,float     ,5299.19              ,True
 m_prev_rate    ,Male CVD prevalence rate per 100k           ,Yes      ,Main Data   ,float     ,8605.12              ,True
 f_cvd_std      ,Female standardized CVD rate                ,Yes      ,Main Data   ,float     ,501.00               ,True
-f_htn_ctrl     ,Female hypertension control rate            ,Yes      ,Risk Factor ,percent   ,17.3                 ,True
-f_htn_diag     ,Female hypertension diagnosis rate          ,Yes      ,Risk Factor ,percent   ,66.0                 ,True
+f_htn_ctrl_30-79     ,Female hypertension control rate            ,Yes      ,Risk Factor ,percent   ,17.3                 ,True
+f_htn_diag_30-79     ,Female hypertension diagnosis rate          ,Yes      ,Risk Factor ,percent   ,66.0                 ,True
 f_htn          ,Female hypertension prevalence              ,Yes      ,Risk Factor ,percent   ,45.3                 ,True
 f_cvd_u70%     ,Female CVD deaths under 70%                 ,Yes      ,Main Data   ,percent   ,53.57                ,True
-f_high_bp      ,Female high blood pressure prevalence       ,Yes      ,Risk Factor ,percent   ,37.41                ,True
-f_htn_rx       ,Female hypertension treatment rate          ,Yes      ,Risk Factor ,percent   ,54.3                 ,True
+f_high_bp_30-79      ,Female high blood pressure prevalence       ,Yes      ,Risk Factor ,percent   ,37.41                ,True
+f_htn_rx_30-79       ,Female hypertension treatment rate          ,Yes      ,Risk Factor ,percent   ,54.3                 ,True
 m_cvd_std      ,Male standardized CVD rate                  ,Yes      ,Main Data   ,float     ,567.00               ,True
-m_htn_ctrl     ,Male hypertension control rate              ,Yes      ,Risk Factor ,percent   ,9.9                  ,True
-m_htn_diag     ,Male hypertension diagnosis rate            ,Yes      ,Risk Factor ,percent   ,43.9                 ,True
+m_htn_ctrl_30-79     ,Male hypertension control rate              ,Yes      ,Risk Factor ,percent   ,9.9                  ,True
+m_htn_diag_30-79     ,Male hypertension diagnosis rate            ,Yes      ,Risk Factor ,percent   ,43.9                 ,True
 m_htn          ,Male hypertension prevalence                ,Yes      ,Risk Factor ,percent   ,35.3                 ,True
 m_cvd_u70%     ,Male CVD deaths under 70%                   ,Yes      ,Main Data   ,percent   ,62.88                ,True
-m_high_bp      ,Male high blood pressure prevalence         ,Yes      ,Risk Factor ,percent   ,31.85                ,True
-m_htn_rx       ,Male hypertension treatment rate            ,Yes      ,Risk Factor ,percent   ,34.6                 ,True
+m_high_bp_30-79      ,Male high blood pressure prevalence         ,Yes      ,Risk Factor ,percent   ,31.85                ,True
+m_htn_rx_30-79       ,Male hypertension treatment rate            ,Yes      ,Risk Factor ,percent   ,34.6                 ,True
 t_cvd_std      ,Total standardized CVD rate                 ,Yes      ,Main Data   ,float     ,531.00               ,True
-t_htn_ctrl     ,Total hypertension control rate             ,Yes      ,Risk Factor ,percent   ,14.0                 ,True
-t_htn_diag     ,Total hypertension diagnosis rate           ,Yes      ,Risk Factor ,percent   ,56.2                 ,True
-t_htn          ,Total hypertension prevalence               ,Yes      ,Risk Factor ,percent   ,40.2                 ,True
+t_htn_ctrl_30-79     ,Total hypertension control rate             ,Yes      ,Risk Factor ,percent   ,14.0                 ,True
+t_htn_diag_30-79     ,Total hypertension diagnosis rate           ,Yes      ,Risk Factor ,percent   ,56.2                 ,True
+t_htn_30-79          ,Total hypertension prevalence               ,Yes      ,Risk Factor ,percent   ,40.2                 ,True
 t_cvd_u70%     ,Total CVD deaths under 70%                  ,Yes      ,Main Data   ,percent   ,58.13                ,True
 t_high_bp      ,Total high blood pressure prevalence        ,Yes      ,Risk Factor ,percent   ,34.57                ,True
 t_htn_rx       ,Total hypertension treatment rate           ,Yes      ,Risk Factor ,percent   ,45.6                 ,True
-Total Percent Null: 52.02%
