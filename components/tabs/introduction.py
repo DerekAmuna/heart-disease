@@ -51,7 +51,7 @@ def create_introduction_tab():
                                         html.Ul([
                                             html.Li("Heart disease mortality rate"),
                                             html.Li("Healthcare expenditure"),
-                                            html.Li("Medical acces and intervention outcomes"),
+                                            html.Li("Medical access and intervention outcomes"),
                                         ], className="mb-0")
                                     ]),
                                     dbc.ListGroupItem([
