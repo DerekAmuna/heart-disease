@@ -7,6 +7,7 @@ from dash.dependencies import Input, Output, State
 from flask import Flask
 
 from components.sidebar import create_sidebar
+from components.tabs.introduction import create_introduction_tab
 from components.tabs.geo_eco import create_geo_eco_tab
 from components.tabs.healthcare import create_healthcare_tab
 from components.tabs.trends import create_trends_tab
@@ -30,10 +31,9 @@ navbar = dbc.Navbar(
         [
             dbc.NavbarBrand("HEART DISEASE DATA VISUALIZATION ", className="ms-2"),
             dbc.Nav(
-                [
-                    dbc.NavItem(
-                        dbc.NavLink("Choropleth Visualization 🌐", id="tab-1-link", active=True)
-                    ),
+                [   
+                    dbc.NavItem(dbc.NavLink("Introduction 📋", id="tab-0-link", active=True)),
+                    dbc.NavItem(dbc.NavLink("Choropleth Visualization 🌐", id="tab-1-link")),
                     dbc.NavItem(dbc.NavLink("GEO-ECO Features 💰", id="tab-2-link")),
                     dbc.NavItem(dbc.NavLink("Healthcare Features 🏥", id="tab-3-link")),
                     dbc.NavItem(dbc.NavLink("Trends 📈", id="tab-4-link")),
@@ -87,30 +87,32 @@ app.layout = html.Div(
 
 # Callback to update active tab links
 @app.callback(
-    [Output(f"tab-{i}-link", "active") for i in range(1, 5)],
-    [Input(f"tab-{i}-link", "n_clicks") for i in range(1, 5)],
+    [Output(f"tab-{i}-link", "active") for i in range(0, 5)],
+    [Input(f"tab-{i}-link", "n_clicks") for i in range(0, 5)],
 )
 def update_active_tab(*args):
     ctx = dash.callback_context
     if not ctx.triggered:
-        return True, False, False, False
+        return True, False, False, False, False
     clicked_tab = ctx.triggered[0]["prop_id"].split(".")[0]
-    return [f"tab-{i}-link" == clicked_tab for i in range(1, 5)]
+    return [f"tab-{i}-link" == clicked_tab for i in range(0, 5)]
 
 
 # Callback to update tab content
 @app.callback(
     Output("tab-content", "children"),
-    [Input(f"tab-{i}-link", "active") for i in range(1, 5)],
+    [Input(f"tab-{i}-link", "active") for i in range(0, 5)],
     [State("tab-store", "data")],
 )
-def render_tab_content(tab1_active, tab2_active, tab3_active, tab4_active, store_data):
+def render_tab_content(tab0_active, tab1_active, tab2_active, tab3_active, tab4_active, store_data):
     ctx = dash.callback_context
     if not ctx.triggered:
         # Default to first tab
-        return create_world_map_tab()
-
-    if tab1_active:
+        return create_introduction_tab()
+    
+    if tab0_active:
+        return create_introduction_tab()
+    elif tab1_active:
         return create_world_map_tab()
     elif tab2_active:
         return create_geo_eco_tab()

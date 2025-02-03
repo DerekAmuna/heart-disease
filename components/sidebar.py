@@ -39,6 +39,11 @@ def create_sidebar():
                             id="income-dropdown", options=[], placeholder="Select Income Level"
                         ),
                         html.Br(),
+                        html.H6("METRIC", className=""),
+                        dcc.Dropdown(
+                            id="metric-dropdown", options=[], placeholder="Select Preferred Metric"
+                        ),
+                        html.Br(),
                     ],
                     style={"padding": "1rem"},
                 ),
