@@ -246,6 +246,7 @@ def create_chloropleth_map(filtered_data):
 
 
 def create_bar_plot(metric, top_n=10):
+    """Create a bar plot for the top N countries by a given metric."""
     sorted_data = data.nlargest(top_n, metric)
     fig = px.bar(
         sorted_data,
@@ -268,6 +269,7 @@ def create_bar_plot(metric, top_n=10):
 
 
 def create_line_plot(metric, countries=None):
+    """Create a line plot for a given metric over time by specified countries."""
     if countries is None:
         countries = data["Entity"].unique()[:5]  # Default to top 5 countries
 
@@ -289,6 +291,7 @@ def create_line_plot(metric, countries=None):
 
 
 def create_geo_eco_plots():
+    """Create geographical and economic plots in a layout."""
     return html.Div(
         [
             dbc.Row(

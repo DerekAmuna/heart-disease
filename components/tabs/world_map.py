@@ -1,13 +1,14 @@
-import pandas as pd
 import logging
-from dash import Input, Output, callback, dcc, html, no_update, State
+
 import dash_bootstrap_components as dbc
+import pandas as pd
+from dash import Input, Output, State, callback, dcc, html, no_update
 
 logger = logging.getLogger(__name__)
 
+import components.data
 from components.common.year_slider import create_year_slider
 from components.visualisations import create_chloropleth_map, create_tooltip
-import components.data
 
 
 def create_world_map_tab():
@@ -24,11 +25,11 @@ def create_world_map_tab():
                             dcc.Graph(
                                 id="chloropleth-map",
                                 style={"height": "77vh"},
-                                config={"displayModeBar": False}
+                                config={"displayModeBar": False},
                             ),
                             dcc.Tooltip(id="graph-tooltip"),
                         ],
-                        style={"position": "relative"}
+                        style={"position": "relative"},
                     ),
                     create_year_slider(default=2000),
                 ],
@@ -38,8 +39,8 @@ def create_world_map_tab():
                     "display": "flex",
                     "flexDirection": "column",
                     "gap": "10px",
-                    "padding": "0px"
-                }
+                    "padding": "0px",
+                },
             ),
         ]
     )
@@ -48,7 +49,7 @@ def create_world_map_tab():
 @callback(
     Output("map-title", "children"),
     Input("year-slider", "value"),
-    Input("metric-dropdown", "value")
+    Input("metric-dropdown", "value"),
 )
 def update_map_title(year, metric):
     """Update the map title based on selected year and metric."""
@@ -61,7 +62,7 @@ def update_map_title(year, metric):
     Output("chloropleth-map", "figure"),
     Input("chloropleth_data", "data"),
     Input("metric-dropdown", "value"),
-    Input("gender-dropdown", "value")
+    Input("gender-dropdown", "value"),
 )
 def update_map(filtered_data, metric, gender):
     """Update the choropleth map based on filtered data and selected options."""
@@ -94,26 +95,31 @@ def display_hover(hover_data, metric, gender, year):
         dcc.Graph(
             figure=fig,
             config={"displayModeBar": False},
-            style={"width": "300px", "height": "200px"}
+            style={"width": "300px", "height": "200px"},
         ),
         html.Div(
             [
-                html.H6(f"Risk Factors ({risk_factors.get('Year', 'Latest Year')})",
-                    style={"marginTop": "10px", "marginBottom": "5px", "fontSize": "12px"}),
+                html.H6(
+                    f"Risk Factors ({risk_factors.get('Year', 'Latest Year')})",
+                    style={"marginTop": "10px", "marginBottom": "5px", "fontSize": "12px"},
+                ),
                 html.Div(
                     [
-                        html.Div([
-                            html.Strong(f"{k}: ", style={"fontSize": "11px"}),
-                            html.Span(v, style={"fontSize": "11px"})
-                        ], style={"marginBottom": "3px"})
+                        html.Div(
+                            [
+                                html.Strong(f"{k}: ", style={"fontSize": "11px"}),
+                                html.Span(v, style={"fontSize": "11px"}),
+                            ],
+                            style={"marginBottom": "3px"},
+                        )
                         for k, v in risk_factors.items()
-                        if k != 'Year'  # Skip the Year in display since it's in the header
+                        if k != "Year"  # Skip the Year in display since it's in the header
                     ],
-                    style={"paddingLeft": "5px"}
-                )
+                    style={"paddingLeft": "5px"},
+                ),
             ],
-            style={"backgroundColor": "white", "padding": "5px"}
-        )
+            style={"backgroundColor": "white", "padding": "5px"},
+        ),
     ]
 
     bbox = pt["bbox"]

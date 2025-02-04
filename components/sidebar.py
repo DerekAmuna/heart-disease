@@ -7,26 +7,38 @@ def create_sidebar():
     dropdowns = [
         ("COUNTRY", "country-dropdown", []),
         ("REGION", "region-dropdown", []),
-        ("GENDER", "gender-dropdown", [
-            {"label": "Both", "value": "Both"},
-            {"label": "Male", "value": "Male"},
-            {"label": "Female", "value": "Female"}
-        ]),
-        ("WORLD INCOME", "income-dropdown", [
-            {"label": "High", "value": "High"},
-            {"label": "Lower-middle", "value": "Lower-middle"},
-            {"label": "Lower", "value": "Lower"},
-            {"label": "Upper-middle", "value": "Upper-middle"},
-            {"label": "Upper", "value": "Upper"}
-        ]),
-        ("METRIC", "metric-dropdown", [
-            {"label": "Prevalence Percent", "value": "Prevalence Percent"},
-            {"label": "Prevalence Rate", "value": "Prevalence Rate"},
-            {"label": "Prevalence", "value": "Prevalence"},
-            {"label": "Death Percent", "value": "Death Percent"},
-            {"label": "Death Rate", "value": "Death Rate"},
-            {"label": "Death", "value": "Death"}
-        ]),
+        (
+            "GENDER",
+            "gender-dropdown",
+            [
+                {"label": "Both", "value": "Both"},
+                {"label": "Male", "value": "Male"},
+                {"label": "Female", "value": "Female"},
+            ],
+        ),
+        (
+            "WORLD INCOME",
+            "income-dropdown",
+            [
+                {"label": "High", "value": "High"},
+                {"label": "Lower-middle", "value": "Lower-middle"},
+                {"label": "Lower", "value": "Lower"},
+                {"label": "Upper-middle", "value": "Upper-middle"},
+                {"label": "Upper", "value": "Upper"},
+            ],
+        ),
+        (
+            "METRIC",
+            "metric-dropdown",
+            [
+                {"label": "Prevalence Percent", "value": "Prevalence Percent"},
+                {"label": "Prevalence Rate", "value": "Prevalence Rate"},
+                {"label": "Prevalence", "value": "Prevalence"},
+                {"label": "Death Percent", "value": "Death Percent"},
+                {"label": "Death Rate", "value": "Death Rate"},
+                {"label": "Death", "value": "Death"},
+            ],
+        ),
     ]
 
     dropdown_elements = [
@@ -36,8 +48,12 @@ def create_sidebar():
                 dcc.Dropdown(
                     id=id,
                     options=options,
-                    value="Death Rate" if id == "metric-dropdown" else "Both" if id == "gender-dropdown" else None,
-                    placeholder=f"Select {label}"
+                    value=(
+                        "Death Rate"
+                        if id == "metric-dropdown"
+                        else "Both" if id == "gender-dropdown" else None
+                    ),
+                    placeholder=f"Select {label}",
                 ),
                 html.Br(),
             ]
@@ -108,7 +124,7 @@ def toggle_sidebar(n_clicks, is_open):
 @callback(
     Output("country-dropdown", "options"),
     Input("region-dropdown", "value"),
-    Input("general-data", "data")
+    Input("general-data", "data"),
 )
 def update_country_options(selected_region, data):
     """Update country dropdown options based on selected region."""
@@ -116,19 +132,16 @@ def update_country_options(selected_region, data):
         return []
 
     df = pd.DataFrame(data)
-    countries = df[df['region'] == selected_region]['Entity'].unique()
+    countries = df[df["region"] == selected_region]["Entity"].unique()
     return [{"label": country, "value": country} for country in sorted(countries)]
 
 
-@callback(
-    Output("region-dropdown", "options"),
-    Input("general-data", "data")
-)
+@callback(Output("region-dropdown", "options"), Input("general-data", "data"))
 def update_region_options(data):
     """Update region dropdown options."""
     if not data:
         return []
 
     df = pd.DataFrame(data)
-    regions = df['region'].unique()
+    regions = df["region"].unique()
     return [{"label": region, "value": region} for region in sorted(regions)]

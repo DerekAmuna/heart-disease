@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 
 import dash
 import dash_bootstrap_components as dbc
@@ -7,21 +7,20 @@ from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from flask import Flask
 
+import components.data  # Import data module to register callbacks
 from components.sidebar import create_sidebar
-from components.tabs.introduction import create_introduction_tab
 from components.tabs.geo_eco import create_geo_eco_tab
 from components.tabs.healthcare import create_healthcare_tab
+from components.tabs.introduction import create_introduction_tab
 from components.tabs.trends import create_trends_tab
 from components.tabs.world_map import create_world_map_tab
-import components.data  # Import data module to register callbacks
 
 #  FontAwesome for icons
 FA = "https://use.fontawesome.com/releases/v5.15.4/css/all.css"
 
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 
 server = Flask(__name__)
@@ -103,6 +102,7 @@ def update_active_tab(*args):
     clicked_tab = ctx.triggered[0]["prop_id"].split(".")[0]
     return [f"tab-{i}-link" == clicked_tab for i in range(5)]
 
+
 # Callback to update tab content
 @app.callback(
     Output("tab-content", "children"),
@@ -127,6 +127,7 @@ def render_tab_content(*active_tabs):
             return tab_mapping[i]()
 
     return "No tab selected"
+
 
 if __name__ == "__main__":
     app.run_server(
