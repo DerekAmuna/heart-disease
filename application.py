@@ -1,4 +1,5 @@
 import os
+import logging
 
 import dash
 import dash_bootstrap_components as dbc
@@ -16,6 +17,12 @@ import components.data  # Import data module to register callbacks
 
 #  FontAwesome for icons
 FA = "https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+
+# Configure logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 server = Flask(__name__)
 app = dash.Dash(

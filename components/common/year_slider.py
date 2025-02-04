@@ -2,8 +2,10 @@ import dash_bootstrap_components as dbc
 from dash import Input, Output, State, callback, dcc, html
 
 
-def create_year_slider(min_year=1950, max_year=2023, default=2021):
+def create_year_slider(min_year=1950, max_year=2022, default=2021):
+    # Generate marks for the slider using a dictionary comprehension
     marks = {str(year): str(year) for year in range(min_year, max_year + 1, 5)}
+
     return dbc.Container(
         [
             dbc.Row(
@@ -23,7 +25,7 @@ def create_year_slider(min_year=1950, max_year=2023, default=2021):
                             ),
                             dcc.Interval(
                                 id="animation-interval",
-                                interval=1000,  # 1 second between frames increase if loading to chloroplth is intensive
+                                interval=1000,  # 1 second between frames increase if loading to chloropleth is intensive
                                 disabled=True,
                             ),
                         ],
@@ -58,7 +60,7 @@ def create_year_slider(min_year=1950, max_year=2023, default=2021):
     State("animation-interval", "disabled"),
 )
 def toggle_animation(n_clicks, disabled):
-    if n_clicks and n_clicks > 0:
+    if n_clicks:
         return not disabled, "⏸️" if disabled else "▶️"
     return True, "▶️"
 

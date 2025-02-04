@@ -1,24 +1,28 @@
 #! usr/bin/env python3
 import os
 import pandas as pd
+import logging
 from dash import callback, Input, Output
+
+logger = logging.getLogger(__name__)
 
 data_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "heart_disease_data.csv")
 data = pd.read_csv(data_path)
-print("Loaded data shape:", data.shape)
+logger.info("Loaded data shape: %s", data.shape)
 
 @callback(
     Output("general-data", "data"),
-    Input("year-slider", "value"),
+    Input("year-slider", "value")
 )
-def year_filter(year:int):
-    print("Year filter called with:", year)
+def year_filter(year: int):
+    """Filter data by year."""
+    logger.debug("Year filter called with: %s", year)
     if year is None:
-        print("No year selected")
+        logger.debug("No year selected")
         return []
     df = data.copy()
     df = df[df['Year'] == year]
-    print("Year filtered data shape:", df.shape)
+    logger.debug("Year filtered data shape: %s", df.shape)
     return df.to_dict('records')
 
 @callback(
@@ -28,15 +32,16 @@ def year_filter(year:int):
     Input("gender-dropdown", "value")
 )
 def chloropleth_data(year_filtered_data, metric, gender):
-    print("Chloropleth data called with:", metric, gender)
-    print("Year filtered data:", len(year_filtered_data) if year_filtered_data else "None")
+    """Get data for chloropleth map."""
+    logger.debug("Chloropleth data called with: %s, %s", metric, gender)
+    logger.debug("Year filtered data: %s", len(year_filtered_data) if year_filtered_data else "None")
     
     if not year_filtered_data or not metric or not gender:
-        print("Missing required data")
+        logger.debug("Missing required data")
         return []
         
     df = pd.DataFrame(year_filtered_data)
-    print("Received data shape:", df.shape)
+    logger.debug("Received data shape: %s", df.shape)
     
     needed = ['Entity', 'Year', 'Code']
     gender_prefix = 'f_' if gender == 'Female' else 'm_' if gender == 'Male' else ''
@@ -54,10 +59,10 @@ def chloropleth_data(year_filtered_data, metric, gender):
     }
 
     col = metric_mapping.get(metric[0], {}).get(metric)
-    print("Looking for column:", col)
+    logger.debug("Looking for column: %s", col)
     if col is not None and col in df.columns:
         df = df[needed + [col]].dropna(subset=[col])
-        print("Final data shape:", df.shape)
+        logger.debug("Final data shape: %s", df.shape)
         return df.to_dict('records')
-    print("Column not found or invalid")
+    logger.warning("Column not found or invalid")
     return []

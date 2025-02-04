@@ -1,6 +1,9 @@
 import pandas as pd
+import logging
 from dash import Input, Output, callback, dcc, html, no_update, State
 import dash_bootstrap_components as dbc
+
+logger = logging.getLogger(__name__)
 
 from components.common.year_slider import create_year_slider
 from components.visualisations import create_chloropleth_map, create_tooltip
@@ -15,12 +18,12 @@ def create_world_map_tab():
             dcc.Store(id="chloropleth_data"),
             html.Div(
                 [
-                    html.H2(id="map-title", style={"textAlign": "center", "marginBottom": "5px"}),
+                    html.H2(id="map-title", style={"textAlign": "center", "marginBottom": "0px"}),
                     html.Div(
                         [
                             dcc.Graph(
                                 id="chloropleth-map",
-                                style={"height": "75vh"},
+                                style={"height": "77vh"},
                                 config={"displayModeBar": False}
                             ),
                             dcc.Tooltip(id="graph-tooltip"),
@@ -35,7 +38,7 @@ def create_world_map_tab():
                     "display": "flex",
                     "flexDirection": "column",
                     "gap": "10px",
-                    "padding": "5px"
+                    "padding": "0px"
                 }
             ),
         ]
@@ -62,7 +65,7 @@ def update_map_title(year, metric):
 )
 def update_map(filtered_data, metric, gender):
     """Update the choropleth map based on filtered data and selected options."""
-    print("Update map called with:", metric, gender)
+    logger.debug("Update map called with: %s, %s", metric, gender)
     if not filtered_data or not metric or not gender:
         return {}
     return create_chloropleth_map(filtered_data)

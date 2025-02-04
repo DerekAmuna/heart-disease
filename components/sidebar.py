@@ -1,4 +1,5 @@
 import dash_bootstrap_components as dbc
+import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
 
 
@@ -33,7 +34,7 @@ def create_sidebar():
             [
                 html.H6(label),
                 dcc.Dropdown(
-                    id=id, 
+                    id=id,
                     options=options,
                     value="Death Rate" if id == "metric-dropdown" else "Both" if id == "gender-dropdown" else None,
                     placeholder=f"Select {label}"
@@ -102,3 +103,32 @@ def toggle_sidebar(n_clicks, is_open):
 
     width = "60px" if is_open else "250px"
     return not is_open, {**sidebar_style, "width": width}
+
+
+@callback(
+    Output("country-dropdown", "options"),
+    Input("region-dropdown", "value"),
+    Input("general-data", "data")
+)
+def update_country_options(selected_region, data):
+    """Update country dropdown options based on selected region."""
+    if not data or not selected_region:
+        return []
+
+    df = pd.DataFrame(data)
+    countries = df[df['region'] == selected_region]['Entity'].unique()
+    return [{"label": country, "value": country} for country in sorted(countries)]
+
+
+@callback(
+    Output("region-dropdown", "options"),
+    Input("general-data", "data")
+)
+def update_region_options(data):
+    """Update region dropdown options."""
+    if not data:
+        return []
+
+    df = pd.DataFrame(data)
+    regions = df['region'].unique()
+    return [{"label": region, "value": region} for region in sorted(regions)]
