@@ -1,6 +1,8 @@
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, callback, dcc, html
 
+from data.data import region_selector
+
 
 def create_sidebar():
     return html.Div(
@@ -26,7 +28,9 @@ def create_sidebar():
                         html.Br(),
                         html.H6("REGION", className=""),
                         dcc.Dropdown(
-                            id="region-dropdown", options=[], placeholder="Select Region"
+                            id="region-dropdown",
+                            options=[region_selector()],
+                            placeholder="Select Region",
                         ),
                         html.Br(),
                         html.H6("GENDER", className=""),
