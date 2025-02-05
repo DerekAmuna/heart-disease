@@ -2,7 +2,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
 
-from components.data.data import region_selector
+# from components.data.data import region_selector
 
 
 def create_sidebar():

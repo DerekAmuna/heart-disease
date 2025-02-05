@@ -1,12 +1,14 @@
 import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
-from dash import dcc, html, Output, Input
+from dash import dcc, html, Output, Input, callback
+import pandas as pd
 
 from components.visualisations import (
     create_scatter_plot,
     create_bar_plot,
     create_line_plot
 )
+from components.data.data import data
 
 def create_plot(graph_id):
     return dcc.Graph(
@@ -17,41 +19,70 @@ def create_plot(graph_id):
 
 @callback(
     Output('4x4plots','children'),
-    Input('general-data', 'data'),
-    # Input('year-slider', 'value'),
-    # Input('metric-dropdown', 'value'),
+    Input('year-slider', 'value'),
+    Input('metric-dropdown', 'value'),
     Input('gender-dropdown', 'value'),
-    Input('region-dropdown', 'value'),
-    Input('income-dropdown', 'value')
 )
-
-def create_plots(data):
+def create_plots(year, metric, gender):
     """Create a grid of plots using visualizations from visualisations.py."""
-    plots = [
-        ("gdp_pc", "death_std", create_scatter_plot),  # GDP vs Death Rate scatter
-        ("m_deaths", None, create_bar_plot),    
-        ("Population", None, create_line_plot),        # Population over time
-        ("f_deaths", "m_deaths", create_scatter_plot)  # Female vs Male deaths scatter
-    ]
+    if not year or not metric or not gender:
+        return html.Div(style={"margin": "20px", "height": "calc(90vh - 150px)"})
 
-    # Create columns with the plots
-    cols = []
-    for i, (metric1, metric2, plot_func) in enumerate(plots, 1):
-        if metric2:
-            plot = plot_func(metric1, metric2)
-        else:
-            plot = plot_func(metric1)
+    # Filter data by year
+    df = data[data['Year'] == year].copy()
+    if df.empty:
+        return html.Div(style={"margin": "20px", "height": "calc(90vh - 150px)"})
 
-        # Ensure the plot has an ID for callbacks
-        if isinstance(plot, dcc.Graph):
-            plot.id = f"graph-{i}"
+    gender_prefix = "f_" if gender == "Female" else "m_" if gender == "Male" else ""
+    metric_mapping = {
+        "P": {
+            "Prevalence Percent": f"{gender_prefix}prev%",
+            "Prevalence Rate": f"{gender_prefix}prev_rate",
+            "Prevalence": f"{gender_prefix}prev",
+        },
+        "D": {
+            "Death Percent": f"{gender_prefix}deaths%",
+            "Death Rate": f"{gender_prefix}death_rate",
+            "Death": f"{gender_prefix}deaths",
+        },
+    }
+    col = metric_mapping.get(metric[0], {}).get(metric)
+    if not col:
+        return html.Div(style={"margin": "20px", "height": "calc(90vh - 150px)"})
 
-        cols.append(dbc.Col(plot, width=6, className="p-1"))
+    # Create each plot with proper spacing
+    gdp_scatter = dbc.Col(
+        create_scatter_plot("gdp_pc", "death_std", df), 
+        width=6, 
+        className="p-3"
+    )
+    
+    metric_bar = dbc.Col(
+        create_bar_plot(col, df, top_n=10), 
+        width=6, 
+        className="p-3"
+    )
+    
+    pop_line = dbc.Col(
+        create_line_plot("Population", df, countries=df.nlargest(5, col)["Entity"].tolist()), 
+        width=6, 
+        className="p-3"
+    )
+    
+    gender_scatter = dbc.Col(
+        create_scatter_plot("f_deaths", "m_deaths", df), 
+        width=6, 
+        className="p-3"
+    )
 
-    # Group columns into rows
-    rows = [dbc.Row(cols[i:i + 2], className="g-0") for i in range(0, len(cols), 2)]
+    # Create rows with increased spacing
+    row1 = dbc.Row([gdp_scatter, metric_bar], className="g-4 mb-4")
+    row2 = dbc.Row([pop_line, gender_scatter], className="g-4")
 
     return html.Div(
-        rows,
-        style={"margin": "0", "height": "calc(90vh - 150px)"},
+        [row1, row2],
+        style={
+            "margin": "20px",
+            "height": "calc(90vh - 150px)",
+        }
     )
