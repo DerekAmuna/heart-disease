@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from dash import Input, Output, callback, dcc, html
+from dash import  dcc, html
 from functools import lru_cache
 
 from components.data.data import data  # Import the DataFrame directly
@@ -266,16 +266,17 @@ def create_line_plot(metric, data, countries=None, top_n=5):
 
     layout = {
         **COMMON_LAYOUT,
-        "margin": {"l": 60, "r": 30, "t": 50, "b": 50},
+        "margin": {"l": 20, "r": 10, "t": 15, "b": 15},
         "height": None,
         "showlegend": True,
         "legend": {
-            "orientation": "h",
-            "yanchor": "bottom",
-            "y": 1.02,
-            "xanchor": "right",
-            "x": 1,
-            "font": {'size': 10}
+            "orientation": "v",
+            "yanchor": "top",
+            "y": 1,
+            "xanchor": "left",
+            "x": 0,
+            "font": {'size': 10},
+            # 'position':'left'
         },
         "title": {
             'text': f"{get_title_text(metric)} Over Time",

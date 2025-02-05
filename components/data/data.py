@@ -10,23 +10,24 @@ logger = logging.getLogger(__name__)
 @lru_cache(maxsize=1)
 def load_data():
     """Load data with caching."""
+    logger.debug("Cache info for load_data: %s", load_data.cache_info())
     data_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "heart_disease_data.csv"
     )
     df = pd.read_csv(data_path)
-    
+
     # Pre-process data once during loading
     df['Year'] = pd.to_numeric(df['Year'], downcast='integer')
-    
+
     # Convert numeric columns to efficient types
     for col in df.select_dtypes(include=['float64']).columns:
         if col != 'WB_Income':  # Skip WB_Income as it contains mixed types
             df[col] = pd.to_numeric(df[col], downcast='float')
-    
+
     # Handle WB_Income column - convert NaN to string 'Unknown'
     df['WB_Income'] = df['WB_Income'].fillna('Unknown')
     df['WB_Income'] = df['WB_Income'].astype(str)
-    
+
     logger.info("Loaded data shape: %s", df.shape)
     return df
 
@@ -42,24 +43,25 @@ YEAR_RANGE = (int(data["Year"].min()), int(data["Year"].max()))
 @lru_cache(maxsize=128)
 def filter_data(year, regions=None, income=None):
     """Filter data with caching for common filter combinations."""
+    logger.debug("Cache info for filter_data: %s", filter_data.cache_info())
     filtered = data[data['Year'] == year].copy()
-    
+
     if regions and regions != ["All"]:
         filtered = filtered[filtered["region"].isin(regions)]
-    
+
     if income and income != "All":
         filtered = filtered[filtered["WB_Income"] == str(income)]
-    
+
     return filtered
 
 @callback(Output("general-data", "data"), Input("year-slider", "value"))
 def year_filter(year: int):
-   
+
     """Filter data by year."""
     if year is None:
         logger.debug("No year selected")
         return []
-        
+
     filtered_df = filter_data(year)
     return filtered_df.to_dict("records")
 
@@ -130,7 +132,7 @@ def chloropleth_data(year_filtered_data, metric, gender):
 
     df = pd.DataFrame(year_filtered_data)
     gender_prefix = "f_" if gender == "Female" else "m_" if gender == "Male" else ""
-    
+
     metric_mapping = {
         "P": {
             "Prevalence Percent": f"{gender_prefix}prev%",
@@ -143,10 +145,10 @@ def chloropleth_data(year_filtered_data, metric, gender):
             "Death": f"{gender_prefix}deaths",
         },
     }
-    
+
     col = metric_mapping.get(metric[0], {}).get(metric)
     if not col:
         return []
-        
+
     needed_cols = ["Entity", "Year", "Code", col]
     return df[needed_cols].to_dict("records")
