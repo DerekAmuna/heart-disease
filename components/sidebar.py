@@ -2,6 +2,8 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
 
+from components.data.data import region_selector
+
 
 def create_sidebar():
     dropdowns = [
@@ -85,8 +87,10 @@ def create_sidebar():
                     [
                         html.H5("Selectors", className="text-center fw-bold"),
                         html.Br(),
+
                     ]
                     + dropdown_elements,
+
                     style={"padding": "1rem"},
                 ),
                 id="sidebar",
