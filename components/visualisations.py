@@ -12,12 +12,13 @@ from components.data.data import data  # Import the DataFrame directly
 logger = logging.getLogger(__name__)
 
 
-def create_scatter_plot(x_metric, y_metric, size=None, hue=None):
+def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None):
     """Create a scatter plot comparing two metrics with optional size and color encoding.
 
     Args:
         x_metric (str): Metric for x-axis
         y_metric (str): Metric for y-axis
+        data (pd.DataFrame): DataFrame containing the data
         size (str, optional): Metric for point sizes
         hue (str, optional): Metric for point colors
 

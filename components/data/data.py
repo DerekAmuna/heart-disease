@@ -18,6 +18,7 @@ logger.info("Loaded data shape: %s", data.shape)
 def year_filter(year: int):
     """Filter data by year."""
     logger.debug("Year filter called with: %s", year)
+    #TODO: review unreachable
     if year is None:
         logger.debug("No year selected")
         return []
@@ -25,6 +26,46 @@ def year_filter(year: int):
     df = df[df["Year"] == year]
     logger.debug("Year filtered data shape: %s", df.shape)
     return df.to_dict("records")
+
+@callback(
+    Output('geo-eco-data', 'data'),
+    Input('general-data', 'data'),
+    # Input('metric-dropdown', 'value'),
+    Input('gender-dropdown', 'value'),
+    Input('region-dropdown', 'value'),
+    Input('income-dropdown', 'value'),
+    Input('top-filter-slider', 'value')
+)
+def geo_eco_data(data, gender, region, income, top_n):
+    """_summary_
+
+    Args:
+        data (_type_): _description_
+        gender (_type_): _description_
+        region (_type_): _description_
+        income (_type_): _description_
+        top_n (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    logger.debug("Geo eco data called with: %s, %s, %s, %s", gender, region, income, top_n)
+    gender_prefix = "f_" if gender == "Female" else "m_" if gender == "Male" else ""
+    metric_mapping = {
+        "P": {
+            "Prevalence Percent": f"{gender_prefix}prev%",
+            "Prevalence Rate": f"{gender_prefix}prev_rate",
+            "Prevalence": f"{gender_prefix}prev",
+        },
+        "D": {
+            "Death Percent": f"{gender_prefix}deaths%",
+            "Death Rate": f"{gender_prefix}death_rate",
+            "Death": f"{gender_prefix}deaths",
+        },
+    }
+    
+
+
 
 
 @callback(
