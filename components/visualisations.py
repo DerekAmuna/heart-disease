@@ -12,7 +12,7 @@ from components.data.data import data  # Import the DataFrame directly
 logger = logging.getLogger(__name__)
 
 
-def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None):
+def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5):
     """Create a scatter plot comparing two metrics with optional size and color encoding."""
     fig = px.scatter(
         data_frame=data,
@@ -28,22 +28,39 @@ def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None):
     )
 
     fig.update_layout(
-        margin={"l": 40, "r": 20, "t": 40, "b": 40},
+        margin={"l": 60, "r": 30, "t": 50, "b": 50},
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        height=350,
+        height=None,
         showlegend=False,
         title={
             'text': f"{x_metric.replace('_', ' ').title()} vs {y_metric.replace('_', ' ').title()}",
-            'y': 0.95,
+            'y': 1,
             'x': 0.5,
             'xanchor': 'center',
-            'yanchor': 'top'
-        }
+            'yanchor': 'top',
+            'font': {'size': 14}
+        },
+        font={'size': 12}
     )
 
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
+    fig.update_traces(
+        marker=dict(size=8),
+        selector=dict(mode='markers')
+    )
+
+    fig.update_xaxes(
+        showgrid=True,
+        gridwidth=1,
+        gridcolor='rgba(128,128,128,0.1)',
+        zeroline=False
+    )
+    fig.update_yaxes(
+        showgrid=True,
+        gridwidth=1,
+        gridcolor='rgba(128,128,128,0.1)',
+        zeroline=False
+    )
 
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
 
@@ -272,63 +289,95 @@ def create_bar_plot(metric, data, top_n=10):
     )
 
     fig.update_layout(
-        margin={"l": 40, "r": 20, "t": 40, "b": 80},
+        margin={"l": 60, "r": 30, "t": 50, "b": 70},
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        height=350,
+        height=300,
         showlegend=False,
         title={
             'y': 0.95,
             'x': 0.5,
             'xanchor': 'center',
-            'yanchor': 'top'
-        }
+            'yanchor': 'top',
+            'font': {'size': 14}
+        },
+        font={'size': 12},
+        coloraxis_showscale=False
     )
 
-    fig.update_xaxes(tickangle=-45, showgrid=False)
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
+    fig.update_xaxes(
+        tickangle=-45,
+        showgrid=False,
+        title=None
+    )
+    fig.update_yaxes(
+        showgrid=True,
+        gridwidth=1,
+        gridcolor='rgba(128,128,128,0.1)',
+        zeroline=False
+    )
 
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
 
 
-def create_line_plot(metric, data, countries=None):
+def create_line_plot(metric, data, countries=None, top_n=5):
     """Create a line plot for a given metric over time by specified countries."""
+    # Filter data from year 2000
+    data = data[data['Year'] >= 2000].copy()
+    
     if countries is None:
-        countries = data["Entity"].unique()[:5]
+        countries = data["Entity"].unique()[:top_n]
     filtered_data = data[data["Entity"].isin(countries)]
 
     fig = px.line(
-        filtered_data, 
-        x="Year", 
-        y=metric, 
-        color="Entity", 
+        filtered_data,
+        x="Year",
+        y=metric,
+        color="Entity",
         title=f"{metric.replace('_', ' ').title()} Over Time",
         labels={metric: metric.replace('_', ' ').title()}
     )
 
     fig.update_layout(
-        margin={"l": 40, "r": 20, "t": 40, "b": 40},
+        margin={"l": 60, "r": 30, "t": 50, "b": 50},
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        height=350,
+        height=300,
         showlegend=True,
         legend=dict(
             orientation="h",
             yanchor="bottom",
             y=1.02,
             xanchor="right",
-            x=1
+            x=1,
+            font={'size': 10}
         ),
         title={
             'y': 0.95,
             'x': 0.5,
             'xanchor': 'center',
-            'yanchor': 'top'
-        }
+            'yanchor': 'top',
+            'font': {'size': 14}
+        },
+        font={'size': 12}
     )
 
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
+    fig.update_traces(line={'width': 2})
+
+    fig.update_xaxes(
+        showgrid=True,
+        gridwidth=1,
+        gridcolor='rgba(128,128,128,0.1)',
+        zeroline=False,
+        dtick=5,  # 5-year intervals
+        tick0=2000  # Start ticks from 2000
+    )
+    fig.update_yaxes(
+        showgrid=True,
+        gridwidth=1,
+        gridcolor='rgba(128,128,128,0.1)',
+        zeroline=False
+    )
 
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
 
