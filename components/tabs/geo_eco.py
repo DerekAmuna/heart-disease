@@ -6,6 +6,7 @@ from components.common.year_slider import create_year_slider
 
 
 def create_geo_eco_tab():
+    """Function to create layout and visualations in the geo eco tab"""
     return html.Div(
         [
             # Add Store component for data
