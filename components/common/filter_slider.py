@@ -2,6 +2,7 @@ from dash import dcc, html
 
 
 def create_filter_slider():
+    marks = {i: str(i) for i in range(10, 101, 10)}  # Generate marks for the slider
     return html.Div(
         [
             html.Label("Filter by top:"),
@@ -10,8 +11,8 @@ def create_filter_slider():
                 min=10,
                 max=100,
                 step=10,
-                value=5,
-                marks={i: str(i) for i in range(10, 110, 10)},
+                value=10,  # Adjusted initial value to be within bounds
+                marks=marks,
             ),
         ]
     )

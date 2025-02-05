@@ -1,83 +1,114 @@
+
+#! usr/bin/env python3
+import logging
+import os
+
 import pandas as pd
+from dash import Input, Output, callback
 
-loaded_data = pd.read_csv("./data/heart_disease_data.csv")
+logger = logging.getLogger(__name__)
 
-# removing leading and trailing whitespaces from column names
-loaded_data.columns = loaded_data.columns.str.strip()
-
-# removing leading and trailing whitespaces from values in the dataframe
-loaded_data = loaded_data.applymap(lambda x: x.strip() if isinstance(x, str) else x)
-
-# print(loaded_data.columns)
-
-
-def region_selector():
-    return loaded_data["region"].unique()
+data_path = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "heart_disease_data.csv"
+)
+data = pd.read_csv(data_path)
+logger.info("Loaded data shape: %s", data.shape)
 
 
-def country_selector(input):
-    if input == "Africa":
-        return loaded_data[loaded_data["region"] == "Africa"]["Entity"].unique()
-    elif input == "Asia":
-        return loaded_data[loaded_data["region"] == "Asia"]["Entity"].unique()
-    elif input == "Europe":
-        return loaded_data[loaded_data["region"] == "Europe"]["Entity"].unique()
-    elif input == "North America":
-        return loaded_data[loaded_data["region"] == "North America"]["Entity"].unique()
-    elif input == "Oceania":
-        return loaded_data[loaded_data["region"] == "Oceania"]["Entity"].unique()
-    elif input == "South America":
-        return loaded_data[loaded_data["region"] == "South America"]["Entity"].unique()
-    else:
-        return loaded_data["country"].unique()
+@callback(Output("general-data", "data"), Input("year-slider", "value"))
+def year_filter(year: int):
+    """Filter data by year."""
+    logger.debug("Year filter called with: %s", year)
+    #TODO: review unreachable
+    if year is None:
+        logger.debug("No year selected")
+        return []
+    df = data.copy()
+    df = df[df["Year"] == year]
+    logger.debug("Year filtered data shape: %s", df.shape)
+    return df.to_dict("records")
 
+@callback(
+    Output('geo-eco-data', 'data'),
+    Input('general-data', 'data'),
+    # Input('metric-dropdown', 'value'),
+    Input('gender-dropdown', 'value'),
+    Input('region-dropdown', 'value'),
+    Input('income-dropdown', 'value'),
+    Input('top-filter-slider', 'value')
+)
+def geo_eco_data(data, gender, region, income, top_n):
+    """_summary_
 
-region = region_selector()[1]
-# print(region)
+    Args:
+        data (_type_): _description_
+        gender (_type_): _description_
+        region (_type_): _description_
+        income (_type_): _description_
+        top_n (_type_): _description_
 
-country = country_selector(region)
-
-
-# print(country)
-def world_imcome_level_selector():
-    return loaded_data["WB_Income"].unique()
-
-
-def metric_selector():
-    columns_to_show = ["obesity%", "population", "cvd_share"]
-    return loaded_data.columns[columns_to_show]
-
-
-def gender_selector(gender):
+    Returns:
+        _type_: _description_
     """
-    Selects gender-specific columns based on user choice (Male 'M' or Female 'F').
-    """
-    gender_map = {
-        "M": {
-            "Prevalence": "m_prev",
-            "Death Percent": "m_deaths%",
-            "Death": "m_deaths",
-            "Hypertension Prevalence": "m_htn_30-79",
+    logger.debug("Geo eco data called with: %s, %s, %s, %s", gender, region, income, top_n)
+    gender_prefix = "f_" if gender == "Female" else "m_" if gender == "Male" else ""
+    metric_mapping = {
+        "P": {
+            "Prevalence Percent": f"{gender_prefix}prev%",
+            "Prevalence Rate": f"{gender_prefix}prev_rate",
+            "Prevalence": f"{gender_prefix}prev",
         },
-        "F": {
-            "Prevalence": "f_prev",
-            "Death Percent": "f_deaths%",
-            "Death": "f_deaths",
-            "Hypertension Prevalence": "f_htn_30-79",
+        "D": {
+            "Death Percent": f"{gender_prefix}deaths%",
+            "Death Rate": f"{gender_prefix}death_rate",
+            "Death": f"{gender_prefix}deaths",
+        },
+    }
+    
+
+
+
+
+@callback(
+    Output("chloropleth_data", "data"),
+    Input("general-data", "data"),
+    Input("metric-dropdown", "value"),
+    Input("gender-dropdown", "value"),
+)
+def chloropleth_data(year_filtered_data, metric, gender):
+    """Get data for chloropleth map."""
+    logger.debug("Chloropleth data called with: %s, %s", metric, gender)
+    logger.debug(
+        "Year filtered data: %s", len(year_filtered_data) if year_filtered_data else "None"
+    )
+
+    if not year_filtered_data or not metric or not gender:
+        logger.debug("Missing required data")
+        return []
+
+    df = pd.DataFrame(year_filtered_data)
+    logger.debug("Received data shape: %s", df.shape)
+
+    needed = ["Entity", "Year", "Code"]
+    gender_prefix = "f_" if gender == "Female" else "m_" if gender == "Male" else ""
+    metric_mapping = {
+        "P": {
+            "Prevalence Percent": f"{gender_prefix}prev%",
+            "Prevalence Rate": f"{gender_prefix}prev_rate",
+            "Prevalence": f"{gender_prefix}prev",
+        },
+        "D": {
+            "Death Percent": f"{gender_prefix}deaths%",
+            "Death Rate": f"{gender_prefix}death_rate",
+            "Death": f"{gender_prefix}deaths",
         },
     }
 
-    return gender_map.get(gender, {})
-
-
-# Example Usage
-selected_gender = "M"  # or "F"
-columns = gender_selector(selected_gender)
-
-# Print the selected columns
-print(columns)
-
-
-def metric_selector():
-    columns_to_show = ["obesity%", "population", "cvd_share"]
-    return loaded_data.columns[columns_to_show]
+    col = metric_mapping.get(metric[0], {}).get(metric)
+    logger.debug("Looking for column: %s", col)
+    if col is not None and col in df.columns:
+        df = df[needed + [col]].dropna(subset=[col])
+        logger.debug("Final data shape: %s", df.shape)
+        return df.to_dict("records")
+    logger.warning("Column not found or invalid")
+    return []

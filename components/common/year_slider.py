@@ -2,7 +2,10 @@ import dash_bootstrap_components as dbc
 from dash import Input, Output, State, callback, dcc, html
 
 
-def create_year_slider(min_year=1950, max_year=2023, default=2021):
+def create_year_slider(min_year=1950, max_year=2022, default=2021):
+    # Generate marks for the slider using a dictionary comprehension
+    marks = {str(year): str(year) for year in range(min_year, max_year + 1, 5)}
+
     return dbc.Container(
         [
             dbc.Row(
@@ -22,7 +25,7 @@ def create_year_slider(min_year=1950, max_year=2023, default=2021):
                             ),
                             dcc.Interval(
                                 id="animation-interval",
-                                interval=1000,  # 1 second between frames increase if loading to chloroplth is intensive
+                                interval=1000,  # 1 second between frames increase if loading to chloropleth is intensive
                                 disabled=True,
                             ),
                         ],
@@ -36,10 +39,7 @@ def create_year_slider(min_year=1950, max_year=2023, default=2021):
                                 min=min_year,
                                 max=max_year,
                                 value=default,
-                                marks={
-                                    str(year): str(year)
-                                    for year in range(min_year, max_year + 1, 5)
-                                },
+                                marks=marks,
                                 step=1,
                                 tooltip={"placement": "bottom", "always_visible": True},
                                 included=False,
@@ -60,13 +60,9 @@ def create_year_slider(min_year=1950, max_year=2023, default=2021):
     State("animation-interval", "disabled"),
 )
 def toggle_animation(n_clicks, disabled):
-    if n_clicks is None:
-        return True, "▶️"
-
-    if disabled:
-        return False, "⏸️"  # Play -> Pause
-    else:
-        return True, "▶️"  # Pause -> Play
+    if n_clicks:
+        return not disabled, "⏸️" if disabled else "▶️"
+    return True, "▶️"
 
 
 @callback(
@@ -77,11 +73,8 @@ def toggle_animation(n_clicks, disabled):
     State("year-slider", "max"),
 )
 def update_year_on_interval(n_intervals, current_year, min_year, max_year):
-    if current_year is None or n_intervals is None:
+    if current_year is None:
         return min_year
 
-    next_year = current_year + 1
-    if next_year > max_year:
-        next_year = min_year
-
+    next_year = current_year + 1 if current_year < max_year else min_year
     return next_year

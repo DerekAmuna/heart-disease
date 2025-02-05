@@ -19,13 +19,26 @@ disable = [
     "C0116",  # missing-function-docstring
     "C0301",  # line-too-long
     "E0401",  # import error
+    "C0103",  # invalid-name
+    "C0111",  # missing-docstring
+    "C0200",  # consider-using-enumerate
+    "C0201",  # consider-iterating-dictionary
+    "C0325",  # superfluous-parens
+    "C0326",  # bad-whitespace
+    "W0603",  # global-statement
+    "W0621",  # redefined-outer-name
+    "W0703",  # broad-except
+    "R0903",  # too-few-public-methods
+    "R0913",  # too-many-arguments
+    "R0914",  # too-many-locals
+    "R0915",  # too-many-statements
 ]
 
 [tool.pylint.format]
 max-line-length = 99
 
 [tool.pylint.basic]
-good-names = ["i", "j", "k", "ex", "Run", "_", "df", "x", "y"]
+good-names = ["i", "j", "k", "ex", "Run", "_", "df", "x", "y", "z", "n", "f", "fp", "id", "io"]
 
 [build-system]
 requires = ["setuptools>=45", "wheel"]

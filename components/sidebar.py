@@ -1,13 +1,80 @@
 import dash_bootstrap_components as dbc
+import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
 
 from components.data.data import region_selector
 
 
 def create_sidebar():
+    dropdowns = [
+        ("COUNTRY", "country-dropdown", []),
+        ("REGION", "region-dropdown", []),
+        (
+            "GENDER",
+            "gender-dropdown",
+            [
+                {"label": "Both", "value": "Both"},
+                {"label": "Male", "value": "Male"},
+                {"label": "Female", "value": "Female"},
+            ],
+        ),
+        (
+            "WORLD INCOME",
+            "income-dropdown",
+            [
+                {"label": "High income", "value": "High income"},
+                {"label": "Lower middle income", "value": "Lower middle income"},
+                {"label": "Low income", "value": "Low income"},
+                {"label": "Upper middle income", "value": "Upper middle income"},
+            ],
+        ),
+        (
+            "METRIC",
+            "metric-dropdown",
+            [
+                {"label": "Prevalence Percent", "value": "Prevalence Percent"},
+                {"label": "Prevalence Rate", "value": "Prevalence Rate"},
+                {"label": "Prevalence", "value": "Prevalence"},
+                {"label": "Death Percent", "value": "Death Percent"},
+                {"label": "Death Rate", "value": "Death Rate"},
+                {"label": "Death", "value": "Death"},
+            ],
+        ),
+    ]
+
+    dropdown_elements = [
+        html.Div(
+            [
+                html.H6(label),
+                dcc.Dropdown(
+                    id=id,
+                    options=options,
+                    value=(
+                        "Death Rate"
+                        if id == "metric-dropdown"
+                        else "Both" if id == "gender-dropdown" else None
+                    ),
+                    placeholder=f"Select {label}",
+                ),
+                html.Br(),
+            ]
+        )
+        for label, id, options in dropdowns
+    ]
+
+    sidebar_style = {
+        "padding": "1rem",
+        "background-color": "#f8f9fa",
+        "height": "100vh",
+        "width": "250px",
+        "position": "fixed",
+        "z-index": "1",
+        "transition": "all 0.3s",
+        "box-shadow": "3px 0 10px rgba(0,0,0,0.1)",
+    }
+
     return html.Div(
         [
-            # Sidebar toggle button
             dbc.Button(
                 "☰",
                 id="sidebar-toggle",
@@ -15,40 +82,15 @@ def create_sidebar():
                 className="mb-3",
                 style={"position": "absolute", "top": "10px", "right": "-20px", "zIndex": "1000"},
             ),
-            # Sidebar content
             dbc.Collapse(
                 html.Div(
                     [
                         html.H5("Selectors", className="text-center fw-bold"),
                         html.Br(),
-                        html.H6("COUNTRY", className=""),
-                        dcc.Dropdown(
-                            id="country-dropdown", options=[], placeholder="Select Country"
-                        ),
-                        html.Br(),
-                        html.H6("REGION", className=""),
-                        dcc.Dropdown(
-                            id="region-dropdown",
-                            options=[region_selector()],
-                            placeholder="Select Region",
-                        ),
-                        html.Br(),
-                        html.H6("GENDER", className=""),
-                        dcc.Dropdown(
-                            id="gender-dropdown", options=[], placeholder="Select Gender"
-                        ),
-                        html.Br(),
-                        html.H6("WORLD INCOME", className=""),
-                        dcc.Dropdown(
-                            id="income-dropdown", options=[], placeholder="Select Income Level"
-                        ),
-                        html.Br(),
-                        html.H6("METRIC", className=""),
-                        dcc.Dropdown(
-                            id="metric-dropdown", options=[], placeholder="Select Preferred Metric"
-                        ),
-                        html.Br(),
-                    ],
+
+                    ]
+                    + dropdown_elements,
+
                     style={"padding": "1rem"},
                 ),
                 id="sidebar",
@@ -56,16 +98,7 @@ def create_sidebar():
             ),
         ],
         id="sidebar-container",
-        style={
-            "padding": "1rem",
-            "background-color": "#f8f9fa",
-            "height": "100vh",
-            "width": "250px",
-            "position": "fixed",
-            "z-index": "1",
-            "transition": "all 0.3s",
-            "box-shadow": "3px 0 10px rgba(0,0,0,0.1)",
-        },
+        style=sidebar_style,
     )
 
 
@@ -77,39 +110,41 @@ def create_sidebar():
     prevent_initial_call=True,
 )
 def toggle_sidebar(n_clicks, is_open):
-    if n_clicks is None:
-        return True, {
-            "padding": "1rem",
-            "background-color": "#f8f9fa",
-            "height": "100vh",
-            "width": "250px",
-            "position": "fixed",
-            "z-index": "1",
-            "transition": "all 0.3s",
-            "box-shadow": "3px 0 10px rgba(0,0,0,0.1)",
-        }
+    sidebar_style = {
+        "padding": "1rem",
+        "background-color": "#f8f9fa",
+        "height": "100vh",
+        "position": "fixed",
+        "z-index": "1",
+        "transition": "all 0.3s",
+        "box-shadow": "3px 0 10px rgba(0,0,0,0.1)",
+    }
 
-    if is_open:
-        # Collapsed state
-        return False, {
-            "padding": "1rem",
-            "background-color": "#f8f9fa",
-            "height": "100vh",
-            "width": "60px",  # Reduced width when collapsed
-            "position": "fixed",
-            "z-index": "1",
-            "transition": "all 0.3s",
-            "box-shadow": "3px 0 10px rgba(0,0,0,0.1)",
-        }
-    else:
-        # Expanded state
-        return True, {
-            "padding": "1rem",
-            "background-color": "#f8f9fa",
-            "height": "100vh",
-            "width": "250px",
-            "position": "fixed",
-            "z-index": "1",
-            "transition": "all 0.3s",
-            "box-shadow": "3px 0 10px rgba(0,0,0,0.1)",
-        }
+    width = "60px" if is_open else "250px"
+    return not is_open, {**sidebar_style, "width": width}
+
+
+@callback(
+    Output("country-dropdown", "options"),
+    Input("region-dropdown", "value"),
+    Input("general-data", "data"),
+)
+def update_country_options(selected_region, data):
+    """Update country dropdown options based on selected region."""
+    if not data or not selected_region:
+        return []
+
+    df = pd.DataFrame(data)
+    countries = df[df["region"] == selected_region]["Entity"].unique()
+    return [{"label": country, "value": country} for country in sorted(countries)]
+
+
+@callback(Output("region-dropdown", "options"), Input("general-data", "data"))
+def update_region_options(data):
+    """Update region dropdown options."""
+    if not data:
+        return []
+
+    df = pd.DataFrame(data)
+    regions = df["region"].unique()
+    return [{"label": region, "value": region} for region in sorted(regions)]

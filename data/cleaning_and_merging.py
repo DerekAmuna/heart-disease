@@ -249,152 +249,58 @@ name_mapping = {
 
 ihme_data["location"] = ihme_data["location"].replace(name_mapping)
 
-# Deaths and prevalence data
+# Splitting the deaths and prevalence data
 deaths_df = ihme_data[ihme_data["measure"] == "Deaths"].copy()
 prev_df = ihme_data[ihme_data["measure"] == "Prevalence"].copy()
 
-# Merge deaths and prevalence data
-wide_ihme = pd.merge(
-    deaths_df,
-    prev_df,
-    on=["location", "sex", "age", "year", "metric"],
-    how="outer",
-    suffixes=("_deaths", "_prev"),
-)
+# Efficient merge and cleanup operations
+wide_ihme = pd.merge(deaths_df, prev_df, on=["location", "sex", "age", "year", "metric"], how="outer", suffixes=("_deaths", "_prev"))
+columns_to_drop = ["measure_deaths", "measure_prev", "cause_deaths", "cause_prev", "age"]
+wide_ihme.drop(columns=columns_to_drop, inplace=True)
 
-# Clean up column names
-wide_ihme = wide_ihme.drop(
-    ["measure_deaths", "measure_prev", "cause_deaths", "cause_prev", "age"], axis=1
-)
-
-# Rename columns
-wide_ihme = wide_ihme.rename(
-    columns={
-        "sex": "gender",
-        "location": "Entity",
-        "val_deaths": "deaths",
-        "val_prev": "prevalence",
-        "year": "Year",
-    }
-)
+# Rename columns for clarity
+wide_ihme.rename(columns={
+    "sex": "gender", "location": "Entity", "val_deaths": "deaths", "val_prev": "prevalence", "year": "Year"
+}, inplace=True)
 
 # Merge with main dataset
 primary_df = wide_ihme.merge(merged_df, on=["Entity", "Year"], how="outer")
 
-# Drop unnecessary columns
-primary_df = primary_df.drop(
-    [
-        "Total deaths from cardiovascular diseases among both sexes_x",
-        "Share of total deaths in males in those aged all ages that are from cardiovascular diseases",
-        "Share of total deaths in females in those aged all ages that are from cardiovascular diseases",
-        "Share of total deaths in both sexes in those aged all ages that are from cardiovascular diseases",
-        "Deaths from cardiovascular diseases per 100,000 people in, both sexes aged all ages",
-    ],
-    axis=1,
-)
-
-# Load additional datasets
-add4 = pd.read_csv("./Cleaned-Secondary-Data/Global_CVD_Deaths.csv")
-add4["Entity"] = "Global"
-
-add4["Total_Number_of_Deaths"] = add4["Total_Number_of_Deaths"].str.replace(",", "").astype(int)
-add4["Gender"] = add4["Gender"].replace({"Total": "Both", "Males": "Male", "Females": "Female"})
-add4 = add4.rename(
-    columns={
-        "Gender": "gender",
-    }
-)
-
-primary_df = primary_df.merge(
-    add4, on=["Entity", "Year", "gender"], how="outer", suffixes=("", "_global_deaths")
-)
-
-add5 = pd.read_csv("./Cleaned-Secondary-Data/Global_WHO_data.csv")
-add5 = add5[
-    add5["indicator_name"].isin(
-        [
-            "2.B.0 Cardiovascular diseases prevalence (age standardized) (per 100 000 population)",
-            "2.B.01 Rheumatic heart disease prevalence (age standardized) (per 100 000 population)"
-            "2.B.02 Ischemic heart disease prevalence (age standardized) (per 100 000 population)"
-            "2.B.03 Stroke prevalence (age standardized) (per 100 000 population)"
-            "2.B.04 Hypertensive heart disease prevalence (age standardized) (per 100 000 population)"
-            "2.B.05 Cardiomyopathy and myocarditis prevalence (age standardized) (per 100 000 population)"
-            "2.B.06 Atrial fibrillation and flutter prevalence (age standardized) (per 100 000 population)"
-            "2.B.07 Peripheral artery disease prevalence (age standardized) (per 100 000 population)"
-            "2.B.08 Endocarditis prevalence (age standardized) (per 100 000 population)"
-            "2.B.09 Non-rheumatic valvular heart disease prevalence (age standardized) (per 100 000 population)"
-            "2.B.10 Other cardiovascular and circulatory diseases prevalence (age standardized) (per 100 000 population)",
-        ]
-    )
+# Drop unnecessary columns in a single call
+unnecessary_columns = [
+    "Total deaths from cardiovascular diseases among both sexes_x",
+    "Share of total deaths in males in those aged all ages that are from cardiovascular diseases",
+    "Share of total deaths in females in those aged all ages that are from cardiovascular diseases",
+    "Share of total deaths in both sexes in those aged all ages that are from cardiovascular diseases",
+    "Deaths from cardiovascular diseases per 100,000 people in, both sexes aged all ages",
 ]
-add5 = add5.rename(columns={"Country": "Entity", "WHO_Region": "Region", "Gender": "gender"})
+primary_df.drop(columns=unnecessary_columns, inplace=True)
 
-primary_df = primary_df.rename(columns={"World Bank's income classification": "WB_Income"})
+# Load additional datasets with streamlined renaming and merging
+add_datasets = [
+    ("./Cleaned-Secondary-Data/Global_CVD_Deaths.csv", {"Gender": "gender", "Total_Number_of_Deaths": "Total_Number_of_Deaths"}),
+    ("./Cleaned-Secondary-Data/Global_WHO_data.csv", {"Country": "Entity", "WHO_Region": "Region", "Gender": "gender"}),
+    ("./Cleaned-Secondary-Data/Our-World-Cleaned/CT_Units.csv", {"Country": "Entity"}),
+    ("./Cleaned-Secondary-Data/Our-World-Cleaned/Ischaemic_Death_Rate.csv", {"Country": "Entity"}),
+    ("./Cleaned-Secondary-Data/Our-World-Cleaned/Obesity_Rate.csv", {"Country": "Entity"}),
+    ("./Cleaned-Secondary-Data/Our-World-Cleaned/Pacemaker_Implantations_per_1M.csv", {"Country": "Entity"}),
+    ("./Cleaned-Secondary-Data/Our-World-Cleaned/Rheumatic_Death_Rate.csv", {"Country": "Entity"}),
+    ("./Cleaned-Secondary-Data/Our-World-Cleaned/satins_availablity.csv", {"Country": "Entity"}),
+    ("./Cleaned-Secondary-Data/Our-World-Cleaned/Statin_use_(1000).csv", {"Country": "Entity"}),
+]
 
-primary_df = primary_df.merge(
-    add5, on=["Entity", "Year", "gender", "Region", "WB_Income"], how="outer"
-)
-primary_df.drop(["indicator_name", "indicator_abbr"], axis=1, inplace=True)
-
-add6 = pd.read_csv("./Cleaned-Secondary-Data/Our-World-Cleaned/CT_Units.csv")
-add6 = add6.rename(columns={"Country": "Entity"})
-
-primary_df = primary_df.merge(add6, on=["Entity", "Year"], how="outer")
-
-add7 = pd.read_csv("./Cleaned-Secondary-Data/Our-World-Cleaned/Ischaemic_Death_Rate.csv")
-add7 = add7.rename(columns={"Country": "Entity"})
-
-primary_df = primary_df.merge(add7, on=["Entity", "Year"], how="outer")
-
-add8 = pd.read_csv("./Cleaned-Secondary-Data/Our-World-Cleaned/Obesity_Rate.csv")
-add8 = add8.rename(columns={"Country": "Entity"})
-
-primary_df = primary_df.merge(add8, on=["Entity", "Year"], how="outer")
-
-add9 = pd.read_csv("./Cleaned-Secondary-Data/Our-World-Cleaned/Pacemaker_Implantations_per_1M.csv")
-add9 = add9.rename(columns={"Country": "Entity"})
-
-primary_df = primary_df.merge(add9, on=["Entity", "Year"], how="outer")
-
-add10 = pd.read_csv("./Cleaned-Secondary-Data/Our-World-Cleaned/Rheumatic_Death_Rate.csv")
-add10 = add10.rename(columns={"Country": "Entity"})
-
-primary_df = primary_df.merge(add10, on=["Entity", "Year"], how="outer")
-
-add11 = pd.read_csv("./Cleaned-Secondary-Data/Our-World-Cleaned/satins_availablity.csv")
-add11 = add11.rename(columns={"Country": "Entity"})
-primary_df = primary_df.merge(add11, on=["Entity", "Year"], how="outer")
-
-add12 = pd.read_csv("./Cleaned-Secondary-Data/Our-World-Cleaned/Statin_use_(1000).csv")
-add12 = add12.rename(columns={"Country": "Entity"})
-
-primary_df = primary_df.merge(add12, on=["Entity", "Code", "Year"], how="outer")
+for file_path, rename_dict in add_datasets:
+    add_df = pd.read_csv(file_path).rename(columns=rename_dict)
+    primary_df = primary_df.merge(add_df, on=["Entity", "Year", "gender"], how="outer", suffixes=("", "_global_deaths"))
 
 # Select relevant columns
 keep_cols = [
-    "Entity",
-    "Code",
-    "Year",
-    "gender",
-    "metric",
-    "deaths",
-    "prevalence",
-    "GDP per capita, PPP (constant 2017 international $)",
-    "WB_Income",
-    "Population",
-    "World regions according to OWID",
-    "Indicator Name",
-    "Numeric_Females",
-    "Numeric_Males",
-    "Numeric_Total",
-    "age_standardized_death_rate",
-    "CT_Units",
-    "Ischaemic_Death_Rate (100,000)",
-    "Obesity_Rate (%)",
-    "Pacemaker_Implantations_per_1M",
-    "Rheumatic_Death_Rate (100,000)",
-    "Availability_of_Statins",
-    "Statin_use_(1000)",
+    "Entity", "Code", "Year", "gender", "metric", "deaths", "prevalence",
+    "GDP per capita, PPP (constant 2017 international $)", "WB_Income", "Population",
+    "World regions according to OWID", "Indicator Name", "Numeric_Females",
+    "Numeric_Males", "Numeric_Total", "age_standardized_death_rate", "CT_Units",
+    "Ischaemic_Death_Rate (100,000)", "Obesity_Rate (%)", "Pacemaker_Implantations_per_1M",
+    "Rheumatic_Death_Rate (100,000)", "Availability_of_Statins", "Statin_use_(1000)",
     "Age-standardized death rate from hypertensive heart disease among both sexes",
     "Age-standardized death rate from ischaemic heart disease among both sexes",
     "Age-standardized death rate from rheumatic heart disease among both sexes",
@@ -405,10 +311,8 @@ final_df = primary_df[keep_cols]
 
 # Pivot table for deaths and prevalence
 pivot_df = final_df.pivot_table(
-    index=["Entity", "Year", "gender"],  # Keep minimal index
-    columns=["metric"],
-    values=["deaths", "prevalence"],
-    aggfunc="first",
+    index=["Entity", "Year", "gender"], columns=["metric"],
+    values=["deaths", "prevalence"], aggfunc="first"
 ).reset_index()
 
 # Clean up column names
@@ -417,23 +321,16 @@ pivot_df.columns = [
 ]
 
 # Rename to more intuitive names
-pivot_df = pivot_df.rename(
-    columns={
-        "deaths_Number": "deaths_value",
-        "deaths_Percent": "deaths_percent",
-        "deaths_Rate": "deaths_rate",
-        "prevalence_Number": "prevalence_value",
-        "prevalence_Percent": "prevalence_percent",
-        "prevalence_Rate": "prevalence_rate",
-    }
-)
+pivot_df.rename(columns={
+    "deaths_Number": "deaths_value", "deaths_Percent": "deaths_percent", "deaths_Rate": "deaths_rate",
+    "prevalence_Number": "prevalence_value", "prevalence_Percent": "prevalence_percent", "prevalence_Rate": "prevalence_rate",
+}, inplace=True)
 
 # Merge with original dataframe
 final_df = final_df.merge(pivot_df, on=["Entity", "Year", "gender"], how="left")
 
 # Drop original deaths and prevalence columns and metric column
-cols_to_drop = ["deaths", "prevalence", "metric"]
-final_df = final_df.drop(columns=cols_to_drop)
+final_df.drop(columns=["deaths", "prevalence", "metric"], inplace=True)
 
 # Pivot table for gender
 gender_pivot = final_df.pivot_table(
@@ -505,21 +402,17 @@ indicator_pivot.columns = [
 final_df = final_df.merge(indicator_pivot, on=["Entity", "Year"], how="left")
 
 # Drop original columns
-cols_to_drop = ["Indicator Name", "Numeric_Females", "Numeric_Males", "Numeric_Total"]
-final_df = final_df.drop(columns=cols_to_drop)
-final_df = final_df.dropna(axis=1, how="all")
-
-final_df = final_df.drop_duplicates()
+final_df.drop(columns=["Indicator Name", "Numeric_Females", "Numeric_Males", "Numeric_Total"], inplace=True)
+final_df.dropna(axis=1, how="all", inplace=True)
 
 # Set first 7 columns as index
-final_df = final_df.set_index(final_df.columns[:7].tolist())
+final_df.set_index(final_df.columns[:7].tolist(), inplace=True)
 
 # Drop rows where all non-index values are NaN
-final_df = final_df.dropna(how="all")
+final_df.dropna(how="all", inplace=True)
 
 # Reset the index to get the columns back
-final_df = final_df.reset_index()
-
+final_df.reset_index(inplace=True)
 
 def interpolate_series(group_data, column_name):
     """
@@ -530,13 +423,13 @@ def interpolate_series(group_data, column_name):
     values = group_data[column_name].values
     mask = ~np.isnan(values)
 
-    if sum(mask) < 2:
+    if np.sum(mask) < 2:
         return values
 
     try:
         spline = CubicSpline(years[mask], values[mask], extrapolate=False)
-        interpolated_values = spline(years)
-        return np.where(mask, values, interpolated_values)
+        return np.where(mask, values, spline(years)
+        )
     except ValueError:
         return values
 
