@@ -55,6 +55,7 @@ def create_sidebar():
                         else "Both" if id == "gender-dropdown" else None
                     ),
                     placeholder=f"Select {label}",
+                    multi=True if id in ["country-dropdown", "region-dropdown"] else False,
                 ),
                 html.Br(),
             ]
@@ -87,10 +88,8 @@ def create_sidebar():
                     [
                         html.H5("Selectors", className="text-center fw-bold"),
                         html.Br(),
-
                     ]
                     + dropdown_elements,
-
                     style={"padding": "1rem"},
                 ),
                 id="sidebar",
