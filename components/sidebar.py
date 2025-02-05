@@ -2,13 +2,14 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
 
-from components.data.data import region_selector
+# from components.data.data import region_selector
 
 
 def create_sidebar():
     dropdowns = [
+          ("REGION", "region-dropdown", []),
         ("COUNTRY", "country-dropdown", []),
-        ("REGION", "region-dropdown", []),
+      
         (
             "GENDER",
             "gender-dropdown",
@@ -71,6 +72,7 @@ def create_sidebar():
         "z-index": "1",
         "transition": "all 0.3s",
         "box-shadow": "3px 0 10px rgba(0,0,0,0.1)",
+        "top": "90px",  # Add top offset equal to navbar height
     }
 
     return html.Div(
@@ -80,7 +82,7 @@ def create_sidebar():
                 id="sidebar-toggle",
                 color="primary",
                 className="mb-3",
-                style={"position": "absolute", "top": "10px", "right": "-20px", "zIndex": "1000"},
+                style={"position": "absolute", "top": "10px", "right": "-20px", "zIndex": "100"},
             ),
             dbc.Collapse(
                 html.Div(
@@ -111,17 +113,22 @@ def create_sidebar():
 )
 def toggle_sidebar(n_clicks, is_open):
     sidebar_style = {
-        "padding": "1rem",
-        "background-color": "#f8f9fa",
-        "height": "100vh",
-        "position": "fixed",
-        "z-index": "1",
-        "transition": "all 0.3s",
-        "box-shadow": "3px 0 10px rgba(0,0,0,0.1)",
-    }
+            "padding": "1rem",
+            "background-color": "#f8f9fa",
+            "height": "100vh",
+            "width": "250px",
+            "position": "fixed",
+            "z-index": "1",  # Ensure sidebar stays behind the button
+            "transition": "all 0.3s",
+            "box-shadow": "3px 0 10px rgba(0,0,0,0.1)",
+            "top": "90px",  # Add top offset equal to navbar height
+        }
+
 
     width = "60px" if is_open else "250px"
     return not is_open, {**sidebar_style, "width": width}
+
+
 
 
 @callback(

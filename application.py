@@ -51,6 +51,8 @@ navbar = dbc.Navbar(
     ),
     color="primary",
     dark=True,
+     fixed="top",
+    className="mb-5", 
 )
 
 # Main Layout
@@ -58,6 +60,7 @@ app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=False),
         navbar,
+        dcc.Store(id='general-data',data=[]),
         dbc.Row(
             [
                 # Sidebar
@@ -79,6 +82,7 @@ app.layout = html.Div(
                             "padding-left": "80px",  # extra padding for collapsed sidebar
                             "background-color": "#f8f9fa",
                             "min-height": "calc(100vh - 56px)",  # Full height minus navbar
+                            "margin-top": "56px",  # Add margin to account for the fixed navbar
                         },
                     ),
                     className="ms-auto",
