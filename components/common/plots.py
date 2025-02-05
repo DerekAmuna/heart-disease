@@ -1,7 +1,6 @@
 import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 from dash import dcc, html, Output, Input, callback
-import pandas as pd
 
 from components.visualisations import (
     create_scatter_plot,
