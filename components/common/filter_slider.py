@@ -2,6 +2,7 @@ from dash import dcc, html
 
 
 def create_filter_slider():
+    """Function to create a year slider on the pages"""
     marks = {i: str(i) for i in range(10, 101, 10)}  # Generate marks for the slider
     return html.Div(
         [

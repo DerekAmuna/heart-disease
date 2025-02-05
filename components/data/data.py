@@ -17,6 +17,7 @@ logger.info("Loaded data shape: %s", data.shape)
 
 @callback(Output("general-data", "data"), Input("year-slider", "value"))
 def year_filter(year: int):
+   
     """Filter data by year."""
     logger.debug("Year filter called with: %s", year)
     #TODO: review unreachable

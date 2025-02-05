@@ -4,6 +4,7 @@ from components.common.plots import create_plots
 from components.common.year_slider import create_year_slider
 
 def create_healthcare_tab():
+    """FUnction to display the layout for the healthcare tab"""
     return html.Div(
         [# Add Store component for data
             dcc.Store(id='general-data'),

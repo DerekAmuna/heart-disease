@@ -9,6 +9,7 @@ An interactive dashboard built with Dash and Plotly for visualizing global heart
 heart-disease/
 ├── application.py          # Main application entry point
 ├── components/
+   
 │   ├── common/            # Shared components
 │   │   ├── filter_slider.py
 │   │   ├── plots.py

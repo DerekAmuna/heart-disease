@@ -2,6 +2,7 @@ from dash import html
 import dash_bootstrap_components as dbc
 
 def create_introduction_tab():
+    """An introduction message for the user"""
     return dbc.Container([
         dbc.Row([
             dbc.Col([

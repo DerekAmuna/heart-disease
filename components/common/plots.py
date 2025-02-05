@@ -10,6 +10,7 @@ from components.visualisations import (
 from components.data.data import data
 
 def create_plot(graph_id):
+    """Function to create a single plot layout for the visualization"""
     return dcc.Graph(
         id=graph_id,
         config={"displayModeBar": False},

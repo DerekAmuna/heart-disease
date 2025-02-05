@@ -6,6 +6,7 @@ from dash import Input, Output, State, callback, dcc, html
 
 
 def create_sidebar():
+    """Function to create a side bar for the page"""
     dropdowns = [
           ("REGION", "region-dropdown", []),
         ("COUNTRY", "country-dropdown", []),
