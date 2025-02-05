@@ -9,11 +9,13 @@ An interactive dashboard built with Dash and Plotly for visualizing global heart
 heart-disease/
 ├── application.py          # Main application entry point
 ├── components/
-   
+
 │   ├── common/            # Shared components
 │   │   ├── filter_slider.py
 │   │   ├── plots.py
 │   │   └── year_slider.py
+|   ├── data
+|   |   ├── data.py        # side bar selector
 │   ├── tabs/              # Tab-specific components
 │   │   ├── introduction.py
 │   │   ├── world_map.py
