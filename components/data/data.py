@@ -2,34 +2,39 @@
 import logging
 import os
 from functools import lru_cache
+
 import pandas as pd
 from dash import Input, Output, callback
 
 logger = logging.getLogger(__name__)
+
 
 @lru_cache(maxsize=1)
 def load_data():
     """Load data with caching."""
     logger.debug("Cache info for load_data: %s", load_data.cache_info())
     data_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "heart_disease_data.csv"
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+        "data",
+        "heart_disease_data.csv",
     )
     df = pd.read_csv(data_path)
 
     # Pre-process data once during loading
-    df['Year'] = pd.to_numeric(df['Year'], downcast='integer')
+    df["Year"] = pd.to_numeric(df["Year"], downcast="integer")
 
     # Convert numeric columns to efficient types
-    for col in df.select_dtypes(include=['float64']).columns:
-        if col != 'WB_Income':  # Skip WB_Income as it contains mixed types
-            df[col] = pd.to_numeric(df[col], downcast='float')
+    for col in df.select_dtypes(include=["float64"]).columns:
+        if col != "WB_Income":  # Skip WB_Income as it contains mixed types
+            df[col] = pd.to_numeric(df[col], downcast="float")
 
     # Handle WB_Income column - convert NaN to string 'Unknown'
-    df['WB_Income'] = df['WB_Income'].fillna('Unknown')
-    df['WB_Income'] = df['WB_Income'].astype(str)
+    df["WB_Income"] = df["WB_Income"].fillna("Unknown")
+    df["WB_Income"] = df["WB_Income"].astype(str)
 
     logger.info("Loaded data shape: %s", df.shape)
     return df
+
 
 # Load data once at module level
 data = load_data()
@@ -40,11 +45,12 @@ UNIQUE_INCOMES = sorted(data["WB_Income"].unique())
 UNIQUE_ENTITIES = sorted(data["Entity"].unique())
 YEAR_RANGE = (int(data["Year"].min()), int(data["Year"].max()))
 
+
 @lru_cache(maxsize=128)
 def filter_data(year, regions=None, income=None):
     """Filter data with caching for common filter combinations."""
     logger.debug("Cache info for filter_data: %s", filter_data.cache_info())
-    filtered = data[data['Year'] == year].copy()
+    filtered = data[data["Year"] == year].copy()
 
     if regions and regions != ["All"]:
         filtered = filtered[filtered["region"].isin(regions)]
@@ -54,9 +60,9 @@ def filter_data(year, regions=None, income=None):
 
     return filtered
 
+
 @callback(Output("general-data", "data"), Input("year-slider", "value"))
 def year_filter(year: int):
-
     """Filter data by year."""
     if year is None:
         logger.debug("No year selected")
@@ -65,14 +71,15 @@ def year_filter(year: int):
     filtered_df = filter_data(year)
     return filtered_df.to_dict("records")
 
+
 @callback(
-    Output('geo-eco-data', 'data'),
-    Input('general-data', 'data'),
+    Output("geo-eco-data", "data"),
+    Input("general-data", "data"),
     # Input('metric-dropdown', 'value'),
-    Input('gender-dropdown', 'value'),
-    Input('region-dropdown', 'value'),
-    Input('income-dropdown', 'value'),
-    Input('top-filter-slider', 'value')
+    Input("gender-dropdown", "value"),
+    Input("region-dropdown", "value"),
+    Input("income-dropdown", "value"),
+    Input("top-filter-slider", "value"),
 )
 def geo_eco_data(data, metric, gender, region, income, top_n):
     """_summary_
@@ -113,10 +120,11 @@ def geo_eco_data(data, metric, gender, region, income, top_n):
         df = df.nlargest(int(top_n), float(metric))
     if gender is not None:
         col = metric_mapping.get(metric[0], {}).get(metric)
-        df = df[["Entity", "Year", "Code", col, 'gdp_pc','WB_Income','Population', 'region']].dropna(subset=[col])
+        df = df[
+            ["Entity", "Year", "Code", col, "gdp_pc", "WB_Income", "Population", "region"]
+        ].dropna(subset=[col])
 
     return df
-
 
 
 @callback(

@@ -1,12 +1,12 @@
 import logging
+from functools import lru_cache
 
 import dash_bootstrap_components as dbc
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from dash import  dcc, html
-from functools import lru_cache
+from dash import dcc, html
 
 from components.data.data import data  # Import the DataFrame directly
 
@@ -16,20 +16,18 @@ logger = logging.getLogger(__name__)
 COMMON_LAYOUT = {
     "paper_bgcolor": "rgba(0,0,0,0)",
     "plot_bgcolor": "rgba(0,0,0,0)",
-    "font": {'size': 12},
-    "showlegend": False
+    "font": {"size": 12},
+    "showlegend": False,
 }
 
-GRID_SETTINGS = {
-    "gridwidth": 1,
-    "gridcolor": 'rgba(128,128,128,0.1)',
-    "zeroline": False
-}
+GRID_SETTINGS = {"gridwidth": 1, "gridcolor": "rgba(128,128,128,0.1)", "zeroline": False}
+
 
 @lru_cache(maxsize=32)
 def get_title_text(metric):
     """Cache title text generation."""
-    return metric.replace('_', ' ').title()
+    return metric.replace("_", " ").title()
+
 
 def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5):
     """Create a scatter plot comparing two metrics with optional size and color encoding."""
@@ -40,10 +38,7 @@ def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5):
         size=size,
         color=hue,
         hover_name="Entity",
-        labels={
-            x_metric: get_title_text(x_metric),
-            y_metric: get_title_text(y_metric)
-        }
+        labels={x_metric: get_title_text(x_metric), y_metric: get_title_text(y_metric)},
     )
 
     layout = {
@@ -51,22 +46,23 @@ def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5):
         "margin": {"l": 60, "r": 30, "t": 50, "b": 50},
         "height": 300,
         "title": {
-            'text': f"{get_title_text(x_metric)} vs {get_title_text(y_metric)}",
-            'y': 1,
-            'x': 0.5,
-            'xanchor': 'center',
-            'yanchor': 'top',
-            'font': {'size': 14}
-        }
+            "text": f"{get_title_text(x_metric)} vs {get_title_text(y_metric)}",
+            "y": 1,
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "top",
+            "font": {"size": 14},
+        },
     }
 
     fig.update_layout(**layout)
-    fig.update_traces(marker=dict(size=8), selector=dict(mode='markers'))
+    fig.update_traces(marker=dict(size=8), selector=dict(mode="markers"))
 
     for axis in [fig.update_xaxes, fig.update_yaxes]:
         axis(**GRID_SETTINGS)
 
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
+
 
 def estimate_risk_factors(df, target_year):
     """Estimate risk factors for years other than 2019 using linear interpolation."""
@@ -220,11 +216,7 @@ def create_bar_plot(metric, data, top_n=5):
     df = data.nlargest(top_n, metric)
 
     fig = px.bar(
-        df,
-        x="Entity",
-        y=metric,
-        hover_name="Entity",
-        labels={metric: get_title_text(metric)}
+        df, x="Entity", y=metric, hover_name="Entity", labels={metric: get_title_text(metric)}
     )
 
     layout = {
@@ -233,13 +225,13 @@ def create_bar_plot(metric, data, top_n=5):
         "height": None,
         "coloraxis_showscale": False,
         "title": {
-            'text': f"Top {top_n} Countries by {get_title_text(metric)}",
-            'y': 0.95,
-            'x': 0.5,
-            'xanchor': 'center',
-            'yanchor': 'top',
-            'font': {'size': 14}
-        }
+            "text": f"Top {top_n} Countries by {get_title_text(metric)}",
+            "y": 0.95,
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "top",
+            "font": {"size": 14},
+        },
     }
 
     fig.update_layout(**layout)
@@ -248,20 +240,17 @@ def create_bar_plot(metric, data, top_n=5):
 
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
 
+
 def create_line_plot(metric, data, countries=None, top_n=5):
     """Create a line plot for a given metric over time by specified countries."""
-    filtered_data = data[data['Year'] >= 2000].copy()
+    filtered_data = data[data["Year"] >= 2000].copy()
 
     if countries is None:
         countries = data["Entity"].unique()[:top_n]
     filtered_data = filtered_data[filtered_data["Entity"].isin(countries)]
 
     fig = px.line(
-        filtered_data,
-        x="Year",
-        y=metric,
-        color="Entity",
-        labels={metric: get_title_text(metric)}
+        filtered_data, x="Year", y=metric, color="Entity", labels={metric: get_title_text(metric)}
     )
 
     layout = {
@@ -275,32 +264,29 @@ def create_line_plot(metric, data, countries=None, top_n=5):
             "y": 1,
             "xanchor": "left",
             "x": 0,
-            "font": {'size': 10},
+            "font": {"size": 10},
             # 'position':'left'
         },
         "title": {
-            'text': f"{get_title_text(metric)} Over Time",
-            'y': 0.95,
-            'x': 0.5,
-            'xanchor': 'center',
-            'yanchor': 'top',
-            'font': {'size': 14}
-        }
+            "text": f"{get_title_text(metric)} Over Time",
+            "y": 0.95,
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "top",
+            "font": {"size": 14},
+        },
     }
 
     fig.update_layout(**layout)
-    fig.update_traces(line={'width': 2})
+    fig.update_traces(line={"width": 2})
 
-    x_axis_settings = {
-        **GRID_SETTINGS,
-        "dtick": 5,
-        "tick0": 2000
-    }
+    x_axis_settings = {**GRID_SETTINGS, "dtick": 5, "tick0": 2000}
 
     fig.update_xaxes(**x_axis_settings)
     fig.update_yaxes(**GRID_SETTINGS)
 
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
+
 
 def create_chloropleth_map(filtered_data):
     """Create a choropleth map visualization from filtered data.
@@ -371,7 +357,9 @@ def create_geo_eco_plots():
         [
             dbc.Row(
                 [
-                    dbc.Col(create_scatter_plot("gdp_pc", "death_std", data), width=6, className="p-1"),
+                    dbc.Col(
+                        create_scatter_plot("gdp_pc", "death_std", data), width=6, className="p-1"
+                    ),
                     dbc.Col(create_bar_plot("life_expectancy", data), width=6, className="p-1"),
                 ],
                 className="g-0",
@@ -379,7 +367,9 @@ def create_geo_eco_plots():
             dbc.Row(
                 [
                     dbc.Col(create_line_plot("population", data), width=6, className="p-1"),
-                    dbc.Col(create_scatter_plot("f_deaths", "m_deaths", data), width=6, className="p-1"),
+                    dbc.Col(
+                        create_scatter_plot("f_deaths", "m_deaths", data), width=6, className="p-1"
+                    ),
                 ],
                 className="g-0",
             ),
