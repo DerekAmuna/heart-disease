@@ -20,11 +20,10 @@ def create_sidebar():
             "WORLD INCOME",
             "income-dropdown",
             [
-                {"label": "High", "value": "High"},
-                {"label": "Lower-middle", "value": "Lower-middle"},
-                {"label": "Lower", "value": "Lower"},
-                {"label": "Upper-middle", "value": "Upper-middle"},
-                {"label": "Upper", "value": "Upper"},
+                {"label": "High income", "value": "High income"},
+                {"label": "Lower middle income", "value": "Lower middle income"},
+                {"label": "Low income", "value": "Low income"},
+                {"label": "Upper middle income", "value": "Upper middle income"},
             ],
         ),
         (
