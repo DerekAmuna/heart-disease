@@ -1,6 +1,6 @@
 import pandas as pd
 
-loaded_data = pd.read_csv("/home/akogo/Desktop/heart-disease/data/heart_disease_data.csv")
+loaded_data = pd.read_csv("./data/heart_disease_data.csv")
 
 # removing leading and trailing whitespaces from column names
 loaded_data.columns = loaded_data.columns.str.strip()
@@ -46,12 +46,6 @@ def world_imcome_level_selector():
 def metric_selector():
     columns_to_show = ["obesity%", "population", "cvd_share"]
     return loaded_data.columns[columns_to_show]
-
-
-import matplotlib.pyplot as plt
-import pandas as pd
-
-# Load your dataset
 
 
 def gender_selector(gender):
