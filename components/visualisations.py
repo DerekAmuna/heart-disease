@@ -13,18 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None):
-    """Create a scatter plot comparing two metrics with optional size and color encoding.
-
-    Args:
-        x_metric (str): Metric for x-axis
-        y_metric (str): Metric for y-axis
-        data (pd.DataFrame): DataFrame containing the data
-        size (str, optional): Metric for point sizes
-        hue (str, optional): Metric for point colors
-
-    Returns:
-        plotly.graph_objects.Figure: The scatter plot figure
-    """
+    """Create a scatter plot comparing two metrics with optional size and color encoding."""
     fig = px.scatter(
         data_frame=data,
         x=x_metric,
@@ -32,8 +21,31 @@ def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None):
         size=size,
         color=hue,
         hover_data=["Entity", "Year"],
+        labels={
+            x_metric: x_metric.replace('_', ' ').title(),
+            y_metric: y_metric.replace('_', ' ').title()
+        }
     )
-    return fig
+
+    fig.update_layout(
+        margin={"l": 40, "r": 20, "t": 40, "b": 40},
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        height=350,
+        showlegend=False,
+        title={
+            'text': f"{x_metric.replace('_', ' ').title()} vs {y_metric.replace('_', ' ').title()}",
+            'y': 0.95,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'
+        }
+    )
+
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
+
+    return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
 
 
 def estimate_risk_factors(df, target_year):
@@ -246,47 +258,77 @@ def create_chloropleth_map(filtered_data):
     return fig
 
 
-def create_bar_plot(metric, top_n=10):
+def create_bar_plot(metric, data, top_n=10):
     """Create a bar plot for the top N countries by a given metric."""
     sorted_data = data.nlargest(top_n, metric)
     fig = px.bar(
         sorted_data,
         x="Entity",
         y=metric,
-        title=f"Top {top_n} Countries by {metric}",
+        title=f"Top {top_n} Countries by {metric.replace('_', ' ').title()}",
         color=metric,
         color_continuous_scale="Reds",
+        labels={metric: metric.replace('_', ' ').title()}
     )
 
     fig.update_layout(
-        margin={"l": 20, "r": 20, "t": 40, "b": 20},
+        margin={"l": 40, "r": 20, "t": 40, "b": 80},
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        height=None,
-        xaxis_tickangle=-45,
+        height=350,
+        showlegend=False,
+        title={
+            'y': 0.95,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'
+        }
     )
+
+    fig.update_xaxes(tickangle=-45, showgrid=False)
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
 
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
 
 
-def create_line_plot(metric, countries=None):
+def create_line_plot(metric, data, countries=None):
     """Create a line plot for a given metric over time by specified countries."""
     if countries is None:
-        countries = data["Entity"].unique()[:5]  # Default to top 5 countries
-
+        countries = data["Entity"].unique()[:5]
     filtered_data = data[data["Entity"].isin(countries)]
 
     fig = px.line(
-        filtered_data, x="Year", y=metric, color="Entity", title=f"{metric} Over Time by Country"
+        filtered_data, 
+        x="Year", 
+        y=metric, 
+        color="Entity", 
+        title=f"{metric.replace('_', ' ').title()} Over Time",
+        labels={metric: metric.replace('_', ' ').title()}
     )
 
     fig.update_layout(
-        margin={"l": 20, "r": 20, "t": 40, "b": 20},
+        margin={"l": 40, "r": 20, "t": 40, "b": 40},
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        height=None,
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        height=350,
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1
+        ),
+        title={
+            'y': 0.95,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'
+        }
     )
+
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(128,128,128,0.2)')
 
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
 
@@ -297,15 +339,15 @@ def create_geo_eco_plots():
         [
             dbc.Row(
                 [
-                    dbc.Col(create_scatter_plot("gdp_pc", "death_std"), width=6, className="p-1"),
-                    dbc.Col(create_bar_plot("life_expectancy"), width=6, className="p-1"),
+                    dbc.Col(create_scatter_plot("gdp_pc", "death_std", data), width=6, className="p-1"),
+                    dbc.Col(create_bar_plot("life_expectancy", data), width=6, className="p-1"),
                 ],
                 className="g-0",
             ),
             dbc.Row(
                 [
-                    dbc.Col(create_line_plot("population"), width=6, className="p-1"),
-                    dbc.Col(create_scatter_plot("f_deaths", "m_deaths"), width=6, className="p-1"),
+                    dbc.Col(create_line_plot("population", data), width=6, className="p-1"),
+                    dbc.Col(create_scatter_plot("f_deaths", "m_deaths", data), width=6, className="p-1"),
                 ],
                 className="g-0",
             ),

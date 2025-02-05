@@ -37,11 +37,12 @@ def year_filter(year: int):
     Input('income-dropdown', 'value'),
     Input('top-filter-slider', 'value')
 )
-def geo_eco_data(data, gender, region, income, top_n):
+def geo_eco_data(data, metric, gender, region, income, top_n):
     """_summary_
 
     Args:
         data (_type_): _description_
+        metric (_type_): _description_
         gender (_type_): _description_
         region (_type_): _description_
         income (_type_): _description_
@@ -64,8 +65,20 @@ def geo_eco_data(data, gender, region, income, top_n):
             "Death": f"{gender_prefix}deaths",
         },
     }
-    
+    if gender is None or gender or region is None or income is None:
+        return data
 
+    if region is not None:
+        df = data[data["region"] == region]
+    if income is not None:
+        df = df[df["income"] == income]
+    if top_n is not None:
+        df = df.nlargest(int(top_n), float(metric))
+    if gender is not None:
+        col = metric_mapping.get(metric[0], {}).get(metric)
+        df = df[["Entity", "Year", "Code", col, 'gdp_pc','WB_Income','Population', 'region']].dropna(subset=[col])
+
+    return df
 
 
 

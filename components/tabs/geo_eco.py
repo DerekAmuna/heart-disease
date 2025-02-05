@@ -8,9 +8,12 @@ from components.common.year_slider import create_year_slider
 def create_geo_eco_tab():
     return html.Div(
         [
+            # Add Store component for data
+            dcc.Store(id='general-data'),
             create_filter_slider(),
             html.Br(),
-            create_plots(),
+            # Create a container div for the plots with the ID that matches the callback
+            html.Div(id='4x4plots'),
             html.Br(),
             create_year_slider(),
         ]
