@@ -6,7 +6,7 @@ from components.common.year_slider import create_year_slider
 
 
 def create_trends_tab():
-    """Function to create layout and visualations in the trends tab""" 
+    """Function to create layout and visualations in the trends tab"""
     return html.Div(
         [
             # Add Store component for data

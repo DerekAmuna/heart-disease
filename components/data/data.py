@@ -1,33 +1,67 @@
-
 #! usr/bin/env python3
 import logging
 import os
-
+from functools import lru_cache
 import pandas as pd
 from dash import Input, Output, callback
 
 logger = logging.getLogger(__name__)
 
-data_path = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "heart_disease_data.csv"
-)
-data = pd.read_csv(data_path)
-logger.info("Loaded data shape: %s", data.shape)
+@lru_cache(maxsize=1)
+def load_data():
+    """Load data with caching."""
+    data_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "heart_disease_data.csv"
+    )
+    df = pd.read_csv(data_path)
+    
+    # Pre-process data once during loading
+    df['Year'] = pd.to_numeric(df['Year'], downcast='integer')
+    
+    # Convert numeric columns to efficient types
+    for col in df.select_dtypes(include=['float64']).columns:
+        if col != 'WB_Income':  # Skip WB_Income as it contains mixed types
+            df[col] = pd.to_numeric(df[col], downcast='float')
+    
+    # Handle WB_Income column - convert NaN to string 'Unknown'
+    df['WB_Income'] = df['WB_Income'].fillna('Unknown')
+    df['WB_Income'] = df['WB_Income'].astype(str)
+    
+    logger.info("Loaded data shape: %s", df.shape)
+    return df
 
+# Load data once at module level
+data = load_data()
+
+# Pre-calculate unique values for filters
+UNIQUE_REGIONS = sorted(data["region"].unique())
+UNIQUE_INCOMES = sorted(data["WB_Income"].unique())
+UNIQUE_ENTITIES = sorted(data["Entity"].unique())
+YEAR_RANGE = (int(data["Year"].min()), int(data["Year"].max()))
+
+@lru_cache(maxsize=128)
+def filter_data(year, regions=None, income=None):
+    """Filter data with caching for common filter combinations."""
+    filtered = data[data['Year'] == year].copy()
+    
+    if regions and regions != ["All"]:
+        filtered = filtered[filtered["region"].isin(regions)]
+    
+    if income and income != "All":
+        filtered = filtered[filtered["WB_Income"] == str(income)]
+    
+    return filtered
 
 @callback(Output("general-data", "data"), Input("year-slider", "value"))
 def year_filter(year: int):
    
     """Filter data by year."""
-    logger.debug("Year filter called with: %s", year)
-    #TODO: review unreachable
     if year is None:
         logger.debug("No year selected")
         return []
-    df = data.copy()
-    df = df[df["Year"] == year]
-    logger.debug("Year filtered data shape: %s", df.shape)
-    return df.to_dict("records")
+        
+    filtered_df = filter_data(year)
+    return filtered_df.to_dict("records")
 
 @callback(
     Output('geo-eco-data', 'data'),
@@ -72,7 +106,7 @@ def geo_eco_data(data, metric, gender, region, income, top_n):
     if region is not None:
         df = data[data["region"] == region]
     if income is not None:
-        df = df[df["income"] == income]
+        df = df[df["WB_Income"] == str(income)]
     if top_n is not None:
         df = df.nlargest(int(top_n), float(metric))
     if gender is not None:
@@ -91,20 +125,12 @@ def geo_eco_data(data, metric, gender, region, income, top_n):
 )
 def chloropleth_data(year_filtered_data, metric, gender):
     """Get data for chloropleth map."""
-    logger.debug("Chloropleth data called with: %s, %s", metric, gender)
-    logger.debug(
-        "Year filtered data: %s", len(year_filtered_data) if year_filtered_data else "None"
-    )
-
     if not year_filtered_data or not metric or not gender:
-        logger.debug("Missing required data")
         return []
 
     df = pd.DataFrame(year_filtered_data)
-    logger.debug("Received data shape: %s", df.shape)
-
-    needed = ["Entity", "Year", "Code"]
     gender_prefix = "f_" if gender == "Female" else "m_" if gender == "Male" else ""
+    
     metric_mapping = {
         "P": {
             "Prevalence Percent": f"{gender_prefix}prev%",
@@ -117,12 +143,10 @@ def chloropleth_data(year_filtered_data, metric, gender):
             "Death": f"{gender_prefix}deaths",
         },
     }
-
+    
     col = metric_mapping.get(metric[0], {}).get(metric)
-    logger.debug("Looking for column: %s", col)
-    if col is not None and col in df.columns:
-        df = df[needed + [col]].dropna(subset=[col])
-        logger.debug("Final data shape: %s", df.shape)
-        return df.to_dict("records")
-    logger.warning("Column not found or invalid")
-    return []
+    if not col:
+        return []
+        
+    needed_cols = ["Entity", "Year", "Code", col]
+    return df[needed_cols].to_dict("records")
