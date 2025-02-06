@@ -9,12 +9,15 @@ An interactive dashboard built with Dash and Plotly for visualizing global heart
 heart-disease/
 ├── application.py          # Main application entry point
 ├── components/
-   
+
 │   ├── common/            # Shared components
 │   │   ├── filter_slider.py
 │   │   ├── plots.py
 │   │   └── year_slider.py
+|   ├── data
+|   |   ├── data.py        # side bar selector
 │   ├── tabs/              # Tab-specific components
+│   │   ├── introduction.py
 │   │   ├── world_map.py
 │   │   ├── geo_eco.py
 │   │   ├── healthcare.py
@@ -42,6 +45,14 @@ heart-disease/
 - Callback structure:
   - `toggle_animation`: Controls play/pause state
   - `update_year_on_interval`: Handles year increments
+
+#### 3. Filter by Top Slider (components/common/top_slider.py)
+
+- Dynamic range based on data
+- Configurable top N filtering
+- Smooth sliding interaction:
+  - Handles real-time data reduction without full recomputation
+  - Supports flexible top N selection (e.g., top 10, top 50 entities)
 
 #### 3. Choropleth Map (`components/tabs/world_map.py`)
 - Clean interface without legends/menus
