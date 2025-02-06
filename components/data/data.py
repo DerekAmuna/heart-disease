@@ -5,6 +5,7 @@ from functools import lru_cache
 
 import pandas as pd
 from dash import Input, Output, callback
+from components.common.gender_metric_selector import get_metric_column
 
 logger = logging.getLogger(__name__)
 
@@ -96,19 +97,19 @@ def geo_eco_data(data, metric, gender, region, income, top_n):
         _type_: _description_
     """
     logger.debug("Geo eco data called with: %s, %s, %s, %s", gender, region, income, top_n)
-    gender_prefix = "f_" if gender == "Female" else "m_" if gender == "Male" else ""
-    metric_mapping = {
-        "P": {
-            "Prevalence Percent": f"{gender_prefix}prev%",
-            "Prevalence Rate": f"{gender_prefix}prev_rate",
-            "Prevalence": f"{gender_prefix}prev",
-        },
-        "D": {
-            "Death Percent": f"{gender_prefix}deaths%",
-            "Death Rate": f"{gender_prefix}death_rate",
-            "Death": f"{gender_prefix}deaths",
-        },
-    }
+    # gender_prefix = "f_" if gender == "Female" else "m_" if gender == "Male" else ""
+    # metric_mapping = {
+    #     "P": {
+    #         "Prevalence Percent": f"{gender_prefix}prev%",
+    #         "Prevalence Rate": f"{gender_prefix}prev_rate",
+    #         "Prevalence": f"{gender_prefix}prev",
+    #     },
+    #     "D": {
+    #         "Death Percent": f"{gender_prefix}deaths%",
+    #         "Death Rate": f"{gender_prefix}death_rate",
+    #         "Death": f"{gender_prefix}deaths",
+    #     },
+    # }
     if gender is None or gender or region is None or income is None:
         return data
 
@@ -119,7 +120,7 @@ def geo_eco_data(data, metric, gender, region, income, top_n):
     if top_n is not None:
         df = df.nlargest(int(top_n), float(metric))
     if gender is not None:
-        col = metric_mapping.get(metric[0], {}).get(metric)
+        col = get_metric_column(gender,metric)
         df = df[
             ["Entity", "Year", "Code", col, "gdp_pc", "WB_Income", "Population", "region"]
         ].dropna(subset=[col])

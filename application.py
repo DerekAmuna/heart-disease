@@ -51,8 +51,8 @@ navbar = dbc.Navbar(
     ),
     color="primary",
     dark=True,
-     fixed="top",
-    className="mb-5", 
+    fixed="top",
+    className="mb-5",
 )
 
 # Main Layout
@@ -60,7 +60,7 @@ app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=False),
         navbar,
-        dcc.Store(id='general-data',data=[]),
+        dcc.Store(id="general-data", data=[]),
         dbc.Row(
             [
                 # Sidebar

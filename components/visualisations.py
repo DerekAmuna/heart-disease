@@ -7,7 +7,11 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from dash import dcc, html
+from scipy import stats
+from scipy.stats import t
 
+from components.common import gender_metric_selector
+from components.common.gender_metric_selector import get_metric_column
 from components.data.data import data  # Import the DataFrame directly
 
 logger = logging.getLogger(__name__)
@@ -31,8 +35,16 @@ def get_title_text(metric):
 
 def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5):
     """Create a scatter plot comparing two metrics with optional size and color encoding."""
+    plot_data = data.copy()
+
+    # Handle NaN values in size column if specified
+    if size is not None:
+        # Fill NaN values with the minimum non-NaN value
+        min_size = plot_data[size].min()
+        plot_data[size] = plot_data[size].fillna(min_size)
+
     fig = px.scatter(
-        data_frame=data,
+        data_frame=plot_data,
         x=x_metric,
         y=y_metric,
         size=size,
@@ -117,22 +129,13 @@ def format_value(value, is_percent=True, is_estimate=False):
 
 def create_tooltip(country_code, metric, gender, selected_year=None):
     """Create a tooltip with time series plot and risk factors for a country."""
-    gender_prefix = "f_" if gender == "Female" else "m_" if gender == "Male" else ""
-    metric_mapping = {
-        "P": {
-            "Prevalence Percent": f"{gender_prefix}prev%",
-            "Prevalence Rate": f"{gender_prefix}prev_rate",
-            "Prevalence": f"{gender_prefix}prev",
-        },
-        "D": {
-            "Death Percent": f"{gender_prefix}deaths%",
-            "Death Rate": f"{gender_prefix}death_rate",
-            "Death": f"{gender_prefix}deaths",
-        },
-    }
-    col = metric_mapping.get(metric[0], {}).get(metric)
-    if col is None:
-        return go.Figure(), {}
+    country_data = data[data["Code"] == country_code]
+    if country_data.empty:
+        return "No data available"
+
+    col = get_metric_column(gender, metric)
+    if not col:
+        return "Invalid metric"
 
     columns_needed = [
         "Year",
@@ -147,7 +150,7 @@ def create_tooltip(country_code, metric, gender, selected_year=None):
     if col != "m_death_rate":
         columns_needed.append("m_death_rate")
 
-    df = data[data["Code"] == country_code][columns_needed].copy()
+    df = country_data[columns_needed].copy()
     if df.empty:
         return go.Figure(), {}
 
@@ -211,12 +214,24 @@ def create_tooltip(country_code, metric, gender, selected_year=None):
     return fig, risk_factors
 
 
-def create_bar_plot(metric, data, top_n=5):
-    """Create a bar plot for a given metric."""
+def create_bar_plot(metric, data, top_n=5, color=None):
+    """Create a bar plot for a given metric.
+
+    Args:
+        metric (str): Column to plot
+        data (pd.DataFrame): Data to plot
+        top_n (int, optional): Number of top entries to show. Defaults to 5.
+        color (str, optional): Column to use for color coding. Defaults to None.
+    """
     df = data.nlargest(top_n, metric)
 
     fig = px.bar(
-        df, x="Entity", y=metric, hover_name="Entity", labels={metric: get_title_text(metric)}
+        df,
+        x="Entity",
+        y=metric,
+        hover_name="Entity",
+        labels={metric: get_title_text(metric)},
+        color=color,
     )
 
     layout = {
@@ -351,28 +366,206 @@ def create_chloropleth_map(filtered_data):
     return fig
 
 
-def create_geo_eco_plots():
-    """Create geographical and economic plots in a layout."""
-    return html.Div(
-        [
-            dbc.Row(
-                [
-                    dbc.Col(
-                        create_scatter_plot("gdp_pc", "death_std", data), width=6, className="p-1"
-                    ),
-                    dbc.Col(create_bar_plot("life_expectancy", data), width=6, className="p-1"),
-                ],
-                className="g-0",
-            ),
-            dbc.Row(
-                [
-                    dbc.Col(create_line_plot("population", data), width=6, className="p-1"),
-                    dbc.Col(
-                        create_scatter_plot("f_deaths", "m_deaths", data), width=6, className="p-1"
-                    ),
-                ],
-                className="g-0",
-            ),
-        ],
-        style={"margin": "0", "height": "calc(90vh - 150px)"},
+def create_sankey_diagram(data, metric, gender):
+    """Create a Sankey diagram showing flow between Region -> Income -> Metric Ranges."""
+    metric = get_metric_column(gender, metric)
+    df = data[data["Year"] == 2019]
+    df = df.dropna(subset=[metric, "region", "WB_Income"])
+
+    if df.empty:
+        return dcc.Graph()
+
+    try:
+        labels = [f"{get_title_text(metric)} ({i}%)" for i in ["0-25", "25-50", "50-75", "75-100"]]
+        df["metric_range"] = pd.qcut(df[metric], q=4, labels=labels, duplicates="drop")
+    except ValueError:
+        bins = [
+            df[metric].min(),
+            df[metric].mean() / 2,
+            df[metric].mean(),
+            df[metric].mean() * 1.5,
+            df[metric].max(),
+        ]
+        labels = [
+            f"{get_title_text(metric)} (Low)",
+            f"{get_title_text(metric)} (Medium-Low)",
+            f"{get_title_text(metric)} (Medium-High)",
+            f"{get_title_text(metric)} (High)",
+        ]
+        df["metric_range"] = pd.cut(df[metric], bins=bins, labels=labels, duplicates="drop")
+
+    regions = df["region"].unique().tolist()
+    incomes = df["WB_Income"].unique().tolist()
+    ranges = df["metric_range"].unique().tolist()
+    nodes = regions + incomes + ranges
+    sources, targets, values = [], [], []
+    link_colors = []
+
+    for region in regions:
+        region_idx = nodes.index(region)
+        region_data = df[df["region"] == region]
+        for income in incomes:
+            income_idx = nodes.index(income)
+            income_data = region_data[region_data["WB_Income"] == income]
+            if not income_data.empty:
+                sources.append(region_idx)
+                targets.append(income_idx)
+                values.append(len(income_data))
+                link_colors.append("rgba(31, 119, 180, 0.4)")  # Light blue
+
+    for income in incomes:
+        income_idx = nodes.index(income)
+        income_data = df[df["WB_Income"] == income]
+        for range_val in ranges:
+            range_idx = nodes.index(range_val)
+            range_data = income_data[income_data["metric_range"] == range_val]
+            if not range_data.empty:
+                sources.append(income_idx)
+                targets.append(range_idx)
+                values.append(len(range_data))
+                link_colors.append("rgba(44, 160, 44, 0.4)")  # Light green
+
+    node_colors = (
+        ["#1f77b4"] * len(regions) + ["#2ca02c"] * len(incomes) + ["#ff7f0e"] * len(ranges)
     )
+
+    fig = go.Figure(
+        data=[
+            go.Sankey(
+                node=dict(
+                    pad=15,
+                    thickness=20,
+                    line=dict(color="black", width=0.5),
+                    label=nodes,
+                    color=node_colors,
+                ),
+                link=dict(source=sources, target=targets, value=values, color=link_colors),
+            )
+        ]
+    )
+
+    fig.update_layout(
+        **COMMON_LAYOUT,
+        height=400,
+        title=dict(
+            text=f"Distribution of {get_title_text(metric)} across Regions and Income Groups",
+            y=0.95,
+            x=0.5,
+            xanchor="center",
+            yanchor="top",
+            font=dict(size=14),
+        ),
+    )
+
+    return dcc.Graph(figure=fig, config={"displayModeBar": False})
+
+
+def create_trend_plot(data, metric, year, gender="Both"):
+    """Create a line plot with LOWESS trend and projection to 2030."""
+    metric_col = get_metric_column(gender, metric)
+    if not metric_col:
+        return dcc.Graph()
+
+    df = data.copy()
+    df = df.dropna(subset=[metric_col, "Year"])
+    yearly_means = df.groupby("Year")[metric_col].mean().reset_index()
+
+    from statsmodels.nonparametric.smoothers_lowess import lowess
+
+    historical_lowess = lowess(
+        yearly_means[metric_col], yearly_means["Year"], frac=0.5, it=1, return_sorted=True
+    )
+
+    future_years = np.linspace(yearly_means["Year"].max(), 2030, num=20)
+    last_points = historical_lowess[-10:]
+    last_slope = np.polyfit(last_points[:, 0], last_points[:, 1], deg=1)[0]
+    projection = (future_years - yearly_means["Year"].max()) * last_slope + historical_lowess[
+        -1, 1
+    ]
+
+    std_dev = np.std(
+        yearly_means[metric_col]
+        - np.interp(yearly_means["Year"], historical_lowess[:, 0], historical_lowess[:, 1])
+    )
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatter(
+            x=yearly_means["Year"],
+            y=yearly_means[metric_col],
+            mode="markers",
+            name="Historical Data",
+            marker=dict(color="#1f77b4", size=8),
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=historical_lowess[:, 0],
+            y=historical_lowess[:, 1],
+            mode="lines",
+            name="LOWESS Trend",
+            line=dict(color="#2ca02c", width=2),
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=future_years,
+            y=projection,
+            mode="lines",
+            name="Projection to 2030",
+            line=dict(color="#ff7f0e", dash="dash", width=2),
+        )
+    )
+
+    for data, color, name in [
+        (historical_lowess, "rgba(44, 160, 44, 0.2)", "95% Confidence Band"),
+        (
+            np.column_stack((future_years, projection)),
+            "rgba(255, 127, 14, 0.2)",
+            "Projection Uncertainty",
+        ),
+    ]:
+        fig.add_trace(
+            go.Scatter(
+                x=data[:, 0],
+                y=data[:, 1] + 2 * std_dev,
+                mode="lines",
+                line=dict(width=0),
+                showlegend=False,
+                hoverinfo="skip",
+            )
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=data[:, 0],
+                y=data[:, 1] - 2 * std_dev,
+                mode="lines",
+                line=dict(width=0),
+                fill="tonexty",
+                fillcolor=color,
+                name=name,
+                hoverinfo="skip",
+            )
+        )
+
+    fig.add_vline(x=year, line_dash="dot", line_color="gray", opacity=0.5)
+
+    layout = {
+        **COMMON_LAYOUT,
+        "title": dict(
+            text=f"Trend Analysis: {get_title_text(metric)} ({gender})",
+            y=0.95,
+            x=0.5,
+            xanchor="center",
+            yanchor="top",
+        ),
+        "xaxis": dict(title="Year", range=[yearly_means["Year"].min() - 1, 2031]),
+        "yaxis": dict(title=get_title_text(metric)),
+        "hovermode": "x unified",
+    }
+
+    fig.update_layout(layout)
+    return dcc.Graph(figure=fig, config={"displayModeBar": False})
