@@ -4,10 +4,8 @@ from components.common.filter_slider import create_filter_slider
 from components.common.plots import create_plots
 from components.common.year_slider import create_year_slider
 
-
+"""Function to create layout and visualations in the trends tab"""
 def create_trends_tab():
-     """Function to create layout and visualations in the trends tab"""
-
     return html.Div(
         [
             # Add Store component for data
