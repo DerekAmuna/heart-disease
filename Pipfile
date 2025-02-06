@@ -12,14 +12,14 @@ scipy = "*"
 dash = "*"
 dash-bootstrap-components = "*"
 gunicorn = "*"
-
+scikit-learn = "*"
+statsmodels = "*"
 
 [dev-packages]
 pre-commit = "*"
 black = "*"
 pylint = "*"
 ggshield = "*"
-
 
 [requires]
 python_version = "3.12"

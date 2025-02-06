@@ -1,7 +1,9 @@
-from dash import html
 import dash_bootstrap_components as dbc
+from dash import html
+
 
 def create_introduction_tab():
+
     return dbc.Container([
         # Main Title
         dbc.Row([
@@ -121,3 +123,4 @@ def create_introduction_tab():
             ])
         ])
     ], fluid=True)
+

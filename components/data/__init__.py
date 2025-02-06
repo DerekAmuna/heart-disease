@@ -1,2 +1,3 @@
-from .data import year_filter, chloropleth_data
+from .data import chloropleth_data, year_filter
+
 #

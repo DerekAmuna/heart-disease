@@ -4,7 +4,7 @@ from dash import Input, Output, State, callback, dcc, html
 
 def create_year_slider(min_year=1950, max_year=2022, default=2021):
     """Generate marks for the slider using a dictionary comprehension"""
-    
+
     marks = {str(year): str(year) for year in range(min_year, max_year + 1, 5)}
 
     return dbc.Container(
@@ -61,7 +61,7 @@ def create_year_slider(min_year=1950, max_year=2022, default=2021):
     State("animation-interval", "disabled"),
 )
 def toggle_animation(n_clicks, disabled):
-    """Function to add a toggle animation the sidebar """
+    """Function to add a toggle animation the sidebar"""
     if n_clicks:
         return not disabled, "⏸️" if disabled else "▶️"
     return True, "▶️"

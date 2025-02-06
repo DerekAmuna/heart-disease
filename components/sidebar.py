@@ -8,9 +8,8 @@ from dash import Input, Output, State, callback, dcc, html
 def create_sidebar():
     """Function to create a side bar for the page"""
     dropdowns = [
-          ("REGION", "region-dropdown", []),
+        ("REGION", "region-dropdown", []),
         ("COUNTRY", "country-dropdown", []),
-      
         (
             "GENDER",
             "gender-dropdown",
@@ -113,22 +112,19 @@ def create_sidebar():
 )
 def toggle_sidebar(n_clicks, is_open):
     sidebar_style = {
-            "padding": "1rem",
-            "background-color": "#f8f9fa",
-            "height": "100vh",
-            "width": "250px",
-            "position": "fixed",
-            "z-index": "1",  # Ensure sidebar stays behind the button
-            "transition": "all 0.3s",
-            "box-shadow": "3px 0 10px rgba(0,0,0,0.1)",
-            "top": "90px",  # Add top offset equal to navbar height
-        }
-
+        "padding": "1rem",
+        "background-color": "#f8f9fa",
+        "height": "100vh",
+        "width": "250px",
+        "position": "fixed",
+        "z-index": "1",  # Ensure sidebar stays behind the button
+        "transition": "all 0.3s",
+        "box-shadow": "3px 0 10px rgba(0,0,0,0.1)",
+        "top": "90px",  # Add top offset equal to navbar height
+    }
 
     width = "60px" if is_open else "250px"
     return not is_open, {**sidebar_style, "width": width}
-
-
 
 
 @callback(
