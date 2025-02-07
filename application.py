@@ -8,6 +8,7 @@ from dash.dependencies import Input, Output, State
 from flask import Flask
 
 import components.data  # Import data module to register callbacks
+from components.data.data import init_cache
 from components.sidebar import create_sidebar
 from components.tabs.geo_eco import create_geo_eco_tab
 from components.tabs.healthcare import create_healthcare_tab
@@ -24,12 +25,8 @@ logging.basicConfig(
 )
 
 server = Flask(__name__)
-app = dash.Dash(
-    __name__,
-    server=server,
-    external_stylesheets=[dbc.themes.ZEPHYR, FA],
-    suppress_callback_exceptions=True,
-)
+app = dash.Dash(__name__, server=server, external_stylesheets=[dbc.themes.ZEPHYR, FA], suppress_callback_exceptions=True)
+init_cache(app.server)
 application = app.server
 
 

@@ -2,6 +2,18 @@
 import logging
 import os
 from functools import lru_cache
+import functools
+from flask import current_app
+from flask_caching import Cache
+
+cache = Cache()
+
+def init_cache(app):
+    cache.init_app(app, config={
+        'CACHE_TYPE': 'RedisCache',
+        'CACHE_REDIS_URL': os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+        'CACHE_DEFAULT_TIMEOUT': 86400
+    })
 
 import pandas as pd
 from dash import Input, Output, callback
@@ -10,7 +22,7 @@ from components.common.gender_metric_selector import get_metric_column
 logger = logging.getLogger(__name__)
 
 
-@lru_cache(maxsize=1)
+@cache.memoize(timeout=3600)
 def load_data():
     """Load data with caching."""
     logger.debug("Cache info for load_data: %s", load_data.cache_info())
@@ -38,16 +50,16 @@ def load_data():
 
 
 # Load data once at module level
-data = load_data()
+if current_app:
+    data = load_data()
+    UNIQUE_REGIONS = sorted(data["region"].unique())
+    UNIQUE_INCOMES = sorted(data["WB_Income"].unique())
+    UNIQUE_ENTITIES = sorted(data["Entity"].unique())
+    YEAR_RANGE = (int(data["Year"].min()), int(data["Year"].max()))
 
-# Pre-calculate unique values for filters
-UNIQUE_REGIONS = sorted(data["region"].unique())
-UNIQUE_INCOMES = sorted(data["WB_Income"].unique())
-UNIQUE_ENTITIES = sorted(data["Entity"].unique())
-YEAR_RANGE = (int(data["Year"].min()), int(data["Year"].max()))
 
-
-@lru_cache(maxsize=128)
+@cache.memoize(timeout=3600)
+@functools.lru_cache(maxsize=128)
 def filter_data(year, regions=None, income=None):
     """Filter data with caching for common filter combinations."""
     logger.debug("Cache info for filter_data: %s", filter_data.cache_info())
@@ -82,6 +94,7 @@ def year_filter(year: int):
     Input("income-dropdown", "value"),
     Input("top-filter-slider", "value"),
 )
+@functools.lru_cache(maxsize=256)
 def geo_eco_data(data, metric, gender, region, income, top_n):
     """_summary_
 
