@@ -12,7 +12,7 @@ from scipy.stats import t
 
 from components.common import gender_metric_selector
 from components.common.gender_metric_selector import get_metric_column
-from components.data.data import data  # Import the DataFrame directly
+from components.data.data import data, UNIQUE_REGIONS, UNIQUE_INCOMES  # Import the DataFrame directly
 
 from statsmodels.nonparametric.smoothers_lowess import lowess
 
@@ -215,26 +215,24 @@ def create_tooltip(country_name, metric, gender, age, selected_year=None):
     return fig, risk_factors
 
 
-def create_no_data_figure(message):
-    """Create an empty figure with a message for no data cases."""
+def create_no_data_figure(message="No data available"):
+    """Create an empty figure with a message when no data is available."""
     fig = go.Figure()
     fig.add_annotation(
         text=message,
-        xref="paper",
-        yref="paper",
-        x=0.5,
-        y=0.5,
+        xref="paper", yref="paper",
+        x=0.5, y=0.5,
         showarrow=False,
-        font=dict(size=14),
+        font=dict(size=14)
     )
+    fig.update_xaxes(showgrid=False, showticklabels=False)
+    fig.update_yaxes(showgrid=False, showticklabels=False)
     fig.update_layout(
-        xaxis=dict(showgrid=False, showticklabels=False),
-        yaxis=dict(showgrid=False, showticklabels=False),
         height=200,
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
     )
-    return fig
+    return dcc.Graph(figure=fig, config={"displayModeBar": False})
 
 
 def create_bar_plot(metric, data, top_n=5, color=None):
@@ -428,12 +426,17 @@ def create_chloropleth_map(filtered_data, metric, gender="Both"):
 
 def create_sankey_diagram(data, metric, gender):
     """Create a Sankey diagram showing flow between Region -> Income -> Metric Ranges."""
+    if not data:
+        return create_no_data_figure("No data available")
+
     metric = get_metric_column(gender, metric)
-    df = data[data["Year"] == 2019]
+    df = pd.DataFrame(data)
+    df = df[df["Year"] == 2019]
     df = df.dropna(subset=[metric, "region", "WB_Income"])
 
     if df.empty:
-        return dcc.Graph()
+        return create_no_data_figure("No data available")
+
 
     try:
         labels = [f"{get_title_text(metric)} ({i}%)" for i in ["0-25", "25-50", "50-75", "75-100"]]
@@ -505,7 +508,7 @@ def create_sankey_diagram(data, metric, gender):
     )
 
     fig.update_layout(
-        **BASE_LAYOUT,
+        **COMMON_LAYOUT,
         height=400,
         title=dict(
             text=f"Distribution of {get_title_text(metric)} across Regions and Income Groups",
@@ -518,7 +521,6 @@ def create_sankey_diagram(data, metric, gender):
     )
 
     return dcc.Graph(figure=fig, config={"displayModeBar": False})
-
 
 def create_trend_plot(data, metric, year, gender):
     """Create a trend plot showing the metric over time for each cause."""
@@ -535,13 +537,11 @@ def create_trend_plot(data, metric, year, gender):
     # Color mapping for causes
     colors = {
         "Cardiovascular diseases": "#1f77b4",
-        "Cancer": "#ff7f0e",
-        "Respiratory diseases": "#2ca02c",
-        "Diabetes": "#d62728",
-        "Liver diseases": "#9467bd",
-        "Digestive diseases": "#8c564b",
-        "Lower respiratory infections": "#e377c2",
-        "Alzheimer's disease": "#7f7f7f",
+        "Ischemic heart disease": "#ff7f0e",
+        "Lower extremity peripheral arterial disease": "#2ca02c",
+        "Other": "#d62728",
+        "Pulmonary Arterial Hypertension": "#9467bd",
+        
     }
 
     # Add traces for each cause

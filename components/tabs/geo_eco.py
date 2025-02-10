@@ -1,5 +1,3 @@
-
-
 import dash_bootstrap_components as dbc
 from dash import Input, Output, callback, dcc, html
 import pandas as pd
@@ -75,54 +73,60 @@ def create_geo_eco_plots(data, metric, gender, top_n, year):
     if not col or col not in df.columns:
         return html.Div("Selected metric data not available", style={"margin": "20px"})
 
-
+    # Create plots
     return dbc.Container([
-    dbc.Row([
-        dbc.Col(
-            dbc.Card([
-                dbc.CardHeader(html.H4("GDP vs Death Rate", className="text-center")),
-                dbc.CardBody(
-                    create_scatter_plot("gdp_pc", col, df[df['Year']==year].dropna(subset=["gdp_pc", col]), hue="WB_Income", top_n=top_n),
-                    style={"height": "350px", "overflow": "auto"}
-                ),
-            ], className="mb-3 shadow-sm"),
-            xs=12, sm=12, md=6, lg=6, xl=6
-        ),
-        dbc.Col(
-            dbc.Card([
-                dbc.CardHeader(html.H4("Population Growth", className="text-center")),
-                dbc.CardBody(
-                    create_line_plot("Population", df, top_n=top_n, n_metric=col),
-                    style={"height": "350px", "overflow": "auto"}
-                ),
-            ], className="mb-3 shadow-sm"),
-            xs=12, sm=12, md=6, lg=6, xl=6
-        )
-    ], className="mb-3"),
-    dbc.Row([
-        dbc.Col(
-            dbc.Card([
-                dbc.CardHeader(html.H4(f"{metric} Distribution", className="text-center")),
-                dbc.CardBody(
-                    create_bar_plot(col, df[df['Year']==year].dropna(subset=[col]), top_n=top_n),
-                    style={"height": "350px", "overflow": "auto"}
-                ),
-            ], className="mb-3 shadow-sm"),
-            xs=12, sm=12, md=6, lg=6, xl=6
-        ),
-        dbc.Col(
-            dbc.Card([
-                dbc.CardHeader(html.H4("Male vs Female Deaths", className="text-center")),
-                dbc.CardBody(
-                    create_scatter_plot("f_deaths", "m_deaths", df),
-                    style={"height": "350px", "overflow": "auto"}
-                ),
-            ], className="mb-3 shadow-sm"),
-            xs=12, sm=12, md=6, lg=6, xl=6
-        )
-    ])
-], fluid=True, style={
-    "backgroundColor": "#f8f9fa",
-    "borderRadius": "8px",
-    "padding": "15px",
-})
+        dbc.Row([
+            dbc.Col(
+                dbc.Card([
+                    dbc.CardHeader(html.H4("GDP vs Death Rate", className="text-center")),
+                    dbc.CardBody(
+                        create_scatter_plot("gdp_pc", col, df[df['Year']==year].dropna(subset=["gdp_pc", col]), hue="WB_Income", top_n=top_n),
+                        style={"height": "350px", "overflow": "auto"}
+                    ),
+                ], className="mb-3 shadow-sm"),
+                xs=12, sm=12, md=6, lg=6, xl=6
+            ),
+            dbc.Col(
+                dbc.Card([
+                    dbc.CardHeader(html.H4("Population Growth", className="text-center")),
+                    dbc.CardBody(
+                        create_line_plot("Population", df, top_n=top_n, n_metric=col),
+                        style={"height": "350px", "overflow": "auto"}
+                    ),
+                ], className="mb-3 shadow-sm"),
+                xs=12, sm=12, md=6, lg=6, xl=6
+            )
+        ], className="mb-3"),
+        dbc.Row([
+            dbc.Col(
+                dbc.Card([
+                    dbc.CardHeader(html.H4(f"{metric} Distribution", className="text-center")),
+                    dbc.CardBody(
+                        create_bar_plot(col, df[df['Year']==year].dropna(subset=[col]), top_n=top_n),
+                        style={"height": "350px", "overflow": "auto"}
+                    ),
+                ], className="mb-3 shadow-sm"),
+                xs=12, sm=12, md=6, lg=6, xl=6
+            ),
+            dbc.Col(
+                dbc.Card([
+                    dbc.CardHeader(html.H4("Male vs Female Deaths", className="text-center")),
+                    dbc.CardBody(
+                        create_scatter_plot(
+                            get_metric_column("Female", metric), 
+                            get_metric_column("Male", metric), 
+                            df[df['Year']==year],
+                            hue="WB_Income",
+                            top_n=top_n
+                        ),
+                        style={"height": "350px", "overflow": "auto"}
+                    ),
+                ], className="mb-3 shadow-sm"),
+                xs=12, sm=12, md=6, lg=6, xl=6
+            )
+        ])
+    ], fluid=True, style={
+        "backgroundColor": "#f8f9fa",
+        "borderRadius": "8px",
+        "padding": "15px",
+    })
