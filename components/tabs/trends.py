@@ -62,7 +62,7 @@ def create_trends_tab():
     """Function to create layout and visualations in the trends tab"""
     return html.Div(
         [
-            dcc.Store(id="general-data"),
+            dcc.Store(id="trend-data"),
             create_filter_slider(),
             html.Br(),
             html.Div(id="trend-plots"),
@@ -74,7 +74,7 @@ def create_trends_tab():
 
 @callback(
     Output("trend-plots", "children"),
-    Input("trends-data", "data"),
+    Input("trend-data", "data"),
     Input("metric-dropdown", "value"),
     Input("gender-dropdown", "value"),
     Input("income-dropdown", "value"),
