@@ -1,59 +1,52 @@
+
+
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, callback, dcc, html
 
-
 def create_year_slider(min_year=1950, max_year=2022, default=2021):
     """Generate marks for the slider using a dictionary comprehension"""
+    # Responsive interval based on screen size
+    marks = {
+        str(year): str(year) for year in range(min_year, max_year + 1, 10)  # Increased interval for smaller screens
+    }
+    
+    return dbc.Container([
+        dbc.Row([
+            dbc.Col([
+                html.Button(
+                    "▶️",
+                    id="play-button",
+                    n_clicks=0,
+                    style={
+                        "border": "none",
+                        "background": "none",
+                        "font-size": "20px",
+                        "cursor": "pointer",
+                    },
+                ),
+                dcc.Interval(
+                    id="animation-interval",
+                    interval=1000,  # 1 second between frames
+                    disabled=True,
+                ),
+            ], width=1),
+            dbc.Col([
+                dbc.Label("Select Year"),
+                dcc.Slider(
+                    id="year-slider",
+                    min=min_year,
+                    max=max_year,
+                    value=default,
+                    marks=marks,
+                    step=1,  # Larger step for smaller screens
+                    tooltip={"placement": "bottom", "always_visible": True},
+                    included=False,
+                ),
+            ], width=11),
+        ])
+    ])
 
-    marks = {str(year): str(year) for year in range(min_year, max_year + 1, 5)}
-
-    return dbc.Container(
-        [
-            dbc.Row(
-                [
-                    dbc.Col(
-                        [
-                            html.Button(
-                                "▶️",
-                                id="play-button",
-                                n_clicks=0,
-                                style={
-                                    "border": "none",
-                                    "background": "none",
-                                    "font-size": "20px",
-                                    "cursor": "pointer",
-                                },
-                            ),
-                            dcc.Interval(
-                                id="animation-interval",
-                                interval=1000,  # 1 second between frames increase if loading to chloropleth is intensive
-                                disabled=True,
-                            ),
-                        ],
-                        width=1,
-                    ),
-                    dbc.Col(
-                        [
-                            dbc.Label("Select Year"),
-                            dcc.Slider(
-                                id="year-slider",
-                                min=min_year,
-                                max=max_year,
-                                value=default,
-                                marks=marks,
-                                step=1,
-                                tooltip={"placement": "bottom", "always_visible": True},
-                                included=False,
-                            ),
-                        ],
-                        width=11,
-                    ),
-                ]
-            )
-        ]
-    )
-
-
+# Existing callback functions remain the same
 @callback(
     Output("animation-interval", "disabled"),
     Output("play-button", "children"),
@@ -66,7 +59,6 @@ def toggle_animation(n_clicks, disabled):
         return not disabled, "⏸️" if disabled else "▶️"
     return True, "▶️"
 
-
 @callback(
     Output("year-slider", "value"),
     Input("animation-interval", "n_intervals"),
@@ -75,9 +67,8 @@ def toggle_animation(n_clicks, disabled):
     State("year-slider", "max"),
 )
 def update_year_on_interval(n_intervals, current_year, min_year, max_year):
-    """Funtion to update the year slider"""
+    """Function to update the year slider"""
     if current_year is None:
         return min_year
-
     next_year = current_year + 1 if current_year < max_year else min_year
     return next_year
