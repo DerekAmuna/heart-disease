@@ -9,19 +9,17 @@ def get_metric_column(gender: str, metric: str) -> str:
         metric (str): Selected metric name
 
     Returns:
-        str: Column name for the selected gender and metric
+        str: Column name for the selected metric and gender
     """
-    gender_prefix = "f_" if gender == "Female" else "m_" if gender == "Male" else ""
+    gender_suffix = "female" if gender == "Female" else "male" if gender == "Male" else "both"
+    
     metric_mapping = {
-        "P": {
-            "Prevalence Percent": f"{gender_prefix}prev%",
-            "Prevalence Rate": f"{gender_prefix}prev_rate",
-            "Prevalence": f"{gender_prefix}prev",
-        },
-        "D": {
-            "Death Percent": f"{gender_prefix}deaths%",
-            "Death Rate": f"{gender_prefix}death_rate",
-            "Death": f"{gender_prefix}deaths",
-        },
+        "Prevalence Percent": f"valprevpercent{gender_suffix}",
+        "Prevalence Rate": f"valprevrate{gender_suffix}",
+        "Prevalence": f"valprevnumber{gender_suffix}",
+        "Death Percent": f"valdeathspercent{gender_suffix}",
+        "Death Rate": f"valdeathsrate{gender_suffix}",
+        "Death": f"valdeathsnumber{gender_suffix}",
     }
-    return metric_mapping.get(metric[0], {}).get(metric) if metric else None
+    
+    return metric_mapping.get(metric)

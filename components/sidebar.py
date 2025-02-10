@@ -2,7 +2,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
 
-# from components.data.data import region_selector
+from components.data.data import UNIQUE_REGIONS, REGION_COUNTRIES
 
 
 def create_sidebar():
@@ -41,6 +41,16 @@ def create_sidebar():
                 {"label": "Death", "value": "Death"},
             ],
         ),
+        (
+            "AGE",
+            "age-dropdown",
+            [
+                {"label": "Age-standardized", "value": "Age-standardized"},
+                {"label": "15-49 years", "value": "15-49 years"},
+                {"label": "50-74 years", "value": "50-74 years"},
+                {"label": "75+ years", "value": "75+ years"},
+            ],
+        ),
     ]
 
     dropdown_elements = [
@@ -53,7 +63,9 @@ def create_sidebar():
                     value=(
                         "Death Rate"
                         if id == "metric-dropdown"
-                        else "Both" if id == "gender-dropdown" else None
+                        else "Both" if id == "gender-dropdown"
+                        else "Age-standardized" if id == "age-dropdown"
+                        else None
                     ),
                     placeholder=f"Select {label}",
                     multi=True if id in ["country-dropdown", "region-dropdown"] else False,
@@ -130,24 +142,24 @@ def toggle_sidebar(n_clicks, is_open):
 @callback(
     Output("country-dropdown", "options"),
     Input("region-dropdown", "value"),
-    Input("general-data", "data"),
 )
-def update_country_options(selected_region, data):
+def update_country_options(selected_region):
     """Update country dropdown options based on selected region."""
-    if not data or not selected_region:
+    if not selected_region:
         return []
 
-    df = pd.DataFrame(data)
-    countries = df[df["region"] == selected_region]["Entity"].unique()
-    return [{"label": country, "value": country} for country in sorted(countries)]
+    # Handle multiple regions
+    all_countries = []
+    for region in selected_region:
+        all_countries.extend(REGION_COUNTRIES.get(region, []))
+    return [{"label": country, "value": country} for country in sorted(set(all_countries))]
 
 
-@callback(Output("region-dropdown", "options"), Input("general-data", "data"))
-def update_region_options(data):
+@callback(
+    Output("region-dropdown", "options"),
+    Input("url", "pathname")  # Use URL as trigger to populate on page load
+)
+def update_region_options(_):
     """Update region dropdown options."""
-    if not data:
-        return []
-
-    df = pd.DataFrame(data)
-    regions = df["region"].unique()
-    return [{"label": region, "value": region} for region in sorted(regions)]
+    regions = UNIQUE_REGIONS
+    return [{"label": region, "value": region} for region in regions]

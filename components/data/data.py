@@ -2,34 +2,23 @@
 import logging
 import os
 from functools import lru_cache
-import functools
-from flask import current_app
-from flask_caching import Cache
-
-cache = Cache()
-
-def init_cache(app):
-    cache.init_app(app, config={
-        'CACHE_TYPE': 'RedisCache',
-        'CACHE_REDIS_URL': os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-        'CACHE_DEFAULT_TIMEOUT': 86400
-    })
 
 import pandas as pd
 from dash import Input, Output, callback
+
 from components.common.gender_metric_selector import get_metric_column
 
 logger = logging.getLogger(__name__)
 
 
-@cache.memoize(timeout=3600)
+@lru_cache(maxsize=1)
 def load_data():
     """Load data with caching."""
     logger.debug("Cache info for load_data: %s", load_data.cache_info())
     data_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
         "data",
-        "heart_disease_data.csv",
+        "heart_processed.csv",
     )
     df = pd.read_csv(data_path)
 
@@ -50,127 +39,152 @@ def load_data():
 
 
 # Load data once at module level
-if current_app:
-    data = load_data()
-    UNIQUE_REGIONS = sorted(data["region"].unique())
-    UNIQUE_INCOMES = sorted(data["WB_Income"].unique())
-    UNIQUE_ENTITIES = sorted(data["Entity"].unique())
-    YEAR_RANGE = (int(data["Year"].min()), int(data["Year"].max()))
+data = load_data()
+
+# Pre-calculate unique values for filters
+UNIQUE_REGIONS = sorted(data["region"].dropna().unique())
+UNIQUE_INCOMES = sorted(data["WB_Income"].dropna().unique())
+UNIQUE_ENTITIES = sorted(data["Entity"].unique())
+UNIQUE_AGES = sorted(data["age"].unique())
+YEAR_RANGE = (int(data["Year"].min()), int(data["Year"].max()))
+METRICS = sorted(data["cause"].unique())
+
+# Pre-calculate region to countries mapping
+REGION_COUNTRIES = {
+    region: sorted(data[data["region"] == region]["Entity"].unique())
+    for region in UNIQUE_REGIONS
+}
 
 
-@cache.memoize(timeout=3600)
-@functools.lru_cache(maxsize=128)
-def filter_data(year, regions=None, income=None):
-    """Filter data with caching for common filter combinations."""
-    logger.debug("Cache info for filter_data: %s", filter_data.cache_info())
-    filtered = data[data["Year"] == year].copy()
+@lru_cache(maxsize=32)
+def filter_data(year=None, regions=None, income=None, gender='Both', metric=None, age=None):
+    """Base filter function with caching for common filter combinations."""
+    filtered = data.copy()
 
+    if year:
+        filtered = filtered[filtered["Year"] == year]
     if regions and regions != ["All"]:
         filtered = filtered[filtered["region"].isin(regions)]
-
     if income and income != "All":
         filtered = filtered[filtered["WB_Income"] == str(income)]
+    if age:
+        filtered = filtered[filtered["age"] == age]
+
+    if metric and gender:
+        col = get_metric_column(gender, metric)
+        if col:
+            filtered = filtered.dropna(subset=[col])
 
     return filtered
 
 
-@callback(Output("general-data", "data"), Input("year-slider", "value"))
-def year_filter(year: int):
-    """Filter data by year."""
-    if year is None:
-        logger.debug("No year selected")
-        return []
-
-    filtered_df = filter_data(year)
-    return filtered_df.to_dict("records")
-
-
 @callback(
     Output("geo-eco-data", "data"),
-    Input("general-data", "data"),
-    # Input('metric-dropdown', 'value'),
-    Input("gender-dropdown", "value"),
+    Input("year-slider", "value"),
     Input("region-dropdown", "value"),
     Input("income-dropdown", "value"),
+    Input("gender-dropdown", "value"),
+    Input("metric-dropdown", "value"),
     Input("top-filter-slider", "value"),
 )
-@functools.lru_cache(maxsize=256)
-def geo_eco_data(data, metric, gender, region, income, top_n):
-    """_summary_
+def get_geo_eco_data(year, regions, income, gender, metric, top_n):
+    """Get filtered data for geo-economic visualizations."""
+    print("Geo eco inputs:", year, regions, income, gender, metric, top_n)
 
-    Args:
-        data (_type_): _description_
-        metric (_type_): _description_
-        gender (_type_): _description_
-        region (_type_): _description_
-        income (_type_): _description_
-        top_n (_type_): _description_
+    if not year or not gender or not metric:
+        return []
 
-    Returns:
-        _type_: _description_
-    """
-    logger.debug("Geo eco data called with: %s, %s, %s, %s", gender, region, income, top_n)
-    # gender_prefix = "f_" if gender == "Female" else "m_" if gender == "Male" else ""
-    # metric_mapping = {
-    #     "P": {
-    #         "Prevalence Percent": f"{gender_prefix}prev%",
-    #         "Prevalence Rate": f"{gender_prefix}prev_rate",
-    #         "Prevalence": f"{gender_prefix}prev",
-    #     },
-    #     "D": {
-    #         "Death Percent": f"{gender_prefix}deaths%",
-    #         "Death Rate": f"{gender_prefix}death_rate",
-    #         "Death": f"{gender_prefix}deaths",
-    #     },
-    # }
-    if gender is None or gender or region is None or income is None:
-        return data
+    df = filter_data(None, regions, income, gender, metric)
+    print("Filtered data shape:", df.shape)
+    print(f"Years in data: {sorted(df['Year'].unique())}")
 
-    if region is not None:
-        df = data[data["region"] == region]
-    if income is not None:
-        df = df[df["WB_Income"] == str(income)]
-    if top_n is not None:
-        df = df.nlargest(int(top_n), float(metric))
-    if gender is not None:
-        col = get_metric_column(gender,metric)
-        df = df[
-            ["Entity", "Year", "Code", col, "gdp_pc", "WB_Income", "Population", "region"]
-        ].dropna(subset=[col])
+    col = get_metric_column(gender, metric)
+    print("Using column:", col)
 
-    return df
+    if col:
+        df = df[["Entity", "Year", "Code", col, "gdp_pc", "WB_Income", "Population", "region", "cause"]]
+        # Convert numeric columns
+        for num_col in [col, "gdp_pc", "Population"]:
+            df[num_col] = pd.to_numeric(df[num_col], errors='coerce')
+        print('Pre dropna:', df.shape)
+        df = df.dropna(subset=[col, "gdp_pc", "Population"])
+        print('Post dropna:', df.shape)
+        print("Final data shape:", df.shape)
+        print("Final columns:", df.columns.tolist())
+        print(f"Sample data:\n{df[[col, 'gdp_pc', 'Year']].head()}")
+
+    return df.to_dict("records")
 
 
 @callback(
-    Output("chloropleth_data", "data"),
-    Input("general-data", "data"),
+    Output("world-map-data", "data"),
+    Input("year-slider", "value"),
+    Input("region-dropdown", "value"),
+    Input("income-dropdown", "value"),
+    Input("gender-dropdown", "value"),
+    Input("metric-dropdown", "value"),
+    Input("age-dropdown", "value"),
+)
+def get_world_map_data(year, regions, income, gender, metric, age):
+    """Get filtered data for world map visualization."""
+    if not year or not metric or not gender:
+        return []
+
+    df = filter_data(year, regions, income, gender, metric, age)
+    col = get_metric_column(gender, metric)
+
+    if col:
+        df = df[["Entity", "Code", col, "region", "WB_Income"]]
+
+    return df.to_dict("records")
+
+
+@callback(
+    Output("trends-data", "data"),
     Input("metric-dropdown", "value"),
     Input("gender-dropdown", "value"),
+    Input("country-dropdown", "value"),
+    Input("region-dropdown", "value"),
+    Input("income-dropdown", "value"),
 )
-def chloropleth_data(year_filtered_data, metric, gender):
-    """Get data for chloropleth map."""
-    if not year_filtered_data or not metric or not gender:
+def get_trends_data(metric, gender, countries, regions, income):
+    """Get filtered data for trends visualization."""
+    if not metric or not gender:
         return []
 
-    df = pd.DataFrame(year_filtered_data)
-    gender_prefix = "f_" if gender == "Female" else "m_" if gender == "Male" else ""
+    df = filter_data(None, regions, income, gender, metric)  # No year filter for trends
 
-    metric_mapping = {
-        "P": {
-            "Prevalence Percent": f"{gender_prefix}prev%",
-            "Prevalence Rate": f"{gender_prefix}prev_rate",
-            "Prevalence": f"{gender_prefix}prev",
-        },
-        "D": {
-            "Death Percent": f"{gender_prefix}deaths%",
-            "Death Rate": f"{gender_prefix}death_rate",
-            "Death": f"{gender_prefix}deaths",
-        },
-    }
+    # Filter by countries if specified
+    if countries:
+        df = df[df["Entity"].isin(countries)]
 
-    col = metric_mapping.get(metric[0], {}).get(metric)
-    if not col:
+    # Sum across ages for each year, entity, and cause
+    df = df.groupby(["Year", "Entity", "cause", "region", "WB_Income"]).sum().reset_index()
+
+    return df.to_dict("records")
+
+
+@callback(
+    Output("healthcare-data", "data"),
+    Input("year-slider", "value"),
+    Input("region-dropdown", "value"),
+    Input("income-dropdown", "value"),
+    Input("gender-dropdown", "value"),
+    Input("metric-dropdown", "value"),
+)
+def get_healthcare_data(year, regions, income, gender, metric):
+    """Get filtered data for healthcare system visualization."""
+    if not year or not metric or not gender:
         return []
 
-    needed_cols = ["Entity", "Year", "Code", col]
-    return df[needed_cols].to_dict("records")
+    df = filter_data(year, regions, income, gender, metric)
+    col = get_metric_column(gender, metric)
+
+    if col:
+        df = df[[
+            "Entity", "Code", col, "region", "WB_Income",
+            "ct_units", "obesity%", "pacemaker_1m",
+            "statin_avail", "statin_use_k"
+        ]]
+
+    return df.to_dict("records")

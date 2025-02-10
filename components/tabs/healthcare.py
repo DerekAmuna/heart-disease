@@ -27,27 +27,36 @@ def create_healthcare_tab():
 
 @callback(
     Output("healthcare-plots", "children"),
-    Input("year-slider", "value"),
-    Input("country-dropdown", "value"),
-    Input("income-dropdown", "value"),
-    Input("region-dropdown", "value"),
-    Input("top-filter-slider", "value"),
+    Input("healthcare-data", "data"),
     Input("metric-dropdown", "value"),
+    Input("gender-dropdown", "value"),
 )
-def create_healthcare_plots(
-    year: int, countries: list, income: str, region: str, top_n: int, metric: str
-):
-    """Create healthcare-related visualizations in a grid layout."""
+def create_healthcare_plots(data, metric, gender):
+    """Create healthcare-related visualizations in a grid layout.
+
+    Returns:
+        html.Div: A div containing a 2x2 grid of healthcare-related plots
+    """
+    if not data or not metric or not gender:
+        return html.Div("Please select metric and gender")
+
+    df = pd.DataFrame(data)
+    if df.empty:
+        return html.Div("No data available for the selected filters")
+
+    # Convert numeric columns
     numeric_cols = [
         "obesity%",
-        "death_rate",
-        "t_htn_30-79",
-        "t_high_bp_30-79",
-        "t_htn_ctrl_30-79",
         "ct_units",
+        "pacemaker_1m",
+        "statin_use_k"
     ]
-    for col in numeric_cols:
-        data[col] = pd.to_numeric(data[col], errors="coerce")
+    for col in numeric_cols + [col for col in df.columns if col not in numeric_cols]:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+
+    metric_col = next((col for col in df.columns if col not in numeric_cols), None)
+    if not metric_col:
+        return html.Div("No metric data available")
 
     return dbc.Container([
         dbc.Row([
@@ -57,9 +66,9 @@ def create_healthcare_plots(
                     dbc.CardBody(
                         create_scatter_plot(
                             "obesity%",
-                            "death_rate",
-                            data[data["Year"] == year].dropna(subset=["obesity%", "death_rate"]),
-                            hue="WB_Income"
+                            metric_col,
+                            df.dropna(subset=["obesity%", metric_col]),
+                            hue="WB_Income",
                         ),
                         style={"height": "350px", "overflow": "auto"}
                     ),
@@ -70,11 +79,11 @@ def create_healthcare_plots(
                 dbc.Card([
                     dbc.CardHeader(html.H4("CT Units by Country", className="text-center")),
                     dbc.CardBody(
-                        create_bar_plot(
+                        create_scatter_plot(
                             "ct_units",
-                            data.dropna(subset=["ct_units"]),
-                            top_n=top_n,
-                            color="WB_Income"
+                            metric_col,
+                            df.dropna(subset=["ct_units", metric_col]),
+                            hue="WB_Income",
                         ),
                         style={"height": "350px", "overflow": "auto"}
                     ),
@@ -87,7 +96,12 @@ def create_healthcare_plots(
                 dbc.Card([
                     dbc.CardHeader(html.H4("High Blood Pressure", className="text-center")),
                     dbc.CardBody(
-                        create_bar_plot("t_high_bp_30-79", data, top_n=top_n),
+                        create_scatter_plot(
+                            "pacemaker_1m",
+                            metric_col,
+                            df.dropna(subset=["pacemaker_1m", metric_col]),
+                            hue="WB_Income",
+                        ),
                         style={"height": "350px", "overflow": "auto"}
                     ),
                 ], className="mb-3 shadow-sm"),
@@ -105,7 +119,7 @@ def create_healthcare_plots(
             )
         ])
     ], fluid=True, style={
-        "backgroundColor": "#f8f9fa", 
-        "borderRadius": "8px", 
+        "backgroundColor": "#f8f9fa",
+        "borderRadius": "8px",
         "padding": "15px",
     })

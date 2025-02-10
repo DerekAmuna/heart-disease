@@ -16,7 +16,7 @@ def create_world_map_tab():
     return html.Div(
         [
             dcc.Store(id="general-data"),
-            dcc.Store(id="chloropleth_data"),
+            dcc.Store(id="world-map-data"),
             html.Div(
                 [
                     html.H2(id="map-title", style={"textAlign": "center", "marginBottom": "0px"}),
@@ -60,16 +60,43 @@ def update_map_title(year, metric):
 
 @callback(
     Output("chloropleth-map", "figure"),
-    Input("chloropleth_data", "data"),
+    Input("world-map-data", "data"),
     Input("metric-dropdown", "value"),
     Input("gender-dropdown", "value"),
 )
 def update_map(filtered_data, metric, gender):
-    """Update the choropleth map based on filtered data and selected options."""
-    logger.debug("Update map called with: %s, %s", metric, gender)
+    """Update the choropleth map based on filtered data."""
     if not filtered_data or not metric or not gender:
-        return {}
-    return create_chloropleth_map(filtered_data)
+        return create_empty_message("Please select metric and gender")
+
+    df = pd.DataFrame(filtered_data)
+    if df.empty:
+        return create_empty_message("No data available for the selected filters")
+
+    return create_chloropleth_map(filtered_data, metric, gender)
+
+
+def create_empty_message(message):
+    """Create an empty figure with a centered message."""
+    return {
+        "data": [],
+        "layout": {
+            "xaxis": {"visible": False},
+            "yaxis": {"visible": False},
+            "annotations": [
+                {
+                    "text": message,
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "font": {
+                        "size": 28
+                    }
+                }
+            ],
+            "height": 600,
+        }
+    }
 
 
 @callback(
@@ -80,47 +107,59 @@ def update_map(filtered_data, metric, gender):
     Input("metric-dropdown", "value"),
     Input("gender-dropdown", "value"),
     Input("year-slider", "value"),
+    Input('age-dropdown','value')
 )
-def display_hover(hover_data, metric, gender, year):
+def display_hover(hover_data, metric, gender, year, age):
     """Display time series plot in tooltip when hovering over a country."""
     if not hover_data or not metric or not gender:
         return False, no_update, no_update
 
     pt = hover_data["points"][0]
-    country_code = pt["location"]
+    country_name = pt["location"]
 
-    fig, risk_factors = create_tooltip(country_code, metric, gender, year)
+    fig, risk_factors = create_tooltip(country_name, metric, gender, age, year)
 
-    children = [
-        dcc.Graph(
-            figure=fig,
-            config={"displayModeBar": False},
-            style={"width": "300px", "height": "200px"},
-        ),
-        html.Div(
-            [
-                html.H6(
-                    f"Risk Factors ({risk_factors.get('Year', 'Latest Year')})",
-                    style={"marginTop": "10px", "marginBottom": "5px", "fontSize": "12px"},
-                ),
-                html.Div(
-                    [
-                        html.Div(
-                            [
-                                html.Strong(f"{k}: ", style={"fontSize": "11px"}),
-                                html.Span(v, style={"fontSize": "11px"}),
-                            ],
-                            style={"marginBottom": "3px"},
-                        )
-                        for k, v in risk_factors.items()
-                        if k != "Year"  # Skip the Year in display since it's in the header
-                    ],
-                    style={"paddingLeft": "5px"},
-                ),
-            ],
-            style={"backgroundColor": "white", "padding": "5px"},
-        ),
-    ]
+    if fig is None:
+        children = html.Div(
+            risk_factors["message"],
+            style={
+                "backgroundColor": "white",
+                "padding": "10px",
+                "borderRadius": "5px",
+                "border": "1px solid #ddd",
+            }
+        )
+    else:
+        children = [
+            dcc.Graph(
+                figure=fig,
+                config={"displayModeBar": False},
+                style={"width": "300px", "height": "200px"},
+            ),
+            html.Div(
+                [
+                    html.H6(
+                        f"Risk Factors ({risk_factors.get('Year', 'Latest Year')})",
+                        style={"marginTop": "10px", "marginBottom": "5px", "fontSize": "12px"},
+                    ),
+                    html.Div(
+                        [
+                            html.Div(
+                                [
+                                    html.Strong(f"{k}: ", style={"fontSize": "11px"}),
+                                    html.Span(v, style={"fontSize": "11px"}),
+                                ],
+                                style={"marginBottom": "3px"},
+                            )
+                            for k, v in risk_factors.items()
+                            if k != "Year"  # Skip the Year in display since it's in the header
+                        ],
+                        style={"paddingLeft": "5px"},
+                    ),
+                ],
+                style={"backgroundColor": "white", "padding": "5px"},
+            ),
+        ]
 
     bbox = pt["bbox"]
     return True, bbox, children

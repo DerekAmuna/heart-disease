@@ -3,13 +3,13 @@
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, callback, dcc, html
 
-def create_year_slider(min_year=1950, max_year=2022, default=2021):
+def create_year_slider(min_year=1980, max_year=2021, default=2021):
     """Generate marks for the slider using a dictionary comprehension"""
     # Responsive interval based on screen size
     marks = {
         str(year): str(year) for year in range(min_year, max_year + 1, 10)  # Increased interval for smaller screens
     }
-    
+
     return dbc.Container([
         dbc.Row([
             dbc.Col([
