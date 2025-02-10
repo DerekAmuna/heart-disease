@@ -55,6 +55,8 @@ navbar = dbc.Navbar(
     className="mb-5",
 )
 
+
+
 # Main Layout
 app.layout = html.Div(
     [
