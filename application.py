@@ -3,7 +3,7 @@ import os
 
 import dash
 import dash_bootstrap_components as dbc
-from dash import dcc, html
+from dash import dcc, html, callback
 from dash.dependencies import Input, Output, State
 from flask import Flask
 
@@ -32,11 +32,12 @@ app = dash.Dash(
 )
 application = app.server
 
-# Navbar Component
+
 navbar = dbc.Navbar(
-    dbc.Container(
-        [
-            dbc.NavbarBrand("HEART DISEASE DATA VISUALIZATION ", className="ms-2"),
+    dbc.Container([
+        dbc.NavbarBrand("HEART DISEASE DATA VISUALIZATION ", className="ms-2"),
+        dbc.NavbarToggler(id="navbar-toggler", className="ms-auto"),
+        dbc.Collapse(
             dbc.Nav(
                 [
                     dbc.NavItem(dbc.NavLink("Introduction 📋", id="tab-0-link", active=True)),
@@ -45,16 +46,18 @@ navbar = dbc.Navbar(
                     dbc.NavItem(dbc.NavLink("Healthcare Features 🏥", id="tab-3-link")),
                     dbc.NavItem(dbc.NavLink("Trends 📈", id="tab-4-link")),
                 ],
-                className="ms-auto",
+                className="ms-auto"  # Align to right
             ),
-        ]
-    ),
+            id="navbar-collapse",
+            is_open=False,
+            navbar=True
+        )
+    ]),
     color="primary",
     dark=True,
     fixed="top",
-    className="mb-5",
+    className="mb-5"
 )
-
 
 
 # Main Layout
@@ -134,6 +137,17 @@ def render_tab_content(*active_tabs):
 
     return "No tab selected"
 
+
+# Add callback to toggle navbar
+@callback(
+    Output("navbar-collapse", "is_open"),
+    [Input("navbar-toggler", "n_clicks")],
+    [State("navbar-collapse", "is_open")]
+)
+def toggle_navbar_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
 
 if __name__ == "__main__":
     app.run_server(
