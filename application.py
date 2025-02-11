@@ -3,7 +3,7 @@ import os
 
 import dash
 import dash_bootstrap_components as dbc
-from dash import dcc, html, callback
+from dash import callback, dcc, html
 from dash.dependencies import Input, Output, State
 from flask import Flask
 
@@ -34,29 +34,31 @@ application = app.server
 
 
 navbar = dbc.Navbar(
-    dbc.Container([
-        dbc.NavbarBrand("HEART DISEASE DATA VISUALIZATION ", className="ms-2"),
-        dbc.NavbarToggler(id="navbar-toggler", className="ms-auto"),
-        dbc.Collapse(
-            dbc.Nav(
-                [
-                    dbc.NavItem(dbc.NavLink("Introduction 📋", id="tab-0-link", active=True)),
-                    dbc.NavItem(dbc.NavLink("Choropleth Visualization 🌐", id="tab-1-link")),
-                    dbc.NavItem(dbc.NavLink("GEO-ECO Features 💰", id="tab-2-link")),
-                    dbc.NavItem(dbc.NavLink("Healthcare Features 🏥", id="tab-3-link")),
-                    dbc.NavItem(dbc.NavLink("Trends 📈", id="tab-4-link")),
-                ],
-                className="ms-auto"  # Align to right
+    dbc.Container(
+        [
+            dbc.NavbarBrand("HEART DISEASE DATA VISUALIZATION ", className="ms-2"),
+            dbc.NavbarToggler(id="navbar-toggler", className="ms-auto"),
+            dbc.Collapse(
+                dbc.Nav(
+                    [
+                        dbc.NavItem(dbc.NavLink("Introduction 📋", id="tab-0-link", active=True)),
+                        dbc.NavItem(dbc.NavLink("Choropleth Visualization 🌐", id="tab-1-link")),
+                        dbc.NavItem(dbc.NavLink("GEO-ECO Features 💰", id="tab-2-link")),
+                        dbc.NavItem(dbc.NavLink("Healthcare Features 🏥", id="tab-3-link")),
+                        dbc.NavItem(dbc.NavLink("Trends 📈", id="tab-4-link")),
+                    ],
+                    className="ms-auto",  # Align to right
+                ),
+                id="navbar-collapse",
+                is_open=False,
+                navbar=True,
             ),
-            id="navbar-collapse",
-            is_open=False,
-            navbar=True
-        )
-    ]),
+        ]
+    ),
     color="primary",
     dark=True,
     fixed="top",
-    className="mb-5"
+    className="mb-5",
 )
 
 
@@ -142,12 +144,13 @@ def render_tab_content(*active_tabs):
 @callback(
     Output("navbar-collapse", "is_open"),
     [Input("navbar-toggler", "n_clicks")],
-    [State("navbar-collapse", "is_open")]
+    [State("navbar-collapse", "is_open")],
 )
 def toggle_navbar_collapse(n, is_open):
     if n:
         return not is_open
     return is_open
+
 
 if __name__ == "__main__":
     app.run_server(
