@@ -95,7 +95,7 @@ def create_sidebar():
             dbc.Button(
                 "☰",
                 id="sidebar-toggle",
-                color="primary",
+                color="info",
                 className="mb-3",
                 style={"position": "absolute", "top": "10px", "right": "-20px", "zIndex": "100"},
             ),

@@ -28,16 +28,45 @@ from components.visualisations import (
 #             create_year_slider(),
 #         ]
 #     )
+# def create_geo_eco_tab():
+#     """Function to create layout and visualations in the geo eco tab"""
+#     return dbc.Container(
+#         [
+#             dcc.Store(id="general-data"),
+#             dbc.Row(
+#                 [
+#                     dbc.Col(create_filter_slider(), width=12, lg=6),
+#                 ],
+#                 className="mb-3",
+#             ),
+#             html.Div(id="4x4plots"),
+#             dbc.Row(
+#                 [
+#                     dbc.Col(create_year_slider(), width=12, lg=6),
+#                 ],
+#                 className="mb-3",
+#             ),
+#         ],
+#         fluid=True,
+#     )
 def create_geo_eco_tab():
     """Function to create layout and visualations in the geo eco tab"""
     return dbc.Container(
         [
-             dcc.Store(id="geo-eco-data"),
-            create_filter_slider(),
-            # html.Br(),
-            html.Div(id="geo-eco-plots"),
-            # html.Br(),
-            create_year_slider(),
+            dcc.Store(id="general-data"),
+            dbc.Row(
+                [
+                    dbc.Col(create_filter_slider(), width=12, lg=6),
+                ],
+                className="mb-3",
+            ),
+            html.Div(id="4x4plots"),
+            dbc.Row(
+                [
+                    dbc.Col(create_year_slider(), width=12, lg=6),
+                ],
+                className="mb-3",
+            ),
         ],
         fluid=True,
     )
