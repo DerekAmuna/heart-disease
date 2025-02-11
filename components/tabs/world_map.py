@@ -6,7 +6,7 @@ from dash import Input, Output, State, callback, dcc, html, no_update
 
 logger = logging.getLogger(__name__)
 
-import components.data
+
 from components.common.year_slider import create_year_slider
 from components.visualisations import create_chloropleth_map, create_tooltip
 
@@ -19,27 +19,32 @@ def create_world_map_tab():
             dcc.Store(id="world-map-data"),
             html.Div(
                 [
-                    html.H2(id="map-title", style={"textAlign": "center", "marginBottom": "0px"}),
+                    html.H2(
+                        id="map-title",
+                        style={"textAlign": "center", "marginBottom": "5px", "height": "30px"},
+                    ),
                     html.Div(
                         [
                             dcc.Graph(
                                 id="chloropleth-map",
-                                style={"height": "77vh"},
+                                style={"height": "calc(95vh - 160px)"},
                                 config={"displayModeBar": False},
                             ),
                             dcc.Tooltip(id="graph-tooltip"),
                         ],
-                        style={"position": "relative"},
+                        style={"position": "relative", "flex": "1"},
                     ),
-                    create_year_slider(default=2000),
+                    html.Div(
+                        create_year_slider(default=2000),
+                        style={"height": "50px", "marginTop": "2px"},
+                    ),
                 ],
                 id="world-map-container",
                 style={
-                    "height": "85vh",
+                    "height": "100%",
                     "display": "flex",
                     "flexDirection": "column",
-                    "gap": "10px",
-                    "padding": "0px",
+                    "padding": "5px",
                 },
             ),
         ]
@@ -50,12 +55,14 @@ def create_world_map_tab():
     Output("map-title", "children"),
     Input("year-slider", "value"),
     Input("metric-dropdown", "value"),
+    Input("gender-dropdown", "value"),
 )
-def update_map_title(year, metric):
+def update_map_title(year, metric, gender):
     """Update the map title based on selected year and metric."""
+    gender = ": " + gender if gender != "Both" else ""
     if not year or not metric:
         return ""
-    return f"{metric} for {year}"
+    return f"{metric} for {year} {gender}"
 
 
 @callback(
@@ -89,13 +96,11 @@ def create_empty_message(message):
                     "xref": "paper",
                     "yref": "paper",
                     "showarrow": False,
-                    "font": {
-                        "size": 28
-                    }
+                    "font": {"size": 28},
                 }
             ],
             "height": 600,
-        }
+        },
     }
 
 
@@ -107,7 +112,7 @@ def create_empty_message(message):
     Input("metric-dropdown", "value"),
     Input("gender-dropdown", "value"),
     Input("year-slider", "value"),
-    Input('age-dropdown','value')
+    Input("age-dropdown", "value"),
 )
 def display_hover(hover_data, metric, gender, year, age):
     """Display time series plot in tooltip when hovering over a country."""
@@ -127,7 +132,7 @@ def display_hover(hover_data, metric, gender, year, age):
                 "padding": "10px",
                 "borderRadius": "5px",
                 "border": "1px solid #ddd",
-            }
+            },
         )
     else:
         children = [

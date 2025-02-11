@@ -11,10 +11,10 @@ from components.common.gender_metric_selector import get_metric_column
 logger = logging.getLogger(__name__)
 
 
-@lru_cache(maxsize=1)
+@lru_cache(maxsize=128)
 def load_data():
     """Load data with caching."""
-    logger.debug("Cache info for load_data: %s", load_data.cache_info())
+    logger.debug("Cache info for load_data: %s", (load_data.cache_info()))
     data_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
         "data",
@@ -148,7 +148,8 @@ def get_world_map_data(year, regions, income, gender, metric, age):
     col = get_metric_column(gender, metric)
 
     if col:
-        df = df[["Entity", "Code", col, "region", "WB_Income"]]
+        df = df[["Entity", "Code", col, "region", "WB_Income", "cause"]]
+        df = df[df["cause"].str.lower() == "cardiovascular diseases"]
 
     return df.to_dict("records")
 
@@ -174,6 +175,7 @@ def get_trends_data(metric, gender, countries, regions, income):
 
     # Sum across ages for each year, entity, and cause
     df = df.groupby(["Year", "Entity", "cause", "region", "WB_Income"]).sum().reset_index()
+    logger.debug(f"Trend data shape: {df.shape}")
 
     return df.to_dict("records")
 
@@ -188,29 +190,39 @@ def get_trends_data(metric, gender, countries, regions, income):
 )
 def get_healthcare_data(year, regions, income, gender, metric):
     """Get filtered data for healthcare system visualization."""
-    if not year or not metric or not gender:
+    if not year or not metric:
         return []
 
-    df = filter_data(year, regions, income, gender, metric)
+    df = filter_data(
+        year, regions, income, gender="Both", metric=metric
+    )  # Use Both to get all gender data
     df = df[df["cause"].str.lower() == "cardiovascular diseases"]
     df = df[df["age"].str.contains("Age-standardized", case=False, na=False)]
-    col = get_metric_column(gender, metric)
 
-    if col and col in df.columns:
-        # Keep required columns
-        required_cols = ["Entity", "Code", "region", "WB_Income", "Year", "cause"]
-        optional_cols = ["ct_units", "obesity%", "pacemaker_1m", "statin_avail", "statin_use_k"]
+    # Keep required columns
+    required_cols = ["Entity", "Code", "region", "WB_Income", "Year", "cause"]
+    optional_cols = ["ct_units", "obesity%", "pacemaker_1m", "statin_avail", "statin_use_k"]
 
-        # Check which optional columns exist
-        available_cols = required_cols + [col] + [c for c in optional_cols if c in df.columns]
+    # Add all val* columns
+    val_cols = [col for col in df.columns if col.startswith("val")]
 
-        # Only keep rows where required columns are not null
-        df = df[available_cols].dropna(subset=required_cols + [col])
-        logger.debug(f"Healthcare data shape: {df.shape}")
-        logger.debug(df.head())
-        return df.to_dict("records")
+    # Check which optional columns exist and combine with val columns
+    available_cols = required_cols + val_cols + [c for c in optional_cols if c in df.columns]
 
-    return []
+    # Only keep rows where required columns are not null
+    df = df[available_cols].dropna(subset=required_cols)
+
+    # # Convert numeric columns
+    # if "obesity%" in df.columns:
+    #     df["obesity%"] = pd.to_numeric(df["obesity%"], errors='coerce')
+    # if "pacemaker_1m" in df.columns:
+    #     df["pacemaker_1m"] = pd.to_numeric(df["pacemaker_1m"], errors='coerce')
+    # if "statin_use_k" in df.columns:
+    #     df["statin_use_k"] = pd.to_numeric(df["statin_use_k"], errors='coerce')
+
+    logger.debug(f"Healthcare data shape: {df.shape}")
+    logger.debug(df.head())
+    return df.to_dict("records")
 
 
 def get_sankey_data(regions, income, gender, metric):
@@ -227,3 +239,14 @@ def get_sankey_data(regions, income, gender, metric):
         return df.to_dict("records")
 
     return []
+
+
+def get_hpt_data():
+    df = (
+        data[data["Year"] == 2019]
+        .dropna(subset=["t_htn_ctrl", "t_high_bp_30-79"])
+        .drop_duplicates(subset=["Entity", "Year", "t_htn_ctrl", "t_high_bp_30-79"])
+    )
+
+    logger.debug(msg=df.head())
+    return df

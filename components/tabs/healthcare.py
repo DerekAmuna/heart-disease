@@ -7,7 +7,7 @@ from dash import Input, Output, callback, dcc, html
 from components.common.filter_slider import create_filter_slider
 from components.common.gender_metric_selector import get_metric_column
 from components.common.year_slider import create_year_slider
-from components.data.data import data, get_sankey_data
+from components.data.data import data, get_hpt_data
 from components.visualisations import (
     create_bar_plot,
     create_line_plot,
@@ -23,7 +23,7 @@ def create_healthcare_tab():
     return html.Div(
         [
             dcc.Store(id="healthcare-data"),
-            # create_filter_slider(),
+            create_filter_slider(),
             # html.Br(),
             html.Div(id="healthcare-plots"),
             # html.Br(),
@@ -35,12 +35,12 @@ def create_healthcare_tab():
 @callback(
     Output("healthcare-plots", "children"),
     Input("healthcare-data", "data"),
-    Input("region-dropdown", "value"),
-    Input("income-dropdown", "value"),
     Input("gender-dropdown", "value"),
     Input("metric-dropdown", "value"),
+    Input("year-slider", "value"),
+    Input("top-filter-slider", "value"),
 )
-def create_healthcare_plots(data, regions, income, gender, metric):
+def create_healthcare_plots(data, gender, metric, year, top_n):
     """Create healthcare-related visualizations in a grid layout.
 
     Returns:
@@ -59,8 +59,8 @@ def create_healthcare_plots(data, regions, income, gender, metric):
         return html.Div("No metric data available")
 
     # Get sankey data directly
-    sankey_data = get_sankey_data(regions, income, gender, metric)
     logger.debug(f"Creating plots for {metric_col}, \n {df.head()}")
+    hpt = get_hpt_data()
 
     return dbc.Container(
         [
@@ -78,7 +78,7 @@ def create_healthcare_plots(data, regions, income, gender, metric):
                                         metric_col,
                                         df.dropna(subset=["obesity%", metric_col]),
                                         hue="WB_Income",
-                                        top_n=50
+                                        top_n=50,
                                     ),
                                     style={"height": "350px", "overflow": "auto"},
                                 ),
@@ -95,14 +95,16 @@ def create_healthcare_plots(data, regions, income, gender, metric):
                         dbc.Card(
                             [
                                 dbc.CardHeader(
-                                    html.H4("CT Units by Country", className="text-center")
+                                    html.H4(
+                                        "Hypertension Control by Country", className="text-center"
+                                    )
                                 ),
                                 dbc.CardBody(
-                                    create_scatter_plot(
-                                        "ct_units",
-                                        metric_col,
-                                        df.dropna(subset=["ct_units", metric_col]),
-                                        hue="WB_Income",
+                                    create_bar_plot(
+                                        "t_htn_ctrl",
+                                        hpt.dropna(subset=["t_htn_ctrl"]),
+                                        top_n=20,
+                                        color="WB_Income",
                                     ),
                                     style={"height": "350px", "overflow": "auto"},
                                 ),
@@ -128,10 +130,11 @@ def create_healthcare_plots(data, regions, income, gender, metric):
                                 ),
                                 dbc.CardBody(
                                     create_scatter_plot(
-                                        "pacemaker_1m",
+                                        "t_high_bp_30-79",
                                         metric_col,
-                                        df.dropna(subset=["pacemaker_1m", metric_col]),
+                                        hpt.dropna(subset=["t_high_bp_30-79", metric_col]),
                                         hue="WB_Income",
+                                        top_n=50,
                                     ),
                                     style={"height": "350px", "overflow": "auto"},
                                 ),
@@ -147,9 +150,18 @@ def create_healthcare_plots(data, regions, income, gender, metric):
                     dbc.Col(
                         dbc.Card(
                             [
-                                dbc.CardHeader(html.H4("Sankey Diagram", className="text-center")),
+                                dbc.CardHeader(
+                                    html.H4("Male vs Female Comparison", className="text-center")
+                                ),
                                 dbc.CardBody(
-                                    create_sankey_diagram(sankey_data, metric, gender),
+                                    create_scatter_plot(
+                                        get_metric_column("Female", metric),
+                                        get_metric_column("Male", metric),
+                                        df[df["Year"] == year],
+                                        hue="WB_Income",
+                                        top_n=top_n,
+                                        add_diagonal=True,
+                                    ),
                                     style={"height": "350px", "overflow": "auto"},
                                 ),
                             ],

@@ -9,12 +9,15 @@ import plotly.graph_objects as go
 from dash import dcc, html
 from scipy import stats
 from scipy.stats import t
+from statsmodels.nonparametric.smoothers_lowess import lowess
 
 from components.common import gender_metric_selector
 from components.common.gender_metric_selector import get_metric_column
-from components.data.data import data, UNIQUE_REGIONS, UNIQUE_INCOMES  # Import the DataFrame directly
-
-from statsmodels.nonparametric.smoothers_lowess import lowess
+from components.data.data import (
+    UNIQUE_INCOMES,
+    UNIQUE_REGIONS,
+    data,
+)  # Import the DataFrame directly
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +39,27 @@ GRID_SETTINGS = {"gridwidth": 1, "gridcolor": "rgba(128,128,128,0.1)", "zeroline
 @lru_cache(maxsize=32)
 def get_title_text(metric):
     """Cache title text generation."""
-    return metric.replace("_", " ").title()
+    mapping = {
+        "valdeathsnumberfemale": "Female Deaths",
+        "valdeathsnumbermale": "Male Deaths",
+        "valdeathsnumberboth": "Deaths",
+        "valdeathsratefemale": "Female Death Rate",
+        "valdeathsratemale": "Male Death Rate",
+        "valdeathsrateboth": "Death Rate",
+        "valdeathspercentfemale": "Female Death %",
+        "valdeathspercentmale": "Male Death %",
+        "valdeathspercentboth": "Death %",
+        "valprevnumberfemale": "Female Prevalence",
+        "valprevnumbermale": "Male Prevalence",
+        "valprevnumberboth": "Prevalence",
+        "valprevratefemale": "Female Prevalence Rate",
+        "valprevratemale": "Male Prevalence Rate",
+        "valprevrateboth": "Prevalence Rate",
+        "valprevpercentfemale": "Female Prevalence %",
+        "valprevpercentmale": "Male Prevalence %",
+        "valprevpercentboth": "Prevalence %",
+    }
+    return mapping.get(metric, metric).replace("_", " ").title()
 
 
 def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5):
@@ -46,14 +69,16 @@ def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5):
     print(f"Data values:\n{data[[x_metric, y_metric]].head()}")
 
     if data.empty or x_metric not in data.columns or y_metric not in data.columns:
-        print(f"Data validation failed: empty={data.empty}, x_exists={x_metric in data.columns}, y_exists={y_metric in data.columns}")
+        print(
+            f"Data validation failed: empty={data.empty}, x_exists={x_metric in data.columns}, y_exists={y_metric in data.columns}"
+        )
         return create_no_data_figure("No data available for selected metrics")
 
     plot_data = data.copy()
 
     # Convert numeric columns
-    plot_data[x_metric] = pd.to_numeric(plot_data[x_metric], errors='coerce')
-    plot_data[y_metric] = pd.to_numeric(plot_data[y_metric], errors='coerce')
+    plot_data[x_metric] = pd.to_numeric(plot_data[x_metric], errors="coerce")
+    plot_data[y_metric] = pd.to_numeric(plot_data[y_metric], errors="coerce")
     plot_data = plot_data.dropna(subset=[x_metric, y_metric])
 
     print(f"After numeric conversion: shape={plot_data.shape}")
@@ -147,7 +172,7 @@ def create_tooltip(country_name, metric, gender, age, selected_year=None):
     is_percent = "percent" in metric.lower()
 
     # Create time series plot for cardiovascular diseases
-    cv_df = df[(df["cause"].str.lower() == "cardiovascular diseases") & (df['age'] == age)]
+    cv_df = df[(df["cause"].str.lower() == "cardiovascular diseases") & (df["age"] == age)]
     cv_df = cv_df.dropna(subset=[col])
 
     if cv_df.empty:
@@ -196,15 +221,17 @@ def create_tooltip(country_name, metric, gender, age, selected_year=None):
         # Add obesity and GDP per capita
         year_data = df[df["Year"] == selected_year].iloc[0]
         if "obesity%" in year_data and pd.notna(year_data["obesity%"]):
-            risk_factors["Obesity Rate"] = format_value(year_data["obesity%"], is_percent=True, is_obesity=True)
+            risk_factors["Obesity Rate"] = format_value(
+                year_data["obesity%"], is_percent=True, is_obesity=True
+            )
         if "gdp_pc" in year_data and pd.notna(year_data["gdp_pc"]):
             risk_factors["GDP per capita"] = format_value(year_data["gdp_pc"], is_percent=False)
 
         # Add other causes
         other_causes = df[
-            (df["Year"] == selected_year) &
-            (df["cause"].str.lower() != "cardiovascular diseases") &
-            (df["age"] == age)
+            (df["Year"] == selected_year)
+            & (df["cause"].str.lower() != "cardiovascular diseases")
+            & (df["age"] == age)
         ]
         other_causes = other_causes.dropna(subset=[col])
 
@@ -219,19 +246,11 @@ def create_no_data_figure(message="No data available"):
     """Create an empty figure with a message when no data is available."""
     fig = go.Figure()
     fig.add_annotation(
-        text=message,
-        xref="paper", yref="paper",
-        x=0.5, y=0.5,
-        showarrow=False,
-        font=dict(size=14)
+        text=message, xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, font=dict(size=14)
     )
     fig.update_xaxes(showgrid=False, showticklabels=False)
     fig.update_yaxes(showgrid=False, showticklabels=False)
-    fig.update_layout(
-        height=200,
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)"
-    )
+    fig.update_layout(height=200, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
     return dcc.Graph(figure=fig, config={"displayModeBar": False})
 
 
@@ -316,7 +335,8 @@ def create_line_plot(metric, data, top_n=5, n_metric=None):
         "margin": {"l": 60, "r": 30, "t": 50, "b": 50},
         "height": None,
         "title": {
-            "text": f"{get_title_text(metric)} Over Time" + (f" by {get_title_text(n_metric)}" if n_metric else ""),
+            "text": f"{get_title_text(metric)} Over Time"
+            + (f" by {get_title_text(n_metric)}" if n_metric else ""),
             "y": 1,
             "x": 0.5,
             "xanchor": "center",
@@ -355,46 +375,57 @@ def create_chloropleth_map(filtered_data, metric, gender="Both"):
         return go.Figure()
 
     # Create figure
+    # Calculate rounded max value for better scale
+    data_max = df[metric_col].max()
+    scale_max = round(data_max / 100) * 100  # Round to nearest hundred
+
     fig = go.Figure(
         data=go.Choropleth(
             locations=df["Entity"],
             locationmode="country names",
             z=df[metric_col],
             text=df["Entity"],
-            colorscale="Viridis",
+            colorscale="RdYlBu_r",  # Changed to a more intuitive red-yellow-blue scale
             autocolorscale=False,
-            reversescale=True,
+            zmin=0,  # Start from 0 for better context
+            zmax=scale_max,  # Use rounded max
             marker_line_color="darkgray",
             marker_line_width=0.5,
-            colorbar_title=metric,
+            colorbar=dict(
+                title=dict(text=get_title_text(metric), side="right", font=dict(size=12)),
+                thickness=15,
+                len=0.9,
+                tickformat=".0f",
+                outlinewidth=0,
+            ),
         )
     )
 
-    #projection types
-#     ['airy', 'aitoff', 'albers', 'albers usa', 'august',
-# 'azimuthal equal area', 'azimuthal equidistant', 'baker',
-# 'bertin1953', 'boggs', 'bonne', 'bottomley', 'bromley',
-# 'collignon', 'conic conformal', 'conic equal area', 'conic
-# equidistant', 'craig', 'craster', 'cylindrical equal
-# area', 'cylindrical stereographic', 'eckert1', 'eckert2',
-# 'eckert3', 'eckert4', 'eckert5', 'eckert6', 'eisenlohr',
-# 'equal earth', 'equirectangular', 'fahey', 'foucaut',
-# 'foucaut sinusoidal', 'ginzburg4', 'ginzburg5',
-# 'ginzburg6', 'ginzburg8', 'ginzburg9', 'gnomonic',
-# 'gringorten', 'gringorten quincuncial', 'guyou', 'hammer',
-# 'hill', 'homolosine', 'hufnagel', 'hyperelliptical',
-# 'kavrayskiy7', 'lagrange', 'larrivee', 'laskowski',
-# 'loximuthal', 'mercator', 'miller', 'mollweide', 'mt flat
-# polar parabolic', 'mt flat polar quartic', 'mt flat polar
-# sinusoidal', 'natural earth', 'natural earth1', 'natural
-# earth2', 'nell hammer', 'nicolosi', 'orthographic',
-# 'patterson', 'peirce quincuncial', 'polyconic',
-# 'rectangular polyconic', 'robinson', 'satellite', 'sinu
-# mollweide', 'sinusoidal', 'stereographic', 'times',
-# 'transverse mercator', 'van der grinten', 'van der
-# grinten2', 'van der grinten3', 'van der grinten4',
-# 'wagner4', 'wagner6', 'wiechel', 'winkel tripel',
-# 'winkel3']
+    # projection types
+    #     ['airy', 'aitoff', 'albers', 'albers usa', 'august',
+    # 'azimuthal equal area', 'azimuthal equidistant', 'baker',
+    # 'bertin1953', 'boggs', 'bonne', 'bottomley', 'bromley',
+    # 'collignon', 'conic conformal', 'conic equal area', 'conic
+    # equidistant', 'craig', 'craster', 'cylindrical equal
+    # area', 'cylindrical stereographic', 'eckert1', 'eckert2',
+    # 'eckert3', 'eckert4', 'eckert5', 'eckert6', 'eisenlohr',
+    # 'equal earth', 'equirectangular', 'fahey', 'foucaut',
+    # 'foucaut sinusoidal', 'ginzburg4', 'ginzburg5',
+    # 'ginzburg6', 'ginzburg8', 'ginzburg9', 'gnomonic',
+    # 'gringorten', 'gringorten quincuncial', 'guyou', 'hammer',
+    # 'hill', 'homolosine', 'hufnagel', 'hyperelliptical',
+    # 'kavrayskiy7', 'lagrange', 'larrivee', 'laskowski',
+    # 'loximuthal', 'mercator', 'miller', 'mollweide', 'mt flat
+    # polar parabolic', 'mt flat polar quartic', 'mt flat polar
+    # sinusoidal', 'natural earth', 'natural earth1', 'natural
+    # earth2', 'nell hammer', 'nicolosi', 'orthographic',
+    # 'patterson', 'peirce quincuncial', 'polyconic',
+    # 'rectangular polyconic', 'robinson', 'satellite', 'sinu
+    # mollweide', 'sinusoidal', 'stereographic', 'times',
+    # 'transverse mercator', 'van der grinten', 'van der
+    # grinten2', 'van der grinten3', 'van der grinten4',
+    # 'wagner4', 'wagner6', 'wiechel', 'winkel tripel',
+    # 'winkel3']
 
     fig.update_layout(
         **COMMON_LAYOUT,
@@ -403,7 +434,7 @@ def create_chloropleth_map(filtered_data, metric, gender="Both"):
         geo=dict(
             showframe=False,
             showcoastlines=True,
-            projection_type="orthographic",
+            projection_type="equirectangular",
             showocean=True,
             oceancolor="rgba(0,0,0,0)",
             showland=True,
@@ -417,7 +448,7 @@ def create_chloropleth_map(filtered_data, metric, gender="Both"):
             countrywidth=0.5,
             showsubunits=True,
             subunitcolor="gray",
-            subunitwidth=0.5
+            subunitwidth=0.5,
         ),
     )
 
@@ -436,7 +467,6 @@ def create_sankey_diagram(data, metric, gender):
 
     if df.empty:
         return create_no_data_figure("No data available")
-
 
     try:
         labels = [f"{get_title_text(metric)} ({i}%)" for i in ["0-25", "25-50", "50-75", "75-100"]]
@@ -522,6 +552,7 @@ def create_sankey_diagram(data, metric, gender):
 
     return dcc.Graph(figure=fig, config={"displayModeBar": False})
 
+
 def create_trend_plot(data, metric, year, gender):
     """Create a trend plot showing the metric over time for each cause."""
     df = data.copy()
@@ -541,7 +572,6 @@ def create_trend_plot(data, metric, year, gender):
         "Lower extremity peripheral arterial disease": "#2ca02c",
         "Other": "#d62728",
         "Pulmonary Arterial Hypertension": "#9467bd",
-        
     }
 
     # Add traces for each cause
@@ -567,11 +597,7 @@ def create_trend_plot(data, metric, year, gender):
 
         # Fit LOWESS to existing data
         lowess_data = lowess(
-            yearly_data[col],
-            yearly_data["Year"],
-            frac=0.5,
-            it=1,
-            return_sorted=True
+            yearly_data[col], yearly_data["Year"], frac=0.5, it=1, return_sorted=True
         )
 
         # Project trend to 2030

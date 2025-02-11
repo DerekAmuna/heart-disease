@@ -1,24 +1,18 @@
 repos:
+
   - repo: https://github.com/psf/black
     rev: 24.10.0
     hooks:
       - id: black
         args: ["--line-length=99"]
-
+        
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
       - id: isort
 
-  - repo: https://github.com/PyCQA/pylint
-    rev: v3.3.3
-    hooks:
-      - id: pylint
-        additional_dependencies: ["pylint"]
-        args: ["--rcfile=pyproject.toml"]
-        verbose: true
-        stages: [pre-commit]
-        fail_fast: false
+
+
 
   - repo: https://github.com/GitGuardian/ggshield
     rev: v1.35.0

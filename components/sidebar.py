@@ -2,7 +2,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Input, Output, State, callback, dcc, html
 
-from components.data.data import UNIQUE_REGIONS, REGION_COUNTRIES
+from components.data.data import REGION_COUNTRIES, UNIQUE_REGIONS
 
 
 def create_sidebar():
@@ -63,9 +63,11 @@ def create_sidebar():
                     value=(
                         "Death Rate"
                         if id == "metric-dropdown"
-                        else "Both" if id == "gender-dropdown"
-                        else "Age-standardized" if id == "age-dropdown"
-                        else None
+                        else (
+                            "Both"
+                            if id == "gender-dropdown"
+                            else "Age-standardized" if id == "age-dropdown" else None
+                        )
                     ),
                     placeholder=f"Select {label}",
                     multi=True if id in ["country-dropdown", "region-dropdown"] else False,
@@ -157,7 +159,7 @@ def update_country_options(selected_region):
 
 @callback(
     Output("region-dropdown", "options"),
-    Input("url", "pathname")  # Use URL as trigger to populate on page load
+    Input("url", "pathname"),  # Use URL as trigger to populate on page load
 )
 def update_region_options(_):
     """Update region dropdown options."""
