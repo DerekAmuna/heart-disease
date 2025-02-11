@@ -62,7 +62,7 @@ def get_title_text(metric):
     return mapping.get(metric, metric).replace("_", " ").title()
 
 
-def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5):
+def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5, add_diagonal=False):
     """Create a scatter plot comparing two metrics with optional size and color encoding."""
     print(f"Creating scatter plot: x={x_metric}, y={y_metric}, data shape={data.shape}")
     print(f"Data columns: {data.columns.tolist()}")
@@ -98,11 +98,26 @@ def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5):
         labels={x_metric: get_title_text(x_metric), y_metric: get_title_text(y_metric)},
     )
 
+    # Add diagonal line if requested
+    if add_diagonal:
+        min_val = min(plot_data[x_metric].min(), plot_data[y_metric].min())
+        max_val = max(plot_data[x_metric].max(), plot_data[y_metric].max())
+        fig.add_trace(
+            go.Scatter(
+                x=[min_val, max_val],
+                y=[min_val, max_val],
+                mode="lines",
+                name="45° line",
+                line=dict(color="gray", dash="dash"),
+                opacity=0.5,
+            )
+        )
+
     layout = {
         "paper_bgcolor": "rgba(0,0,0,0)",
         "plot_bgcolor": "rgba(0,0,0,0)",
         "font": {"size": 12},
-        "showlegend": True if hue else False,
+        "showlegend": True if hue or add_diagonal else False,
         "margin": {"l": 60, "r": 30, "t": 50, "b": 50},
         "height": 300,
         "title": {
