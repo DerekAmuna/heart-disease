@@ -14,63 +14,19 @@ from components.visualisations import (
 )
 
 
-# def create_geo_eco_tab():
-#     """Function to create layout and visualizations in the geo eco tab"""
-#     return html.Div(
-#         [
-#             # Add Store component for data
-#             dcc.Store(id="general-data"),
-#             create_filter_slider(),
-#             html.Br(),
-#             # Create a container div for the plots with the ID that matches the callback
-#             html.Div(id="4x4plots"),
-#             html.Br(),
-#             create_year_slider(),
-#         ]
-#     )
-# def create_geo_eco_tab():
-#     """Function to create layout and visualations in the geo eco tab"""
-#     return dbc.Container(
-#         [
-#             dcc.Store(id="general-data"),
-#             dbc.Row(
-#                 [
-#                     dbc.Col(create_filter_slider(), width=12, lg=6),
-#                 ],
-#                 className="mb-3",
-#             ),
-#             html.Div(id="4x4plots"),
-#             dbc.Row(
-#                 [
-#                     dbc.Col(create_year_slider(), width=12, lg=6),
-#                 ],
-#                 className="mb-3",
-#             ),
-#         ],
-#         fluid=True,
-#     )
 def create_geo_eco_tab():
     """Function to create layout and visualations in the geo eco tab"""
     return dbc.Container(
         [
-            dcc.Store(id="general-data"),
-            dbc.Row(
-                [
-                    dbc.Col(create_filter_slider(), width=12, lg=6),
-                ],
-                className="mb-3",
-            ),
-            html.Div(id="4x4plots"),
-            dbc.Row(
-                [
-                    dbc.Col(create_year_slider(), width=12, lg=6),
-                ],
-                className="mb-3",
-            ),
+             dcc.Store(id="geo-eco-data"),
+            create_filter_slider(),
+            # html.Br(),
+            html.Div(id="geo-eco-plots"),
+            # html.Br(),
+            create_year_slider(),
         ],
         fluid=True,
     )
-
 
 @callback(
     Output("geo-eco-plots", "children"),
