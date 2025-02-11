@@ -32,21 +32,12 @@ def create_geo_eco_tab():
     """Function to create layout and visualations in the geo eco tab"""
     return dbc.Container(
         [
-            # Add Store component for data
-            dcc.Store(id="geo-eco-data"),
-            dbc.Row(
-                [
-                    dbc.Col(create_filter_slider(), width=12, lg=6),
-                ],
-                className="mb-3",
-            ),
+             dcc.Store(id="geo-eco-data"),
+            create_filter_slider(),
+            # html.Br(),
             html.Div(id="geo-eco-plots"),
-            dbc.Row(
-                [
-                    dbc.Col(create_year_slider(min_year=1990, default=2021), width=12, lg=6),
-                ],
-                className="mb-3",
-            ),
+            # html.Br(),
+            create_year_slider(),
         ],
         fluid=True,
     )
