@@ -1,5 +1,6 @@
 import dash_bootstrap_components as dbc
-from dash import html
+from dash import html, Input, Output, callback
+from dash.exceptions import PreventUpdate
 
 
 def create_introduction_tab():
@@ -110,7 +111,10 @@ def create_introduction_tab():
                                 html.H3("Explore. Analyze. Understand.", className="text-primary mb-3"),
                                 html.P("Dive deep into the global landscape of heart disease with our comprehensive visualization dashboard.", 
                                        className="lead"),
-                                dbc.Button("Start Exploring", color="primary", className="mt-3")
+                                dbc.Button("Start Exploring", 
+           id="start-exploring-button",
+           color="primary", 
+           className="mt-3")
                             ], md=8),
                             dbc.Col([
                                 html.Div([
@@ -124,3 +128,17 @@ def create_introduction_tab():
         ])
     ], fluid=True)
 
+
+
+@callback(
+    Output("tab-1-link", "n_clicks"),
+    Input("start-exploring-button", "n_clicks"),
+    prevent_initial_call=True
+)
+def navigate_to_world_map(n_clicks):
+    """
+    Trigger the World Map nav link when Start Exploring is clicked
+    """
+    if n_clicks:
+        return 1
+    return 0
