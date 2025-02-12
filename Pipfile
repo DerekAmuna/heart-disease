@@ -17,6 +17,7 @@ statsmodels = "*"
 flask-caching = "*"
 cachetools = "*"
 polars = "*"
+pyarrow = "*"
 
 [dev-packages]
 pre-commit = "*"
