@@ -1,11 +1,13 @@
 import dash_bootstrap_components as dbc
 import pandas as pd
+import polars as pl
 from dash import Input, Output, callback, dcc, html
+import logging
+logger = logging.getLogger(__name__)
 
 from components.common.filter_slider import create_filter_slider
 from components.common.gender_metric_selector import get_metric_column
 from components.common.year_slider import create_year_slider
-from components.data.data import data, filter_data, get_sankey_data
 from components.visualisations import (
     create_bar_plot,
     create_line_plot,
@@ -14,26 +16,13 @@ from components.visualisations import (
 )
 
 
-# def create_geo_eco_tab():
-#     """Function to create layout and visualizations in the geo eco tab"""
-#     return html.Div(
-#         [
-#             # Add Store component for data
-#             dcc.Store(id="general-data"),
-#             create_filter_slider(),
-#             html.Br(),
-#             # Create a container div for the plots with the ID that matches the callback
-#             html.Div(id="4x4plots"),
-#             html.Br(),
-#             create_year_slider(),
-#         ]
-#     )
 def create_geo_eco_tab():
     """Function to create layout and visualations in the geo eco tab"""
     return dbc.Container(
         [
             # Add Store component for data
             dcc.Store(id="geo-eco-data"),
+            dcc.Store(id="sankey-data"),
             dbc.Row(
                 [
                     dbc.Col(create_filter_slider(), width=12, lg=6),
@@ -55,14 +44,13 @@ def create_geo_eco_tab():
 @callback(
     Output("geo-eco-plots", "children"),
     Input("geo-eco-data", "data"),
+    Input("sankey-data", "data"),
     Input("metric-dropdown", "value"),
     Input("gender-dropdown", "value"),
     Input("top-filter-slider", "value"),
     Input("year-slider", "value"),
-    Input("region-dropdown", "value"),
-    Input("income-dropdown", "value"),
 )
-def create_geo_eco_plots(data, metric, gender, top_n, year, regions, income):
+def create_geo_eco_plots(data, sankey_data, metric, gender, top_n, year):
     """Create a grid of plots using visualizations from visualisations.py."""
     if not data or not metric or not gender:
         print(
@@ -70,19 +58,13 @@ def create_geo_eco_plots(data, metric, gender, top_n, year, regions, income):
         )
         return html.Div("Please select metric and gender", style={"margin": "20px"})
 
-    df = pd.DataFrame(data)
-    print("DataFrame shape:", df.shape)
-    print("DataFrame columns:", df.columns.tolist())
-
-    if df.empty:
-        return html.Div("No data available for the selected filters", style={"margin": "20px"})
+    df = pl.DataFrame(data)
 
     col = get_metric_column(gender, metric)
+
     print("Metric column:", col)
     if not col or col not in df.columns:
         return html.Div("Selected metric data not available", style={"margin": "20px"})
-
-    sankey_data = get_sankey_data(regions, income, gender, metric)
 
     # Create plots
     return dbc.Container(
@@ -97,11 +79,12 @@ def create_geo_eco_plots(data, metric, gender, top_n, year, regions, income):
                                 ),
                                 dbc.CardBody(
                                     create_scatter_plot(
-                                        "gdp_pc",
-                                        col,
-                                        df[df["Year"] == year].dropna(subset=["gdp_pc", col]),
-                                        hue="WB_Income",
-                                        top_n=top_n,
+                                        data = df.filter(pl.col("Year").eq(year)).drop_nulls(subset=["gdp_pc", col]),
+                                        x_metric = "gdp_pc",
+                                        y_metric = col,
+                                        # gender="Both",
+                                        hue = 'WB_Income',
+                                        top_n=top_n
                                     ),
                                     style={"height": "350px", "overflow": "auto"},
                                 ),
@@ -147,7 +130,7 @@ def create_geo_eco_plots(data, metric, gender, top_n, year, regions, income):
                                 dbc.CardBody(
                                     create_bar_plot(
                                         col,
-                                        df[df["Year"] == year].dropna(subset=[col]),
+                                        df.filter(pl.col("Year").eq(year)).drop_nulls(subset=[col]),
                                         top_n=top_n,
                                     ),
                                     style={"height": "350px", "overflow": "auto"},
@@ -165,7 +148,7 @@ def create_geo_eco_plots(data, metric, gender, top_n, year, regions, income):
                         dbc.Card(
                             [
                                 dbc.CardHeader(
-                                    html.H4("Male vs Female Deaths", className="text-center")
+                                    html.H4("Sankey Diagram", className="text-center")
                                 ),
                                 dbc.CardBody(
                                     create_sankey_diagram(sankey_data, metric, gender),

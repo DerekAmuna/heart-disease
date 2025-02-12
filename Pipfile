@@ -15,6 +15,7 @@ gunicorn = "*"
 scikit-learn = "*"
 statsmodels = "*"
 flask-caching = "*"
+cachetools = "*"
 
 [dev-packages]
 pre-commit = "*"
