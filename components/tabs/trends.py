@@ -43,6 +43,5 @@ def update_trend_plots(trends_data, metric, gender):
         return html.Div("No Data")
 
     df = pl.DataFrame(trends_data)
-    metric_col = get_metric_column(gender, metric)
 
     return create_trend_plot(df, metric, gender)
