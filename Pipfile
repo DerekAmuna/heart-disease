@@ -16,6 +16,7 @@ scikit-learn = "*"
 statsmodels = "*"
 flask-caching = "*"
 cachetools = "*"
+polars = "*"
 
 [dev-packages]
 pre-commit = "*"
