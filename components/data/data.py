@@ -93,7 +93,10 @@ def filter_data(
     return filtered
 
 
-data_2019 = filter_data(year=2019, age="Age-standardized", cause="Cardiovascular diseases")
+data_2019 = (filter_data(year=2019, age="Age-standardized", cause="Cardiovascular diseases")
+             .with_columns(pl.col("t_htn_ctrl").cast(pl.Float64, strict=False))
+             .with_columns(pl.col("t_high_bp_30-79").cast(pl.Float64, strict=False))
+                )
 print(data_2019.head())
 
 
@@ -253,15 +256,4 @@ def get_sankey_data(regions, income, gender, metric):
     return []
 
 
-@callback(
-    Output("hpt-data", "data"),Input("_", "data"))
-def get_hpt_data(_):
-    """Get hypertension data."""
-    df = data_2019
-    # df = filter_data(year=2019)
-    # df = df.with_columns(
-    #     pl.col("t_htn_ctrl").cast(pl.Float64),
-    #     pl.col("t_high_bp_30-79").cast(pl.Float64),
-    # )
-    logger.debug(f"HPT DataFrame columns: {df.columns.tolist()}")
-    return df.to_dicts()
+
