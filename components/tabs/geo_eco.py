@@ -30,16 +30,11 @@ def create_geo_eco_tab():
                 className="mb-3",
             ),
             html.Div(id="geo-eco-plots"),
-            dbc.Row(
-                [
-                    dbc.Col(create_year_slider(min_year=1990, default=2021), width=12, lg=6),
-                ],
-                className="mb-3",
-            ),
+            # html.Br(),
+            create_year_slider(),
         ],
         fluid=True,
     )
-
 
 @callback(
     Output("geo-eco-plots", "children"),
