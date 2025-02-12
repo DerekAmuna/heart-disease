@@ -89,14 +89,15 @@ def filter_data(
         col = get_metric_column(gender, metric)
         if col:
             filtered = filtered.drop_nulls(subset=[col])
-    logger.debug(msg=f'columns: {filtered.columns}')
+    logger.debug(msg=f"columns: {filtered.columns}")
     return filtered
 
 
-data_2019 = (filter_data(year=2019, age="Age-standardized", cause="Cardiovascular diseases")
-             .with_columns(pl.col("t_htn_ctrl").cast(pl.Float64, strict=False))
-             .with_columns(pl.col("t_high_bp_30-79").cast(pl.Float64, strict=False))
-                )
+data_2019 = (
+    filter_data(year=2019, age="Age-standardized", cause="Cardiovascular diseases")
+    .with_columns(pl.col("t_htn_ctrl").cast(pl.Float64, strict=False))
+    .with_columns(pl.col("t_high_bp_30-79").cast(pl.Float64, strict=False))
+)
 print(data_2019.head())
 
 
@@ -107,11 +108,10 @@ print(data_2019.head())
     Input("income-dropdown", "value"),
     Input("gender-dropdown", "value"),
     Input("metric-dropdown", "value"),
-    Input("top-filter-slider", "value"),
 )
-def get_geo_eco_data(year, regions, income, gender, metric, top_n):
+@cached(cache=TTLCache(maxsize=32, ttl=300), key=cache_key)
+def get_geo_eco_data(year, regions, income, gender, metric):
     """Get filtered data for geo-economic visualizations."""
-    print("Geo eco inputs:", year, regions, income, gender, metric, top_n)
 
     if not year or not gender or not metric:
         return []
@@ -119,31 +119,25 @@ def get_geo_eco_data(year, regions, income, gender, metric, top_n):
     cols = [get_metric_column(g, metric) for g in ["Both", "Female", "Male"]]
     cols = [col for col in cols if col]
 
-    df = filter_data(None, regions, income, gender, metric)
-    print("Filtered data shape:", df.shape)
-    print(f"Years in data: {sorted(df['Year'].unique())}")
-    print(f"Available columns: {df.columns}")
+    df = filter_data(year, regions, income, gender, metric)
 
     if cols:
         keep_cols = [
-            "Entity",
-            "Year",
-            "Code",
-            "gdp_pc",
-            "WB_Income",
-            "Population",
-            "region",
-            "cause",
+        "Entity",
+        "Year",
+        "Code",
+        "gdp_pc",
+        "WB_Income",
+        "Population",
+        "region",
+        "cause",
         ] + cols
         df = df.select(keep_cols)
         df = df.with_columns(
             [pl.col(col).cast(pl.Float32) for col in cols + ["gdp_pc", "Population"]]
         )
         df = df.drop_nulls(subset=cols + ["gdp_pc", "Population"])
-        print("Post dropna:", df.shape)
-        print("Final data shape:", df.shape)
-        print("Final columns:", df.columns)
-        print(f"Sample data:\n{df[cols + ['gdp_pc', 'Year']].head()}")
+
     return df.to_dicts()
 
 
@@ -185,7 +179,7 @@ def get_trends_data(metric, gender):
 
     metric = get_metric_column(gender, metric)
 
-    df = df.select(['cause','age','Year',metric])
+    df = df.select(["cause", "age", "Year", metric])
     # Pre-process data once during loading: convert Year to integer
     df = df.with_columns(pl.col("Year").cast(pl.Int32))
 
@@ -238,7 +232,15 @@ def get_healthcare_data(year, regions, income, gender, metric):
 )
 def get_sankey_data(regions, income, gender, metric):
     """Get unfiltered data for Sankey diagram visualization."""
-    df = filter_data(year=2019, regions=regions, income=income, gender=gender, metric=metric, cause="Cardiovascular diseases", age="Age-standardized")
+    df = filter_data(
+        year=2019,
+        regions=regions,
+        income=income,
+        gender=gender,
+        metric=metric,
+        cause="Cardiovascular diseases",
+        age="Age-standardized",
+    )
     col = get_metric_column(gender, metric)
 
     if col and col in df.columns:
@@ -249,6 +251,3 @@ def get_sankey_data(regions, income, gender, metric):
         return df.to_dicts()
 
     return []
-
-
-

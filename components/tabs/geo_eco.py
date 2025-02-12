@@ -1,8 +1,10 @@
+import logging
+
 import dash_bootstrap_components as dbc
 import pandas as pd
 import polars as pl
 from dash import Input, Output, callback, dcc, html
-import logging
+
 logger = logging.getLogger(__name__)
 
 from components.common.filter_slider import create_filter_slider
@@ -10,6 +12,7 @@ from components.common.gender_metric_selector import get_metric_column
 from components.common.year_slider import create_year_slider
 from components.visualisations import (
     create_bar_plot,
+    create_histogram_plot,
     create_line_plot,
     create_sankey_diagram,
     create_scatter_plot,
@@ -30,11 +33,11 @@ def create_geo_eco_tab():
                 className="mb-3",
             ),
             html.Div(id="geo-eco-plots"),
-            # html.Br(),
-            create_year_slider(),
+            create_year_slider(min_year=1990, max_year=2021, default=2021),
         ],
         fluid=True,
     )
+
 
 @callback(
     Output("geo-eco-plots", "children"),
@@ -74,12 +77,14 @@ def create_geo_eco_plots(data, sankey_data, metric, gender, top_n, year):
                                 ),
                                 dbc.CardBody(
                                     create_scatter_plot(
-                                        data = df.filter(pl.col("Year").eq(year)).drop_nulls(subset=["gdp_pc", col]),
-                                        x_metric = "gdp_pc",
-                                        y_metric = col,
+                                        data=df.filter(pl.col("Year").eq(year)).drop_nulls(
+                                            subset=["gdp_pc", col]
+                                        ),
+                                        x_metric="gdp_pc",
+                                        y_metric=col,
                                         # gender="Both",
-                                        hue = 'WB_Income',
-                                        top_n=top_n
+                                        hue="WB_Income",
+                                        top_n=top_n,
                                     ),
                                     style={"height": "350px", "overflow": "auto"},
                                 ),
@@ -96,10 +101,13 @@ def create_geo_eco_plots(data, sankey_data, metric, gender, top_n, year):
                         dbc.Card(
                             [
                                 dbc.CardHeader(
-                                    html.H4("Population Growth", className="text-center")
+                                    html.H4(f"{metric} Distribution", className="text-center")
                                 ),
                                 dbc.CardBody(
-                                    create_line_plot("Population", df, top_n=top_n, n_metric=col),
+                                    create_histogram_plot(
+                                        col,
+                                        df.filter(pl.col("Year").eq(year)).drop_nulls(subset=[col])
+                                    ),
                                     style={"height": "350px", "overflow": "auto"},
                                 ),
                             ],
@@ -125,7 +133,9 @@ def create_geo_eco_plots(data, sankey_data, metric, gender, top_n, year):
                                 dbc.CardBody(
                                     create_bar_plot(
                                         col,
-                                        df.filter(pl.col("Year").eq(year)).drop_nulls(subset=[col]),
+                                        df.filter(pl.col("Year").eq(year)).drop_nulls(
+                                            subset=[col]
+                                        ),
                                         top_n=top_n,
                                     ),
                                     style={"height": "350px", "overflow": "auto"},
@@ -142,9 +152,7 @@ def create_geo_eco_plots(data, sankey_data, metric, gender, top_n, year):
                     dbc.Col(
                         dbc.Card(
                             [
-                                dbc.CardHeader(
-                                    html.H4("Sankey Diagram", className="text-center")
-                                ),
+                                dbc.CardHeader(html.H4("Sankey Diagram", className="text-center")),
                                 dbc.CardBody(
                                     create_sankey_diagram(sankey_data, metric, gender),
                                     style={"height": "350px", "overflow": "auto"},

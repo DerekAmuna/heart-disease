@@ -237,13 +237,13 @@ def create_trend_plot(data, metric, gender):
     for cause in df["cause"].unique():
         cause_data = df.filter(pl.col("cause").eq(cause))
         yearly_data = cause_data.group_by("Year").agg(pl.col(col).mean()).sort("Year")
-        
+
         # Split data at 2021.5
         actual = yearly_data.filter(pl.col("Year") <= 2021.5)
         projected = yearly_data.filter(pl.col("Year") > 2021.5)
-        
+
         color = colors.get(cause, "#17becf")
-        
+
         # Add actual data (solid line)
         fig.add_trace(
             go.Scatter(
@@ -254,7 +254,7 @@ def create_trend_plot(data, metric, gender):
                 line=dict(color=color),
             )
         )
-        
+
         # Add projected data (dotted line)
         if not projected.is_empty():
             fig.add_trace(
@@ -613,6 +613,65 @@ def create_sankey_diagram(data, metric, gender):
             yanchor="top",
             font=dict(size=14),
         ),
+    )
+
+    return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
+
+
+def create_histogram_plot(metric: str, data: pl.DataFrame, bins: int = 30) -> go.Figure:
+    """Create a histogram plot showing the distribution of a metric.
+
+    Args:
+        metric (str): Column name to plot
+        data (pl.DataFrame): Data to plot
+        bins (int, optional): Number of bins for histogram. Defaults to 30.
+
+    Returns:
+        go.Figure: Plotly figure object
+    """
+    if len(data) == 0:
+        return create_no_data_figure()
+
+    title = get_title_text(metric)
+
+    # Convert to pandas for plotly compatibility
+    df = data.select([metric]).to_pandas()
+
+    # Create histogram
+    fig = px.histogram(
+        df,
+        x=metric,
+        nbins=bins,
+        title=title,
+        labels={metric: title},
+        opacity=0.75
+    )
+
+    # Update layout
+    fig.update_layout(
+        **BASE_LAYOUT,
+        **COMMON_LAYOUT,
+        # showlegend=False,
+        height=350,
+        margin=dict(l=40, r=40, t=40, b=40),
+        xaxis=dict(
+            title=title,
+            **GRID_SETTINGS
+        ),
+        yaxis=dict(
+            title="Count",
+            **GRID_SETTINGS
+        )
+    )
+
+    # Add mean line
+    mean_val = df[metric].mean()
+    fig.add_vline(
+        x=mean_val,
+        line_dash="dash",
+        line_color="red",
+        annotation_text=f"Mean: {format_value(mean_val)}",
+        annotation_position="top right"
     )
 
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
