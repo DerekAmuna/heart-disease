@@ -175,24 +175,19 @@ def get_world_map_data(year, regions, income, gender, metric, age):
     Output("trends-data", "data"),
     Input("metric-dropdown", "value"),
     Input("gender-dropdown", "value"),
-    Input("country-dropdown", "value"),
-    Input("region-dropdown", "value"),
-    Input("income-dropdown", "value"),
 )
-def get_trends_data(metric, gender, countries, regions, income):
+def get_trends_data(metric, gender):
     """Get filtered data for trends visualization."""
-    if not metric or not gender:
-        return []
+    data_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "trends.csv"
+    )
+    df = pl.read_csv(data_path)
 
-    df = filter_data(None, regions, income, gender, metric)  # No year filter for trends
+    metric = get_metric_column(gender, metric)
 
-    # Filter by countries if specified
-    if countries:
-        df = df.filter(pl.col("Entity").is_in(countries))
-
-    # Sum across ages for each year, entity, and cause
-    df = df.group_by(["Year", "Entity", "cause", "region", "WB_Income"]).sum()
-    logger.debug(f"Trend data shape: {df.shape}")
+    df = df.select(['cause','age','Year',metric])
+    # Pre-process data once during loading: convert Year to integer
+    df = df.with_columns(pl.col("Year").cast(pl.Int32))
 
     return df.to_dicts()
 

@@ -6,19 +6,15 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from dash import dcc, html
 import polars as pl
+from dash import dcc, html
 from scipy import stats
 from scipy.stats import t
 from statsmodels.nonparametric.smoothers_lowess import lowess
 
 from components.common import gender_metric_selector
 from components.common.gender_metric_selector import get_metric_column
-from components.data.data import (
-    UNIQUE_INCOMES,
-    UNIQUE_REGIONS,
-    data,
-)
+from components.data.data import UNIQUE_INCOMES, UNIQUE_REGIONS, data
 
 logger = logging.getLogger(__name__)
 
@@ -63,24 +59,23 @@ def get_title_text(metric):
     return mapping.get(metric, metric).replace("_", " ").title()
 
 
-def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5, add_diagonal=False):
+def create_scatter_plot(
+    x_metric, y_metric, data, size=None, hue=None, top_n=5, add_diagonal=False
+):
     """Create a scatter plot comparing two metrics with optional size and color encoding."""
     # print(f"Creating scatter plot: x={x_metric}, y={y_metric}, data shape={data.shape}")
     # print(f"Data columns: {data.columns.tolist()}")
     # print(f"Data values:\n{data[[x_metric, y_metric]].head()}")
 
-
     if data.is_empty() or x_metric not in data.columns or y_metric not in data.columns:
         return create_no_data_figure("No data available for selected metrics")
-
 
     plot_data = data
 
     # Convert numeric columns
-    plot_data = plot_data.with_columns([
-        pl.col(x_metric).cast(pl.Float64),
-        pl.col(y_metric).cast(pl.Float64)
-    ])
+    plot_data = plot_data.with_columns(
+        [pl.col(x_metric).cast(pl.Float64), pl.col(y_metric).cast(pl.Float64)]
+    )
     plot_data = plot_data.drop_nulls(subset=[x_metric, y_metric])
 
     print(f"After numeric conversion: shape={plot_data.shape}")
@@ -154,8 +149,8 @@ def create_tooltip(country_name, metric, gender, age, selected_year=None):
 
     # Create time series plot for cardiovascular diseases
     cv_df = df.filter(
-        (pl.col("cause").str.to_lowercase().eq("cardiovascular diseases")) &
-        (pl.col("age").eq(age))
+        (pl.col("cause").str.to_lowercase().eq("cardiovascular diseases"))
+        & (pl.col("age").eq(age))
     )
     cv_df = cv_df.drop_nulls(subset=[col])
 
@@ -217,7 +212,7 @@ def create_tooltip(country_name, metric, gender, age, selected_year=None):
     return fig, risk_factors
 
 
-def create_trend_plot(data, metric, year, gender):
+def create_trend_plot(data, metric, gender):
     """Create a trend plot showing the metric over time for each cause."""
     df = data
 
@@ -241,69 +236,40 @@ def create_trend_plot(data, metric, year, gender):
     # Add traces for each cause
     for cause in df["cause"].unique():
         cause_data = df.filter(pl.col("cause").eq(cause))
-
-        # Group by year to get mean values
-        yearly_data = (
-            cause_data.group_by("Year")
-            .agg(pl.col(col).mean())
-            .sort("Year")
-            .to_pandas()
-        )
-
-        # Get color for cause (default to gray if not in mapping)
+        yearly_data = cause_data.group_by("Year").agg(pl.col(col).mean()).sort("Year")
+        
+        # Split data at 2021.5
+        actual = yearly_data.filter(pl.col("Year") <= 2021.5)
+        projected = yearly_data.filter(pl.col("Year") > 2021.5)
+        
         color = colors.get(cause, "#17becf")
-
-        # Add actual data
+        
+        # Add actual data (solid line)
         fig.add_trace(
             go.Scatter(
-                x=yearly_data["Year"],
-                y=yearly_data[col],
+                x=actual["Year"],
+                y=actual[col],
                 name=cause,
-                mode="lines+markers",
+                mode="lines",
                 line=dict(color=color),
             )
         )
-
-        # Fit LOWESS to existing data
-        lowess_data = lowess(
-            yearly_data[col], yearly_data["Year"], frac=0.5, it=1, return_sorted=True
-        )
-
-        # Project trend to 2030
-        last_years = lowess_data[-5:]  # Use last 5 years for projection
-        slope = np.polyfit(last_years[:, 0], last_years[:, 1], deg=1)[0]
-        future_years = np.arange(yearly_data["Year"].max() + 1, 2031)
-        projection = slope * (future_years - yearly_data["Year"].max()) + lowess_data[-1, 1]
-
-        # Add LOWESS trend
-        fig.add_trace(
-            go.Scatter(
-                x=lowess_data[:, 0],
-                y=lowess_data[:, 1],
-                name=f"{cause} (Trend)",
-                mode="lines",
-                line=dict(
-                    dash="dot",
-                    color=color,
-                ),
-                showlegend=False,
+        
+        # Add projected data (dotted line)
+        if not projected.is_empty():
+            fig.add_trace(
+                go.Scatter(
+                    x=projected["Year"],
+                    y=projected[col],
+                    name=f"{cause} (Projected)",
+                    mode="lines",
+                    line=dict(
+                        color=color,
+                        dash="dot",
+                    ),
+                    showlegend=False,
+                )
             )
-        )
-
-        # Add projection
-        fig.add_trace(
-            go.Scatter(
-                x=future_years,
-                y=projection,
-                name=f"{cause} (Projection)",
-                mode="lines",
-                line=dict(
-                    dash="dash",
-                    color=color,
-                ),
-                showlegend=False,
-            )
-        )
 
     fig.update_layout(
         title=f"{metric} Trends Over Time",
@@ -321,6 +287,50 @@ def create_trend_plot(data, metric, year, gender):
         hovermode="x unified",
     )
 
+    return dcc.Graph(figure=fig, config={"displayModeBar": False})
+
+
+def format_value(value, is_percent=True, is_estimate=True, is_obesity=False):
+    """Format a value for display.
+
+    Args:
+        value: The value to format
+        is_percent (bool): Whether the value is a percentage
+        is_estimate (bool): Whether to show decimal places
+        is_obesity (bool): Whether this is an obesity rate (already in percentage)
+
+    Returns:
+        str: Formatted value
+    """
+    if pd.isna(value):
+        return "N/A"
+
+    try:
+        if is_percent:
+            if is_obesity:
+                return f"{float(value):.1f}%"
+            return f"{float(value) * 100:.1f}%"
+        elif isinstance(value, (int, float)):
+            if value >= 1000000:
+                return f"{value/1000000:.1f}M"
+            elif value >= 1000:
+                return f"{value/1000:.1f}K"
+            else:
+                return f"{value:.1f}" if is_estimate else f"{int(value):,}"
+        return str(value)
+    except:
+        return "N/A"
+
+
+def create_no_data_figure(message="No data available"):
+    """Create an empty figure with a message when no data is available."""
+    fig = go.Figure()
+    fig.add_annotation(
+        text=message, xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, font=dict(size=14)
+    )
+    fig.update_xaxes(showgrid=False, showticklabels=False)
+    fig.update_yaxes(showgrid=False, showticklabels=False)
+    fig.update_layout(height=200, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
     return dcc.Graph(figure=fig, config={"displayModeBar": False})
 
 
@@ -374,50 +384,6 @@ def create_line_plot(metric, data, top_n=5, n_metric=None):
         axis(**GRID_SETTINGS)
 
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
-
-
-def format_value(value, is_percent=True, is_estimate=True, is_obesity=False):
-    """Format a value for display.
-
-    Args:
-        value: The value to format
-        is_percent (bool): Whether the value is a percentage
-        is_estimate (bool): Whether to show decimal places
-        is_obesity (bool): Whether this is an obesity rate (already in percentage)
-
-    Returns:
-        str: Formatted value
-    """
-    if pd.isna(value):
-        return "N/A"
-
-    try:
-        if is_percent:
-            if is_obesity:
-                return f"{float(value):.1f}%"
-            return f"{float(value) * 100:.1f}%"
-        elif isinstance(value, (int, float)):
-            if value >= 1000000:
-                return f"{value/1000000:.1f}M"
-            elif value >= 1000:
-                return f"{value/1000:.1f}K"
-            else:
-                return f"{value:.1f}" if is_estimate else f"{int(value):,}"
-        return str(value)
-    except:
-        return "N/A"
-
-
-def create_no_data_figure(message="No data available"):
-    """Create an empty figure with a message when no data is available."""
-    fig = go.Figure()
-    fig.add_annotation(
-        text=message, xref="paper", yref="paper", x=0.5, y=0.5, showarrow=False, font=dict(size=14)
-    )
-    fig.update_xaxes(showgrid=False, showticklabels=False)
-    fig.update_yaxes(showgrid=False, showticklabels=False)
-    fig.update_layout(height=200, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
-    return dcc.Graph(figure=fig, config={"displayModeBar": False})
 
 
 def create_bar_plot(metric, data, top_n=5, color=None):
@@ -521,8 +487,6 @@ def create_chloropleth_map(filtered_data, metric, gender="Both"):
             ),
         )
     )
-
-
 
     fig.update_layout(
         **COMMON_LAYOUT,
