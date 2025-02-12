@@ -1,7 +1,7 @@
 import logging
 
 import dash_bootstrap_components as dbc
-import pandas as pd
+import polars as pl
 from dash import Input, Output, callback, dcc, html
 
 from components.common.filter_slider import create_filter_slider
@@ -37,9 +37,9 @@ def update_trend_plots(trends_data, metric, gender, income):
     if not trends_data or not metric or not gender:
         return html.Div("No Data")
 
-    df = pd.DataFrame(trends_data)
+    df = pl.DataFrame(trends_data)
     logger.debug(f"first load view {df.head()}")
-    if df.empty:
+    if df.height == 0:
         return html.Div("No Data")
 
     return dbc.Container(
@@ -54,7 +54,7 @@ def update_trend_plots(trends_data, metric, gender, income):
                                 ),
                                 dbc.CardBody(
                                     create_trend_plot(df, metric, None, gender),
-                                    style={"height": "500px", "overflow": "auto"},
+                                    style={"height": "100%", "overflow": "auto"},
                                 ),
                             ],
                             className="mb-3 shadow-sm",
@@ -73,5 +73,6 @@ def update_trend_plots(trends_data, metric, gender, income):
             "backgroundColor": "#f8f9fa",
             "borderRadius": "8px",
             "padding": "15px",
+            'height':'100%'
         },
     )
