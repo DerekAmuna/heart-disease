@@ -58,7 +58,7 @@ heart-disease/
 ### Prerequisites
 
 - Python 3.8+
-- Virtual environment (optional but recommended)
+- Pipenv for dependency management
 
 ### Steps
 
@@ -69,13 +69,13 @@ heart-disease/
    ```
 2. Install dependencies:
    ```bash
-   pip install -r requirements.txt
+   pipenv install
    ```
 3. Run the application locally:
    ```bash
    python application.py
    ```
-4. Open your browser and visit `http://127.0.0.1:8050/`
+4. Open your browser and visit `http://0.0.0.0:8080/`
 
 ## Usage
 
@@ -242,4 +242,17 @@ Key columns in the output dataset:
 - **Data Sources**: WHO, IHME, World Bank
 - **Libraries Used**: Dash, Plotly, Pandas, Bootstrap, Flask
 - **Hosting**: AWS Elastic Beanstalk
+
+
+
+
+
+
+
+
+
+
+
+
+
 
