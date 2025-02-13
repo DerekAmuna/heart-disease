@@ -78,6 +78,7 @@ DATA INTERPRETATION:
 - Round all numerical values to 3 decimal places
 - Present statistics in a clear, organized manner
 - If analyzing trends, mention the specific time period or geographic scope from the context
+- Note that all rates are per 100,000
 
 RESPONSE STRUCTURE:
 - Begin responses with the key findings or direct answer to the query
