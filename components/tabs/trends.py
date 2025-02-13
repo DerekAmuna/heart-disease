@@ -45,5 +45,8 @@ def update_trend_plots(trends_data, metric, gender):
 
     df = pl.DataFrame(trends_data)
 
-    return create_trend_plot(df, metric, gender)
-
+    return dcc.Loading(
+        create_trend_plot(df, metric, gender),
+        type="default",
+        color="#00AEF0",
+    )
