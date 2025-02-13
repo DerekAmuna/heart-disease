@@ -12,13 +12,17 @@ logger = logging.getLogger(__name__)
 
 def create_trends_tab():
     """Function to create layout and visualations in the trends tab"""
-    return html.Div(
-        [
-            dcc.Store(id="trends-data"),
-            html.Br(),
-            html.Div(id="trend-plots", style={"height": "100%"}),
-            html.Br(),
-        ]
+    return dcc.Loading(
+        html.Div(
+            [
+                dcc.Store(id="trends-data"),
+                html.Br(),
+                html.Div(id="trend-plots", style={"height": "100%"}),
+                html.Br(),
+            ]
+        ),
+        type="default",
+        color="#00AEF0",
     )
 
 
