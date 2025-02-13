@@ -8,8 +8,8 @@ def create_introduction_tab():
     return dbc.Container([
         # Main Title
         dbc.Row([
-            dbc.Col(html.H1("Heart Disease Global Insights", 
-                             className="text-center text-primary fw-bold mb-4"), 
+            dbc.Col(html.H1("Heart Disease Global Insights",
+                             className="text-center text-primary fw-bold mb-4"),
                     width=12)
         ]),
 
@@ -19,7 +19,7 @@ def create_introduction_tab():
                 dbc.Card([
                     dbc.CardHeader("🌐 World Map Visualization", className="bg-primary text-white"),
                     dbc.CardBody([
-                        html.P("Interactive choropleth map showing heart disease prevalence across countries.", 
+                        html.P("Interactive choropleth map showing heart disease prevalence across countries.",
                                className="card-text"),
                         html.Ul([
                             html.Li("Country-level heart disease metrics"),
@@ -29,12 +29,12 @@ def create_introduction_tab():
                     ])
                 ], className="mb-3 shadow-sm")
             ], md=3),
-            
+
             dbc.Col([
                 dbc.Card([
                     dbc.CardHeader("💰 Geo-Economic Features", className="bg-success text-white"),
                     dbc.CardBody([
-                        html.P("Analyze heart disease through economic and geographical lenses.", 
+                        html.P("Analyze heart disease through economic and geographical lenses.",
                                className="card-text"),
                         html.Ul([
                             html.Li("GDP correlation analysis"),
@@ -44,12 +44,12 @@ def create_introduction_tab():
                     ])
                 ], className="mb-3 shadow-sm")
             ], md=3),
-            
+
             dbc.Col([
                 dbc.Card([
                     dbc.CardHeader("🏥 Healthcare Insights", className="bg-info text-white"),
                     dbc.CardBody([
-                        html.P("Deep dive into healthcare-related heart disease factors.", 
+                        html.P("Deep dive into healthcare-related heart disease factors.",
                                className="card-text"),
                         html.Ul([
                             html.Li("Medical intervention effectiveness"),
@@ -59,12 +59,12 @@ def create_introduction_tab():
                     ])
                 ], className="mb-3 shadow-sm")
             ], md=3),
-            
+
             dbc.Col([
                 dbc.Card([
                     dbc.CardHeader("📈 Trends Analysis", className="bg-warning text-white"),
                     dbc.CardBody([
-                        html.P("Comprehensive temporal analysis of heart disease trends.", 
+                        html.P("Comprehensive temporal analysis of heart disease trends.",
                                className="card-text"),
                         html.Ul([
                             html.Li("Long-term trend visualization"),
@@ -89,7 +89,7 @@ def create_introduction_tab():
                             ], width=4),
                             dbc.Col([
                                 html.H5("Years", className="text-center"),
-                                html.H3("1950-2022", className="text-center text-primary")
+                                html.H3("1980-2021", className="text-center text-primary")
                             ], width=4),
                             dbc.Col([
                                 html.H5("Data Points", className="text-center"),
@@ -109,11 +109,11 @@ def create_introduction_tab():
                         dbc.Row([
                             dbc.Col([
                                 html.H3("Explore. Analyze. Understand.", className="text-primary mb-3"),
-                                html.P("Dive deep into the global landscape of heart disease with our comprehensive visualization dashboard.", 
+                                html.P("Dive deep into the global landscape of heart disease with our comprehensive visualization dashboard.",
                                        className="lead"),
-                                dbc.Button("Start Exploring", 
+                                dbc.Button("Start Exploring",
            id="start-exploring-button",
-           color="primary", 
+           color="primary",
            className="mt-3")
                             ], md=8),
                             dbc.Col([

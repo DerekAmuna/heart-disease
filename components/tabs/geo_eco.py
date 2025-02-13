@@ -28,7 +28,7 @@ def create_geo_eco_tab():
             dcc.Store(id="sankey-data"),
             dbc.Row(
                 [
-                    dbc.Col(create_filter_slider(), width=12, lg=6),
+                    dbc.Col(create_filter_slider(), width=12,),
                 ],
                 className="mb-3",
             ),
