@@ -33,6 +33,7 @@ app = dash.Dash(
 application = app.server
 
 
+
 navbar = dbc.Navbar(
     dbc.Container(
         [
@@ -97,6 +98,7 @@ app.layout = html.Div(
             ],
             className="g-0",
         ),
+        chatbot.create_chatbot(),
     ]
 )
 
@@ -151,6 +153,17 @@ def toggle_navbar_collapse(n, is_open):
         return not is_open
     return is_open
 
+# Register chatbot callbacks
+chatbot.register_callbacks(app)
+
+if __name__ == "__main__":
+    app.run_server(
+        debug=True,
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 8080)),
+        dev_tools_hot_reload=True,
+        dev_tools_ui=True,
+    )
 
 if __name__ == "__main__":
     app.run_server(
