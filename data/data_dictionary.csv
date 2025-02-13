@@ -1,59 +1,35 @@
 Column Name    ,Description                                 ,Nullable ,Type        ,Data Type ,Sample Value         ,Contains Imputed Values
 Entity         ,Country or region name                      ,No       ,Main Data   ,string    ,Afghanistan          ,False
-Code           ,Country code                                ,No       ,Main Data   ,string    ,AFG                  ,False
+age            ,Age group                                   ,No       ,Main Data   ,string    ,All Ages             ,False
+cause          ,Type of heart disease                       ,No       ,Main Data   ,string    ,Cardiovascular diseases,False
 Year           ,Year of observation                         ,No       ,Main Data   ,integer   ,1980                 ,False
+valprevnumberboth,Total prevalence count for both genders   ,Yes       ,Disease Metrics,float     ,687223.91            ,False
+valdeathsnumberboth,Total deaths count for both genders     ,Yes      ,Disease Metrics,float     ,52184.06             ,False
+valprevrateboth,Prevalence rate per 100k for both genders   ,Yes      ,Disease Metrics,float     ,6911.31              ,False
+valdeathsrateboth,Death rate per 100k for both genders      ,Yes      ,Disease Metrics,float     ,388.48               ,False
+valprevpercentboth,Prevalence percentage for both genders   ,Yes      ,Disease Metrics,percent   ,0.0700               ,False
+valdeathspercentboth,Death percentage for both genders      ,Yes      ,Disease Metrics,percent   ,0.1806               ,False
+valprevnumberfemale,Total prevalence count for females     ,Yes     ,Gender Metrics ,float     ,269970.69            ,False
+valdeathsnumberfemale,Total deaths count for females        ,Yes       ,Gender Metrics ,float     ,19608.30             ,False
+valprevratefemale,Prevalence rate per 100k for females     ,Yes     ,Gender Metrics ,float     ,5299.19              ,False
+valdeathsratefemale,Death rate per 100k for females        ,Yes      ,Gender Metrics ,float     ,301.38               ,False
+valprevpercentfemale,Prevalence percentage for females     ,Yes      ,Gender Metrics ,percent   ,0.0538               ,False
+valdeathspercentfemale,Death percentage for females        ,Yes      ,Gender Metrics ,percent   ,0.1500               ,False
+valprevnumbermale,Total prevalence count for males        ,Yes       ,Gender Metrics ,float     ,417253.22            ,False
+valdeathsnumbermale,Total deaths count for males           ,Yes       ,Gender Metrics ,float     ,32575.76             ,False
+valprevratemale,Prevalence rate per 100k for males        ,Yes       ,Gender Metrics ,float     ,8605.12              ,False
+valdeathsratemale,Death rate per 100k for males           ,Yes       ,Gender Metrics ,float     ,470.31               ,False
+valprevpercentmale,Prevalence percentage for males        ,Yes       ,Gender Metrics ,percent   ,0.0870               ,False
+valdeathspercentmale,Death percentage for males           ,Yes       ,Gender Metrics ,percent   ,0.2066               ,False
+Code           ,Country code                                ,Yes      ,Main Data   ,string    ,AFG                  ,False
 gdp_pc         ,GDP per capita                              ,Yes      ,Risk Factor ,float     ,1280.46              ,True
 WB_Income      ,World Bank Income Classification            ,Yes      ,Main Data   ,string    ,Low-income countries ,True
-Population     ,Total population                            ,Yes      ,Main Data   ,integer   ,12045664             ,True
-region         ,Geographic region                           ,Yes      ,Main Data   ,string    ,South Asia           ,True
-death_std      ,Standardized death rate                     ,Yes      ,Main Data   ,float     ,696.06               ,True
-ct_units       ,CT scanner units                            ,Yes      ,Risk Factor ,float     ,0.19                 ,True
-ischemic_rate  ,Rate of ischemic heart disease              ,Yes      ,Main Data   ,float     ,336.27               ,True
+ct_units       ,CT scanner units per million population     ,Yes      ,Risk Factor ,float     ,0.19                 ,True
 obesity%       ,Percentage of population with obesity       ,Yes      ,Risk Factor ,percent   ,1.3                  ,True
 pacemaker_1m   ,Pacemaker implants per 1 million population ,Yes      ,Risk Factor ,float     ,107.9                ,True
-rheumatic_rate ,Rate of rheumatic heart disease             ,Yes      ,Main Data   ,float     ,7.24                 ,True
-statin_avail   ,Statin availability                         ,Yes      ,Risk Factor ,string    ,Yes                  ,True
-statin_use_k   ,Statin usage per thousand                   ,Yes      ,Risk Factor ,float     ,108.9                ,True
-htn_death_std  ,Standardized hypertension death rate        ,Yes      ,Main Data   ,float     ,90.89                ,True
-ischemic_std   ,Standardized ischemic heart disease rate    ,Yes      ,Main Data   ,float     ,336.27               ,True
-rheumatic_std  ,Standardized rheumatic heart disease rate   ,Yes      ,Main Data   ,float     ,7.24                 ,True
-cvd_share      ,Share of cardiovascular disease deaths      ,Yes      ,Main Data   ,float     ,36.87                ,True
-deaths         ,Total CVD deaths                            ,No       ,Main Data   ,float     ,52184.06             ,True
-f_deaths       ,Female CVD deaths                           ,No       ,Main Data   ,float     ,19608.30             ,True
-m_deaths       ,Male CVD deaths                             ,No       ,Main Data   ,float     ,32575.76             ,True
-deaths%        ,Percentage of total deaths from CVD         ,No       ,Main Data   ,percent   ,0.1806               ,True
-f_deaths%      ,Percentage of female deaths from CVD        ,No       ,Main Data   ,percent   ,0.1500               ,True
-m_deaths%      ,Percentage of male deaths from CVD          ,No       ,Main Data   ,percent   ,0.2066               ,True
-death_rate     ,CVD death rate per 100k                     ,No       ,Main Data   ,float     ,388.48               ,True
-f_death_rate   ,Female CVD death rate per 100k              ,No       ,Main Data   ,float     ,301.38               ,True
-m_death_rate   ,Male CVD death rate per 100k                ,No       ,Main Data   ,float     ,470.31               ,True
-prev           ,Total CVD prevalence                        ,Yes      ,Main Data   ,float     ,687223.91            ,True
-f_prev         ,Female CVD prevalence                       ,Yes      ,Main Data   ,float     ,269970.69            ,True
-m_prev         ,Male CVD prevalence                         ,Yes      ,Main Data   ,float     ,417253.22            ,True
-prev%          ,Percentage of population with CVD           ,Yes      ,Main Data   ,percent   ,0.0700               ,True
-f_prev%        ,Percentage of female population with CVD    ,Yes      ,Main Data   ,percent   ,0.0538               ,True
-m_prev%        ,Percentage of male population with CVD      ,Yes      ,Main Data   ,percent   ,0.0870               ,True
-prev_rate      ,CVD prevalence rate per 100k                ,Yes      ,Main Data   ,float     ,6911.31              ,True
-f_prev_rate    ,Female CVD prevalence rate per 100k         ,Yes      ,Main Data   ,float     ,5299.19              ,True
-m_prev_rate    ,Male CVD prevalence rate per 100k           ,Yes      ,Main Data   ,float     ,8605.12              ,True
-f_cvd_std      ,Female standardized CVD rate                ,Yes      ,Main Data   ,float     ,501.00               ,True
-f_htn_ctrl_30-79     ,Female hypertension control rate            ,Yes      ,Risk Factor ,percent   ,17.3                 ,True
-f_htn_diag_30-79     ,Female hypertension diagnosis rate          ,Yes      ,Risk Factor ,percent   ,66.0                 ,True
-f_htn          ,Female hypertension prevalence              ,Yes      ,Risk Factor ,percent   ,45.3                 ,True
-f_cvd_u70%     ,Female CVD deaths under 70%                 ,Yes      ,Main Data   ,percent   ,53.57                ,True
-f_high_bp_30-79      ,Female high blood pressure prevalence       ,Yes      ,Risk Factor ,percent   ,37.41                ,True
-f_htn_rx_30-79       ,Female hypertension treatment rate          ,Yes      ,Risk Factor ,percent   ,54.3                 ,True
-m_cvd_std      ,Male standardized CVD rate                  ,Yes      ,Main Data   ,float     ,567.00               ,True
-m_htn_ctrl_30-79     ,Male hypertension control rate              ,Yes      ,Risk Factor ,percent   ,9.9                  ,True
-m_htn_diag_30-79     ,Male hypertension diagnosis rate            ,Yes      ,Risk Factor ,percent   ,43.9                 ,True
-m_htn          ,Male hypertension prevalence                ,Yes      ,Risk Factor ,percent   ,35.3                 ,True
-m_cvd_u70%     ,Male CVD deaths under 70%                   ,Yes      ,Main Data   ,percent   ,62.88                ,True
-m_high_bp_30-79      ,Male high blood pressure prevalence         ,Yes      ,Risk Factor ,percent   ,31.85                ,True
-m_htn_rx_30-79       ,Male hypertension treatment rate            ,Yes      ,Risk Factor ,percent   ,34.6                 ,True
-t_cvd_std      ,Total standardized CVD rate                 ,Yes      ,Main Data   ,float     ,531.00               ,True
-t_htn_ctrl_30-79     ,Total hypertension control rate             ,Yes      ,Risk Factor ,percent   ,14.0                 ,True
-t_htn_diag_30-79     ,Total hypertension diagnosis rate           ,Yes      ,Risk Factor ,percent   ,56.2                 ,True
-t_htn_30-79          ,Total hypertension prevalence               ,Yes      ,Risk Factor ,percent   ,40.2                 ,True
-t_cvd_u70%     ,Total CVD deaths under 70%                  ,Yes      ,Main Data   ,percent   ,58.13                ,True
-t_high_bp      ,Total high blood pressure prevalence        ,Yes      ,Risk Factor ,percent   ,34.57                ,True
-t_htn_rx       ,Total hypertension treatment rate           ,Yes      ,Risk Factor ,percent   ,45.6                 ,True
+Population     ,Total population                            ,Yes      ,Main Data   ,integer   ,12045664             ,True
+region         ,Geographic region                           ,Yes      ,Main Data   ,string    ,South Asia           ,True
+t_htn_ctrl     ,Hypertension control rate                   ,Yes      ,Risk Factor ,float     ,23.4                 ,True
+t_high_bp_30-79,Prevalence of high blood pressure (ages 30-79),Yes,Risk Factor,float,31.2,True
+t_htn_diag     ,Hypertension diagnosis rate                 ,Yes      ,Risk Factor ,float     ,52.1                 ,True
+t_htn_rx_30-79 ,Hypertension treatment rate (ages 30-79)    ,Yes      ,Risk Factor ,float     ,47.3                 ,True

@@ -5,8 +5,11 @@
 | Column Name | Description | Nullable | Data Type | Sample Value |
 |------------|-------------|----------|-----------|--------------|
 | Entity | Country or region name | No | string | Afghanistan |
-| Code | Country code | No | string | AFG |
+| age | Age group | No | string | All Ages |
+| cause | Type of heart disease | No | string | Cardiovascular diseases |
 | Year | Year of observation | No | integer | 1980 |
+| Code | Country code | Yes | string | AFG |
+| gdp_pc | GDP per capita | Yes | float | 1280.46 |
 | WB_Income | World Bank Income Classification | Yes | string | Low-income countries |
 | Population | Total population | Yes | integer | 12045664 |
 | region | Geographic region | Yes | string | South Asia |
@@ -42,31 +45,50 @@
 | m_cvd_u70% | Male CVD deaths under 70% | Yes | percent | 62.88 |
 | t_cvd_u70% | Total CVD deaths under 70% | Yes | percent | 58.13 |
 
-## Risk Factors
+## Disease Metrics
 
 | Column Name | Description | Nullable | Data Type | Sample Value |
 |------------|-------------|----------|-----------|--------------|
-| gdp_pc | GDP per capita | Yes | float | 1280.46 |
-| ct_units | CT scanner units | Yes | float | 0.19 |
+| valprevnumberboth | Total prevalence count for both genders | No | float | 687223.91 |
+| valdeathsnumberboth | Total deaths count for both genders | No | float | 52184.06 |
+| valprevrateboth | Prevalence rate per 100k for both genders | No | float | 6911.31 |
+| valdeathsrateboth | Death rate per 100k for both genders | No | float | 388.48 |
+| valprevpercentboth | Prevalence percentage for both genders | No | percent | 0.0700 |
+| valdeathspercentboth | Death percentage for both genders | No | percent | 0.1806 |
+
+## Gender-Specific Metrics
+
+### Female
+| Column Name | Description | Nullable | Data Type | Sample Value |
+|------------|-------------|----------|-----------|--------------|
+| valprevnumberfemale | Total prevalence count for females | No | float | 269970.69 |
+| valdeathsnumberfemale | Total deaths count for females | No | float | 19608.30 |
+| valprevratefemale | Prevalence rate per 100k for females | No | float | 5299.19 |
+| valdeathsratefemale | Death rate per 100k for females | No | float | 301.38 |
+| valprevpercentfemale | Prevalence percentage for females | No | percent | 0.0538 |
+| valdeathspercentfemale | Death percentage for females | No | percent | 0.1500 |
+
+### Male
+| Column Name | Description | Nullable | Data Type | Sample Value |
+|------------|-------------|----------|-----------|--------------|
+| valprevnumbermale | Total prevalence count for males | No | float | 417253.22 |
+| valdeathsnumbermale | Total deaths count for males | No | float | 32575.76 |
+| valprevratemale | Prevalence rate per 100k for males | No | float | 8605.12 |
+| valdeathsratemale | Death rate per 100k for males | No | float | 470.31 |
+| valprevpercentmale | Prevalence percentage for males | No | percent | 0.0870 |
+| valdeathspercentmale | Death percentage for males | No | percent | 0.2066 |
+
+## Risk Factors and Healthcare Metrics
+
+| Column Name | Description | Nullable | Data Type | Sample Value |
+|------------|-------------|----------|-----------|--------------|
+| ct_units | CT scanner units per million population | Yes | float | 0.19 |
 | obesity% | Percentage of population with obesity | Yes | percent | 1.3 |
 | pacemaker_1m | Pacemaker implants per 1 million population | Yes | float | 107.9 |
-| statin_avail | Statin availability | Yes | string | Yes |
-| statin_use_k | Statin usage per thousand | Yes | float | 108.9 |
-| f_htn_ctrl | Female hypertension control rate | Yes | percent | 17.3 |
-| f_htn_diag | Female hypertension diagnosis rate | Yes | percent | 66.0 |
-| f_htn | Female hypertension prevalence | Yes | percent | 45.3 |
-| f_high_bp | Female high blood pressure prevalence | Yes | percent | 37.41 |
-| f_htn_rx | Female hypertension treatment rate | Yes | percent | 54.3 |
-| m_htn_ctrl | Male hypertension control rate | Yes | percent | 9.9 |
-| m_htn_diag | Male hypertension diagnosis rate | Yes | percent | 43.9 |
-| m_htn | Male hypertension prevalence | Yes | percent | 35.3 |
-| m_high_bp | Male high blood pressure prevalence | Yes | percent | 31.85 |
-| m_htn_rx | Male hypertension treatment rate | Yes | percent | 34.6 |
-| t_htn_ctrl | Total hypertension control rate | Yes | percent | 14.0 |
-| t_htn_diag | Total hypertension diagnosis rate | Yes | percent | 56.2 |
-| t_htn | Total hypertension prevalence | Yes | percent | 40.2 |
-| t_high_bp | Total high blood pressure prevalence | Yes | percent | 34.57 |
-| t_htn_rx | Total hypertension treatment rate | Yes | percent | 45.6 |
+| t_htn_ctrl | Hypertension control rate | Yes | float | 23.4 |
+| t_high_bp_30-79 | Prevalence of high blood pressure (ages 30-79) | Yes | float | 31.2 |
+| t_htn_diag | Hypertension diagnosis rate | Yes | float | 52.1 |
+| t_htn_rx_30-79 | Hypertension treatment rate (ages 30-79) | Yes | float | 47.3 |
 
 ## Notes
 - Data includes both sex-specific (prefixed with f_ for female and m_ for male) and total population metrics (prefixed with t_)
