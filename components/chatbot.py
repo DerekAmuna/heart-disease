@@ -1,21 +1,34 @@
 import pandas as pd
 from dash import html, dcc
 from dash.dependencies import Input, Output, State
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain_community.vectorstores import FAISS
+from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import CSVLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.schema import Document
+from sentence_transformers import SentenceTransformer
+from langchain_pinecone import PineconeVectorStore
+from pinecone import Pinecone
+import os
+from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
+class SentenceTransformerEmbeddings:
+    def __init__(self, model_name: str):
+        self.model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+
+    def embed_query(self, text: str):
+        # Use the encode method of SentenceTransformer
+        return self.model.encode(text).tolist()
 
 class ChatbotComponent:
     def __init__(self, open_api_key, csv_file=None, data_dict=None):
         self.open_api_key = open_api_key
         self.qa_chain = self._initialize_rag(csv_file, data_dict)
+
     def _process_data_dict(self, data_dict):
         df = pd.read_csv(data_dict)
         return [Document(page_content=str(row)) for row in df.astype(str).values.tolist()]
+
     def _initialize_rag(self, csv_file, data_dict):
         # Initialize documents
         documents = []
@@ -24,40 +37,75 @@ class ChatbotComponent:
         elif csv_file:
             df = pd.read_csv(csv_file)
             documents = [Document(page_content=str(row)) for row in df.astype(str).values.tolist()]
+
         # Split documents
         text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
         split_docs = text_splitter.split_documents(documents)
-        # Create embeddings
-        embedding_model = OpenAIEmbeddings(
-            model="text-embedding-ada-002",
-            api_key=self.open_api_key
+
+        # Initialize SentenceTransformer embeddings
+        embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+
+        # Set the API key as an environment variable
+        os.environ["PINECONE_API_KEY"] = ""
+        environment = "us-east1-gcp"  # Replace with your environment
+
+        # Initialize Pinecone connection
+        pinecone = Pinecone(environment=environment)
+
+        # Create PineconeVectorStore instance
+        docsearch = PineconeVectorStore.from_existing_index(
+            index_name="heart-deistes",
+            embedding=embeddings,
+            # pinecone_client=pinecone  # Pass the Pinecone instance
         )
-        vectorstore = FAISS.from_documents(split_docs, embedding_model)
-        retriever = vectorstore.as_retriever()
+
         # Initialize OpenAI model
         llm = ChatOpenAI(
             model_name="gpt-4",
             temperature=0,
             api_key=self.open_api_key
         )
-        return RetrievalQA.from_chain_type(
-            llm=llm,
-            retriever=retriever,
-            chain_type="stuff"
+
+        # Define the system prompt
+        system_prompt = (
+            "You are an assistant specializing in heart disease data analysis and visualization. "
+            "Use the retrieved context to provide accurate answers related to heart disease trends, risk factors, and statistics. "
+            "Ensure your response is based strictly on the provided context. If the answer is not in the context, say so. "
+            "Context:\n{context}"
         )
+
+        # Create a ChatPromptTemplate with the system and human messages
+        prompt = ChatPromptTemplate.from_messages([
+            SystemMessagePromptTemplate.from_template(system_prompt),
+            HumanMessagePromptTemplate.from_template("{question}")
+        ])
+
+        # Create the RetrievalQA chain with the prompt
+        qa_chain = RetrievalQA.from_chain_type(
+            llm=llm,
+            retriever=docsearch.as_retriever(),
+            chain_type="stuff",
+            chain_type_kwargs={
+                "prompt": prompt  # Pass the ChatPromptTemplate here
+            }
+        )
+        
+        return qa_chain
+
     def ask_question(self, query):
         return self.qa_chain.run(query)
+
     def create_layout(self):
         return html.Div([
             html.Button(
-                ':speech_balloon: Chat',
+                '💬 Chat',
                 id='chat-button',
                 n_clicks=0,
                 style={
                     'position': 'fixed',
                     'bottom': '20px',
                     'right': '20px',
-                    'background': '#007BFF',
+                    'background': '#007bff',
                     'color': 'white',
                     'border': 'none',
                     'padding': '10px 15px',
@@ -78,7 +126,7 @@ class ChatbotComponent:
                             style={'font-weight': 'bold', 'margin-left': '10px'}
                         ),
                         html.Span(
-                            ":large_green_circle: Online",
+                            "🟢 Online",
                             style={'color': 'green', 'margin-left': '10px'}
                         )
                     ], style={'display': 'flex', 'align-items': 'center', 'margin-bottom': '10px'}),
@@ -90,7 +138,7 @@ class ChatbotComponent:
                             'padding': '10px',
                             'height': '300px',
                             'overflowY': 'scroll',
-                            'background': '#F9F9F9',
+                            'background': '#f9f9f9',
                             'border-radius': '10px'
                         }
                     ),
@@ -111,7 +159,7 @@ class ChatbotComponent:
                             id='send-button',
                             n_clicks=0,
                             style={
-                                'background': '#007BFF',
+                                'background': '#007bff',
                                 'color': 'white',
                                 'border': 'none',
                                 'padding': '10px 15px',
@@ -135,6 +183,7 @@ class ChatbotComponent:
                 }
             ),
         ], style={'position': 'relative'})
+
     def register_callbacks(self, app):
         @app.callback(
             Output('chat-container', 'style'),
@@ -145,6 +194,7 @@ class ChatbotComponent:
             if n_clicks % 2 == 1:
                 return {**current_style, 'display': 'block'}
             return {**current_style, 'display': 'none'}
+
         @app.callback(
             Output('chat-history', 'children'),
             Input('send-button', 'n_clicks'),
@@ -155,12 +205,14 @@ class ChatbotComponent:
         def update_chat(n_clicks, user_message, chat_history):
             if not user_message:
                 return chat_history if chat_history else []
+
             chatbot_response = self.ask_question(user_message)
+
             new_chat = html.Div([
                 html.Div(
                     f"You: {user_message}",
                     style={
-                        'background': '#007BFF',
+                        'background': '#007bff',
                         'color': 'white',
                         'padding': '10px',
                         'border-radius': '10px',
@@ -170,11 +222,12 @@ class ChatbotComponent:
                 html.Div(
                     f"Response: {chatbot_response}",
                     style={
-                        'background': '#E9ECEF',
+                        'background': '#e9ecef',
                         'padding': '10px',
                         'border-radius': '10px',
                         'margin': '5px 0'
                     }
                 )
             ])
+
             return chat_history + [new_chat] if chat_history else [new_chat]
