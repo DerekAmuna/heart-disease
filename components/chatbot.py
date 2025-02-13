@@ -49,7 +49,7 @@ class ChatbotComponent:
         embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
         # Set the API key as an environment variable
-        os.environ["PINECONE_API_KEY"] = pinecone_api
+        os.environ["PINECONE_API_KEY"] = self.pinecone_api
         environment = "us-east1-gcp"  # Replace with your environment
 
         # Initialize Pinecone connection
