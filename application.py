@@ -14,7 +14,7 @@ from components.tabs.healthcare import create_healthcare_tab
 from components.tabs.introduction import create_introduction_tab
 from components.tabs.trends import create_trends_tab
 from components.tabs.world_map import create_world_map_tab
-
+from components.chatbot import ChatbotComponent  
 #  FontAwesome for icons
 FA = "https://use.fontawesome.com/releases/v5.15.4/css/all.css"
 
@@ -32,6 +32,11 @@ app = dash.Dash(
 )
 application = app.server
 
+chatbot = ChatbotComponent(
+open_api_key="",
+    csv_file="/home/akogo/Desktop/test/heart-disease/data/heart_disease_data.csv",
+    data_dict="/home/akogo/Desktop/test/heart-disease/data/data_dictionary.csv"
+)
 
 
 navbar = dbc.Navbar(
