@@ -1,5 +1,6 @@
 import logging
 from functools import lru_cache
+from collections import OrderedDict
 
 import dash_bootstrap_components as dbc
 import numpy as np
@@ -145,6 +146,7 @@ def create_tooltip(country_name, metric, gender, age, selected_year=None):
 
     # Get appropriate column based on metric and gender
     col = get_metric_column(gender, metric)
+    df = df.with_columns(pl.col(col).cast(pl.Float64, strict=False))
     is_percent = "percent" in metric.lower()
 
     # Create time series plot for cardiovascular diseases
@@ -194,7 +196,7 @@ def create_tooltip(country_name, metric, gender, age, selected_year=None):
         margin={"l": 60, "r": 30, "t": 50, "b": 50},
     )
 
-    risk_factors = {}
+    risk_factors = OrderedDict()
 
     if selected_year:
         # Add other causes
@@ -205,7 +207,8 @@ def create_tooltip(country_name, metric, gender, age, selected_year=None):
         )
         other_causes = other_causes.drop_nulls(subset=[col])
 
-        # Add each cause's value
+        # Sort causes by value and add to risk factors
+        other_causes = other_causes.sort(col, descending=True)
         for row in other_causes.iter_rows(named=True):
             risk_factors[row["cause"]] = format_value(row[col], is_percent=is_percent)
 
@@ -454,12 +457,14 @@ def create_chloropleth_map(filtered_data, metric, gender="Both"):
     # Convert list of dicts to DataFrame
     df = pd.DataFrame(filtered_data)
     if df.empty:
-        return go.Figure()
+        return create_no_data_figure("No data available for selected filters")
 
     # Get the appropriate column based on metric and gender
     metric_col = get_metric_column(gender, metric)
     if not metric_col:
-        return go.Figure()
+        return create_no_data_figure("No data available for selected filters")
+
+    df[metric_col] = pd.to_numeric(df[metric_col], errors="coerce")
 
     # Create figure
     # Calculate rounded max value for better scale
@@ -638,14 +643,7 @@ def create_histogram_plot(metric: str, data: pl.DataFrame, bins: int = 30) -> go
     df = data.select([metric]).to_pandas()
 
     # Create histogram
-    fig = px.histogram(
-        df,
-        x=metric,
-        nbins=bins,
-        title=title,
-        labels={metric: title},
-        opacity=0.75
-    )
+    fig = px.histogram(df, x=metric, nbins=bins, title=title, labels={metric: title}, opacity=0.75)
 
     # Update layout
     fig.update_layout(
@@ -654,14 +652,8 @@ def create_histogram_plot(metric: str, data: pl.DataFrame, bins: int = 30) -> go
         # showlegend=False,
         height=350,
         margin=dict(l=40, r=40, t=40, b=40),
-        xaxis=dict(
-            title=title,
-            **GRID_SETTINGS
-        ),
-        yaxis=dict(
-            title="Count",
-            **GRID_SETTINGS
-        )
+        xaxis=dict(title=title, **GRID_SETTINGS),
+        yaxis=dict(title="Count", **GRID_SETTINGS),
     )
 
     # Add mean line
@@ -671,7 +663,7 @@ def create_histogram_plot(metric: str, data: pl.DataFrame, bins: int = 30) -> go
         line_dash="dash",
         line_color="red",
         annotation_text=f"Mean: {format_value(mean_val)}",
-        annotation_position="top right"
+        annotation_position="top right",
     )
 
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})

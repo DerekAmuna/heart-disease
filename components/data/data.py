@@ -3,6 +3,7 @@ import logging
 import os
 from functools import lru_cache
 
+import pandas as pd
 import polars as pl
 from cachetools import TTLCache, cached
 from cachetools.keys import hashkey
@@ -157,6 +158,7 @@ def get_world_map_data(year, regions, income, gender, metric, age):
 
     df = filter_data(year, regions, income, gender, metric, age)
     col = get_metric_column(gender, metric)
+    df = df.with_columns(pl.col(col).cast(pl.Float64, strict=False))
 
     if col:
         df = df.select(["Entity", "Code", col, "region", "WB_Income", "cause"])
