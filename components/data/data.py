@@ -33,7 +33,7 @@ def load_data():
     """Load data with caching using Polars."""
     # logger.debug("Cache info for load_data: %s", load_data.cache_info())
     data_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "heart_processed1.csv"
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "heart_processed.csv"
     )
     df = pl.read_csv(data_path)
     # Pre-process data once during loading: convert Year to integer
