@@ -174,10 +174,12 @@ def get_world_map_data(year, regions, income, gender, metric, age):
 )
 def get_trends_data(metric, gender):
     """Get filtered data for trends visualization."""
+
     data_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "trends.csv"
     )
     df = pl.read_csv(data_path)
+
 
     metric = get_metric_column(gender, metric)
 
@@ -218,7 +220,9 @@ def get_healthcare_data(year, regions, income, gender, metric):
     available_cols = required_cols + val_cols + [c for c in optional_cols if c in df.columns]
 
     # Only keep rows where required columns are not null
+
     df = df.select(available_cols).drop_nulls(subset=required_cols)
+
 
     logger.debug(f"Healthcare data shape: {df.shape}")
     logger.debug(df.head())

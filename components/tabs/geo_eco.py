@@ -64,7 +64,9 @@ def create_geo_eco_plots(data, sankey_data, metric, gender, top_n, year):
     if not col or col not in df.columns:
         return html.Div("Selected metric data not available", style={"margin": "20px"})
 
+
     # Create plots
+
     return dbc.Container(
         [
             dbc.Row(
