@@ -54,7 +54,7 @@ heart-disease/
   - Handles real-time data reduction without full recomputation
   - Supports flexible top N selection (e.g., top 10, top 50 entities)
 
-#### 3. Choropleth Map (`components/tabs/world_map.py`)
+#### 4. Choropleth Map (`components/tabs/world_map.py`)
 - Clean interface without legends/menus
 - Interactive zoom and pan
 - Dynamic year-based updates
@@ -63,7 +63,7 @@ heart-disease/
   - Efficient state management
   - Optimized callback structure
 
-#### 4. Plot Layout (`components/common/plots.py`)
+#### 5. Plot Layout (`components/common/plots.py`)
 - Viewport-based sizing (37vh per plot)
 - Minimal padding for maximum space utilization
 - Two-row, two-column grid layout

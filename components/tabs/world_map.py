@@ -25,12 +25,13 @@ def create_world_map_tab():
                     ),
                     html.Div(
                         [
+                            # Main choropleth map display
                             dcc.Graph(
                                 id="chloropleth-map",
                                 style={"height": "calc(95vh - 160px)"},
                                 config={"displayModeBar": False},
                             ),
-                            dcc.Tooltip(id="graph-tooltip"),
+                            dcc.Tooltip(id="graph-tooltip"), # Tooltip for additional info on hover
                         ],
                         style={"position": "relative", "flex": "1"},
                     ),
@@ -157,7 +158,7 @@ def display_hover(hover_data, metric, gender, year, age):
                                 style={"marginBottom": "3px"},
                             )
                             for k, v in risk_factors.items()
-                            if k != "Year"  # Skip the Year in display since it's in the header
+                            if k != "Year"  
                         ],
                         style={"paddingLeft": "5px"},
                     ),

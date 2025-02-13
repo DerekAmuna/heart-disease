@@ -167,7 +167,7 @@ def get_trends_data(metric, gender, countries, regions, income):
     if not metric or not gender:
         return []
 
-    df = filter_data(None, regions, income, gender, metric)  # No year filter for trends
+    df = filter_data(None, regions, income, gender, metric) # No year filter for trends
 
     # Filter by countries if specified
     if countries:
@@ -211,14 +211,6 @@ def get_healthcare_data(year, regions, income, gender, metric):
 
     # Only keep rows where required columns are not null
     df = df[available_cols].dropna(subset=required_cols)
-
-    # # Convert numeric columns
-    # if "obesity%" in df.columns:
-    #     df["obesity%"] = pd.to_numeric(df["obesity%"], errors='coerce')
-    # if "pacemaker_1m" in df.columns:
-    #     df["pacemaker_1m"] = pd.to_numeric(df["pacemaker_1m"], errors='coerce')
-    # if "statin_use_k" in df.columns:
-    #     df["statin_use_k"] = pd.to_numeric(df["statin_use_k"], errors='coerce')
 
     logger.debug(f"Healthcare data shape: {df.shape}")
     logger.debug(df.head())

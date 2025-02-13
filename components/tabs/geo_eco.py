@@ -14,20 +14,6 @@ from components.visualisations import (
 )
 
 
-# def create_geo_eco_tab():
-#     """Function to create layout and visualizations in the geo eco tab"""
-#     return html.Div(
-#         [
-#             # Add Store component for data
-#             dcc.Store(id="general-data"),
-#             create_filter_slider(),
-#             html.Br(),
-#             # Create a container div for the plots with the ID that matches the callback
-#             html.Div(id="4x4plots"),
-#             html.Br(),
-#             create_year_slider(),
-#         ]
-#     )
 def create_geo_eco_tab():
     """Function to create layout and visualations in the geo eco tab"""
     return dbc.Container(
@@ -75,7 +61,7 @@ def create_geo_eco_plots(data, metric, gender, top_n, year, regions, income):
 
     sankey_data = get_sankey_data(regions, income, gender, metric)
 
-    # Create plots
+    # Create plots in a grid layout
     return dbc.Container(
         [
             dbc.Row(

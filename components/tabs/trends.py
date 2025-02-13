@@ -16,11 +16,9 @@ def create_trends_tab():
     return html.Div(
         [
             dcc.Store(id="trends-data"),
-            # create_filter_slider(),
             html.Br(),
             html.Div(id="trend-plots"),
             html.Br(),
-            # create_year_slider(),
         ]
     )
 
@@ -36,12 +34,14 @@ def update_trend_plots(trends_data, metric, gender, income):
     """Update trend plots based on filtered data."""
     if not trends_data or not metric or not gender:
         return html.Div("No Data")
-
+    
+# Convert trends_data from JSON format into a DataFrame
     df = pd.DataFrame(trends_data)
     logger.debug(f"first load view {df.head()}")
     if df.empty:
         return html.Div("No Data")
 
+# Create a Bootstrap-styled container for the trend plots
     return dbc.Container(
         [
             dbc.Row(
