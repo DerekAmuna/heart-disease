@@ -34,23 +34,36 @@ This dashboard provides an interactive way to explore heart disease data worldwi
 
 ```
 heart-disease/
-├── application.py          # Main application entry point
+├── application.py        # Main application entry point
 ├── components/
-│   ├── common/            # Shared components
+│   ├── common/          # Shared components
 │   │   ├── filter_slider.py
+│   │   ├── gender_metric_selector.py
 │   │   ├── plots.py
 │   │   └── year_slider.py
-|   ├── data/
-|   |   ├── data.py        # Side bar selector
-│   ├── tabs/              # Tab-specific components
-│   │   ├── introduction.py
-│   │   ├── world_map.py
-│   │   ├── geo_eco.py
-│   │   ├── healthcare.py
-│   │   └── trends.py
-│   └── sidebar.py         # Sidebar component
-├── documentation/         # Project documentation
-└── .ebextensions/         # AWS Elastic Beanstalk configuration
+│   ├── data/            # Data handling components
+│   │   └── data.py         # Data processing and management
+│   ├── tabs/            # Tab-specific components
+│   │   ├── geo_eco.py       # Geographic and economic analysis
+│   │   ├── healthcare.py    # Healthcare metrics visualization
+│   │   ├── introduction.py  # Dashboard introduction
+│   │   ├── trends.py        # Time series analysis
+│   │   └── world_map.py     # World map visualization
+│   ├── sidebar.py       # Sidebar component
+│   └── visualisations.py # Visualization utilities
+├── data/                # Data files
+│   ├── cleaning_and_merging.py  # Data processing script
+│   ├── data_dictionary.csv      # Data field descriptions
+│   ├── data_dictionary.md       # Detailed data documentation
+│   ├── heart_processed.csv      # Processed heart disease data
+│   └── trends.csv              # Time series data
+├── documentation/       # Project documentation
+├── .ebextensions/       # AWS Elastic Beanstalk configuration
+├── .platform/          # Platform configuration
+├── Pipfile             # Dependencies management
+├── Pipfile.lock        # Locked dependencies
+├── pyproject.toml      # Project configuration
+└── runtime.txt         # Python runtime specification
 ```
 
 ## Installation
@@ -64,8 +77,8 @@ heart-disease/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/heart-disease-dashboard.git
-   cd heart-disease-dashboard
+   git clone https://github.com/DerekAmuna/heart-disease.git
+   cd heart-disease
    ```
 2. Install dependencies:
    ```bash
@@ -116,7 +129,7 @@ The dashboard consists of multiple interactive tabs:
 python3 cleaning_and_merging.py
 ```
 
-The script will process all data sources and output a file named `heart_disease_data.csv` in the parent directory.
+The script will process all data sources and output a file named `heart_processed.csv` in the parent directory.
 
 ### Data Dictionary
 
@@ -244,4 +257,4 @@ Key columns in the output dataset:
 - **Hosting**: AWS Elastic Beanstalk
 
 
-App URL : [Heart Disease Visualisation](http://Heartdiseasedev-env-1.eba-kzx3p4pv.us-east-1.elasticbeanstalk.com)
+App URL : [Heart Disease Visualisation](http://Heartdiseasedev-env-1.eba-kzx3p4pv.us-east-1.elasticbeanstalk.com) (May be taken down)
