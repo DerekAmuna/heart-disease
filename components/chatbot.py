@@ -122,7 +122,7 @@ class ChatbotComponent:
                             style={'width': '50px', 'border-radius': '50%'}
                         ),
                         html.Span(
-                            "Heart Disease",
+                            "Heart Viz Bot",
                             style={'font-weight': 'bold', 'margin-left': '10px'}
                         ),
                         html.Span(
