@@ -43,7 +43,8 @@ application = app.server
 chatbot = ChatbotComponent(
 open_api_key=open_api_key,
     csv_file=csv_file,
-    data_dict=data_dict
+    data_dict=data_dict,
+    pinecone_api = PINECONE_API_KEY
 )
 
 
