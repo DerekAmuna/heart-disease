@@ -7,6 +7,7 @@ from dash import callback, dcc, html
 from dash.dependencies import Input, Output, State
 from flask import Flask
 
+
 import components.data  # Import data module to register callbacks
 from components.sidebar import create_sidebar
 from components.tabs.geo_eco import create_geo_eco_tab
@@ -14,9 +15,16 @@ from components.tabs.healthcare import create_healthcare_tab
 from components.tabs.introduction import create_introduction_tab
 from components.tabs.trends import create_trends_tab
 from components.tabs.world_map import create_world_map_tab
+from components.chatbot import ChatbotComponent
 
 #  FontAwesome for icons
 FA = "https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+
+csv_file = os.getenv('csv_file')
+data_dict = os.getenv('data_dict')
+open_api_key = os.getenv('open_api_key')
+PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
+print(csv_file)
 
 # Configure logging
 logging.basicConfig(
@@ -31,6 +39,12 @@ app = dash.Dash(
     suppress_callback_exceptions=True,
 )
 application = app.server
+
+chatbot = ChatbotComponent(
+open_api_key=open_api_key,
+    csv_file=csv_file,
+    data_dict=data_dict
+)
 
 
 navbar = dbc.Navbar(
@@ -97,6 +111,8 @@ app.layout = html.Div(
             ],
             className="g-0",
         ),
+
+        chatbot.create_layout(),
     ]
 )
 
@@ -151,6 +167,8 @@ def toggle_navbar_collapse(n, is_open):
         return not is_open
     return is_open
 
+# Register chatbot callbacks
+chatbot.register_callbacks(app)
 
 if __name__ == "__main__":
     app.run_server(
@@ -160,3 +178,4 @@ if __name__ == "__main__":
         dev_tools_hot_reload=True,
         dev_tools_ui=True,
     )
+
