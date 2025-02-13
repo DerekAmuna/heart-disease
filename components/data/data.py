@@ -111,8 +111,8 @@ print(data_2019.head())
     Input("income-dropdown", "value"),
     Input("gender-dropdown", "value"),
     Input("metric-dropdown", "value"),
-    Input('age-dropdown','value'),
-    Input('country-dropdown','value')
+    Input("age-dropdown", "value"),
+    Input("country-dropdown", "value"),
 )
 @cached(cache=TTLCache(maxsize=32, ttl=300), key=cache_key)
 def get_geo_eco_data(year, regions, income, gender, metric, age, country):
@@ -124,20 +124,22 @@ def get_geo_eco_data(year, regions, income, gender, metric, age, country):
     cols = [get_metric_column(g, metric) for g in ["Both", "Female", "Male"]]
     cols = [col for col in cols if col]
 
-    df = filter_data(year, regions, income, gender, metric, age=age, cause="Cardiovascular diseases")
+    df = filter_data(
+        year, regions, income, gender, metric, age=age, cause="Cardiovascular diseases"
+    )
     if country:
         df = df.filter(pl.col("Entity").is_in(country))
 
     if cols:
         keep_cols = [
-        "Entity",
-        "Year",
-        "Code",
-        "gdp_pc",
-        "WB_Income",
-        "Population",
-        "region",
-        "cause",
+            "Entity",
+            "Year",
+            "Code",
+            "gdp_pc",
+            "WB_Income",
+            "Population",
+            "region",
+            "cause",
         ] + cols
         df = df.select(keep_cols)
         df = df.with_columns(
@@ -201,8 +203,8 @@ def get_trends_data(metric, gender):
     Input("income-dropdown", "value"),
     Input("gender-dropdown", "value"),
     Input("metric-dropdown", "value"),
-    Input('age-dropdown','value'),
-    Input('country-dropdown', 'value')
+    Input("age-dropdown", "value"),
+    Input("country-dropdown", "value"),
 )
 def get_healthcare_data(year, regions, income, gender, metric, age, country):
     """Get filtered data for healthcare system visualization."""
@@ -210,7 +212,13 @@ def get_healthcare_data(year, regions, income, gender, metric, age, country):
         return []
 
     df = filter_data(
-        year, regions, income, gender=gender, metric=metric, age=age, cause="Cardiovascular diseases"
+        year,
+        regions,
+        income,
+        gender=gender,
+        metric=metric,
+        age=age,
+        cause="Cardiovascular diseases",
     )
     if country:
         df = df.filter(pl.col("Entity").is_in(country))
@@ -262,12 +270,13 @@ def get_sankey_data(regions, income, gender, metric):
 
     return []
 
+
 @callback(
     Output("risk-data", "data"),
     Input("gender-dropdown", "value"),
     Input("metric-dropdown", "value"),
 )
-def get_risk_data( gender, metric):
+def get_risk_data(gender, metric):
     """Get unfiltered data for Sankey diagram visualization."""
     df = filter_data(
         year=2019,
@@ -279,16 +288,24 @@ def get_risk_data( gender, metric):
     col = get_metric_column(gender, metric)
 
     if col and col in df.columns:
-        required_cols = ['obesity%','t_htn_ctrl','t_high_bp_30-79','pacemaker_1m','t_htn_diag'#,'t_htn_rx_30-79'
+        required_cols = [
+            "obesity%",
+            "t_htn_ctrl",
+            "t_high_bp_30-79",
+            "pacemaker_1m",
+            "t_htn_diag",  # ,'t_htn_rx_30-79'
         ]
         df = df.select(required_cols + [col]).drop_nulls(subset=required_cols + [col])
         for col in required_cols:
             df = df.with_columns(pl.col(col).cast(pl.Float64, strict=False))
 
-        numeric_cols = [col for col, dtype in df.schema.items() if dtype in [pl.Int64, pl.Int32, pl.Float64, pl.Float32]]
+        numeric_cols = [
+            col
+            for col, dtype in df.schema.items()
+            if dtype in [pl.Int64, pl.Int32, pl.Float64, pl.Float32]
+        ]
         df_numeric = df.select(numeric_cols)
         # matrix = df_numeric.corr()
         return df_numeric.to_dicts()
 
     return []
-

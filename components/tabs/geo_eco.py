@@ -28,7 +28,10 @@ def create_geo_eco_tab():
             dcc.Store(id="sankey-data"),
             dbc.Row(
                 [
-                    dbc.Col(create_filter_slider(), width=12,),
+                    dbc.Col(
+                        create_filter_slider(),
+                        width=12,
+                    ),
                 ],
                 className="mb-3",
             ),
@@ -106,7 +109,9 @@ def create_geo_eco_plots(data, sankey_data, metric, gender, top_n, year):
                                 dbc.CardBody(
                                     create_histogram_plot(
                                         col,
-                                        df.filter(pl.col("Year").eq(year)).drop_nulls(subset=[col])
+                                        df.filter(pl.col("Year").eq(year)).drop_nulls(
+                                            subset=[col]
+                                        ),
                                     ),
                                     style={"height": "350px", "overflow": "auto"},
                                 ),

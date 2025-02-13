@@ -8,8 +8,8 @@ from dash import Input, Output, callback, dcc, html
 from components.common.filter_slider import create_filter_slider
 from components.common.gender_metric_selector import get_metric_column
 from components.common.year_slider import create_year_slider
-from components.visualisations import create_corr_matrix, create_scatter_plot
 from components.data.data import data_2019
+from components.visualisations import create_corr_matrix, create_scatter_plot
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ def create_healthcare_tab():
     return html.Div(
         [
             dcc.Store(id="healthcare-data"),
-            dcc.Store(id='risk-data'),
+            dcc.Store(id="risk-data"),
             create_filter_slider(),
             html.Div(id="healthcare-plots"),
             create_year_slider(),
@@ -35,7 +35,7 @@ def create_healthcare_tab():
     Input("metric-dropdown", "value"),
     Input("top-filter-slider", "value"),
 )
-def create_healthcare_plots(data,risk_data,gender, metric, top_n):
+def create_healthcare_plots(data, risk_data, gender, metric, top_n):
     """Create healthcare-related visualizations in a grid layout.
 
     Returns:
@@ -74,7 +74,7 @@ def create_healthcare_plots(data,risk_data,gender, metric, top_n):
                                         x_metric="obesity%",
                                         y_metric=metric_col,
                                         top_n=top_n,
-                                        hue='WB_Income'
+                                        hue="WB_Income",
                                     ),
                                     style={"height": "350px", "overflow": "auto"},
                                 ),
@@ -97,7 +97,7 @@ def create_healthcare_plots(data,risk_data,gender, metric, top_n):
                                 ),
                                 dbc.CardBody(
                                     create_corr_matrix(
-                                       risk_data # data_2019.select(['obesity%','t_htn_ctrl','t_high_bp_30-79','pacemaker_1m','t_htn_diag','t_htn_rx_30-79', metric_col])
+                                        risk_data  # data_2019.select(['obesity%','t_htn_ctrl','t_high_bp_30-79','pacemaker_1m','t_htn_diag','t_htn_rx_30-79', metric_col])
                                     ),
                                     style={"height": "350px", "overflow": "auto"},
                                 ),
@@ -153,7 +153,7 @@ def create_healthcare_plots(data,risk_data,gender, metric, top_n):
                                         y_metric=get_metric_column("Male", metric),
                                         add_diagonal=True,
                                         top_n=top_n,
-                                        hue='WB_Income'
+                                        hue="WB_Income",
                                     ),
                                     style={"height": "350px", "overflow": "auto"},
                                 ),
