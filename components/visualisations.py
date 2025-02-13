@@ -1,6 +1,6 @@
 import logging
-from functools import lru_cache
 from collections import OrderedDict
+from functools import lru_cache
 
 import dash_bootstrap_components as dbc
 import numpy as np
@@ -94,6 +94,7 @@ def create_scatter_plot(
         color=hue if hue in plot_data.columns else None,
         hover_name="Entity",
         labels={x_metric: get_title_text(x_metric), y_metric: get_title_text(y_metric)},
+        size=size,
     )
 
     # Add diagonal line if requested
@@ -662,8 +663,28 @@ def create_histogram_plot(metric: str, data: pl.DataFrame, bins: int = 30) -> go
         x=mean_val,
         line_dash="dash",
         line_color="red",
-        annotation_text=f"Mean: {format_value(mean_val)}",
+        annotation_text=f"Mean: {format_value(mean_val, is_estimate=False, is_percent=False)}",
         annotation_position="top right",
     )
 
+    return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
+
+
+def create_corr_matrix(data: pl.DataFrame) -> dcc.Graph:
+    """Create a correlation matrix of all numeric columns in the data."""
+
+    corr_matrix = data.corr()
+    fig = px.imshow(corr_matrix, text_auto=".2f", color_continuous_scale="blues")
+    fig.update_layout(
+        **BASE_LAYOUT,
+        **COMMON_LAYOUT,
+        title=dict(
+            text="Correlation Matrix",
+            y=0.95,
+            x=0.5,
+            xanchor="center",
+            yanchor="top",
+            font=dict(size=14),
+        ),
+    )
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})

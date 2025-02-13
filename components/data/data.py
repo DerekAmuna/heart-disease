@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def make_hashable(value):
-    """Convert unhashable types to hashable ones for caching."""
+    """Convert unhashable types (lists) to hashable ones (tuples) for caching."""
     if isinstance(value, list):
         return tuple(sorted(value))
     return value
@@ -98,6 +98,8 @@ data_2019 = (
     filter_data(year=2019, age="Age-standardized", cause="Cardiovascular diseases")
     .with_columns(pl.col("t_htn_ctrl").cast(pl.Float64, strict=False))
     .with_columns(pl.col("t_high_bp_30-79").cast(pl.Float64, strict=False))
+    .with_columns(pl.col("t_htn_diag").cast(pl.Float64, strict=False))
+    .with_columns(pl.col("t_htn_rx_30-79").cast(pl.Float64, strict=False))
 )
 print(data_2019.head())
 
@@ -109,9 +111,11 @@ print(data_2019.head())
     Input("income-dropdown", "value"),
     Input("gender-dropdown", "value"),
     Input("metric-dropdown", "value"),
+    Input("age-dropdown", "value"),
+    Input("country-dropdown", "value"),
 )
 @cached(cache=TTLCache(maxsize=32, ttl=300), key=cache_key)
-def get_geo_eco_data(year, regions, income, gender, metric):
+def get_geo_eco_data(year, regions, income, gender, metric, age, country):
     """Get filtered data for geo-economic visualizations."""
 
     if not year or not gender or not metric:
@@ -120,18 +124,22 @@ def get_geo_eco_data(year, regions, income, gender, metric):
     cols = [get_metric_column(g, metric) for g in ["Both", "Female", "Male"]]
     cols = [col for col in cols if col]
 
-    df = filter_data(year, regions, income, gender, metric)
+    df = filter_data(
+        year, regions, income, gender, metric, age=age, cause="Cardiovascular diseases"
+    )
+    if country:
+        df = df.filter(pl.col("Entity").is_in(country))
 
     if cols:
         keep_cols = [
-        "Entity",
-        "Year",
-        "Code",
-        "gdp_pc",
-        "WB_Income",
-        "Population",
-        "region",
-        "cause",
+            "Entity",
+            "Year",
+            "Code",
+            "gdp_pc",
+            "WB_Income",
+            "Population",
+            "region",
+            "cause",
         ] + cols
         df = df.select(keep_cols)
         df = df.with_columns(
@@ -197,21 +205,29 @@ def get_trends_data(metric, gender):
     Input("income-dropdown", "value"),
     Input("gender-dropdown", "value"),
     Input("metric-dropdown", "value"),
+    Input("age-dropdown", "value"),
+    Input("country-dropdown", "value"),
 )
-def get_healthcare_data(year, regions, income, gender, metric):
+def get_healthcare_data(year, regions, income, gender, metric, age, country):
     """Get filtered data for healthcare system visualization."""
     if not year or not metric:
         return []
 
     df = filter_data(
-        year, regions, income, gender=gender, metric=metric
-    )  # Use Both to get all gender data
-    df = df.filter(pl.col("cause").str.to_lowercase() == "cardiovascular diseases")
-    df = df.filter(pl.col("age").str.contains("Age-standardized"))
+        year,
+        regions,
+        income,
+        gender=gender,
+        metric=metric,
+        age=age,
+        cause="Cardiovascular diseases",
+    )
+    if country:
+        df = df.filter(pl.col("Entity").is_in(country))
 
     # Keep required columns
     required_cols = ["Entity", "Code", "region", "WB_Income", "Year", "cause"]
-    optional_cols = ["ct_units", "obesity%", "pacemaker_1m", "statin_avail", "statin_use_k"]
+    optional_cols = ["obesity%"]
 
     # Add all val* columns
     val_cols = [col for col in df.columns if col.startswith("val")]
@@ -255,5 +271,45 @@ def get_sankey_data(regions, income, gender, metric):
         logger.debug(f"Sankey data shape: {df.shape}")
         logger.debug(msg=df.head())
         return df.to_dicts()
+
+    return []
+
+
+@callback(
+    Output("risk-data", "data"),
+    Input("gender-dropdown", "value"),
+    Input("metric-dropdown", "value"),
+)
+def get_risk_data(gender, metric):
+    """Get unfiltered data for Sankey diagram visualization."""
+    df = filter_data(
+        year=2019,
+        gender=gender,
+        metric=metric,
+        cause="Cardiovascular diseases",
+        age="Age-standardized",
+    )
+    col = get_metric_column(gender, metric)
+
+    if col and col in df.columns:
+        required_cols = [
+            "obesity%",
+            "t_htn_ctrl",
+            "t_high_bp_30-79",
+            "pacemaker_1m",
+            "t_htn_diag",  # ,'t_htn_rx_30-79'
+        ]
+        df = df.select(required_cols + [col]).drop_nulls(subset=required_cols + [col])
+        for col in required_cols:
+            df = df.with_columns(pl.col(col).cast(pl.Float64, strict=False))
+
+        numeric_cols = [
+            col
+            for col, dtype in df.schema.items()
+            if dtype in [pl.Int64, pl.Int32, pl.Float64, pl.Float32]
+        ]
+        df_numeric = df.select(numeric_cols)
+        # matrix = df_numeric.corr()
+        return df_numeric.to_dicts()
 
     return []
