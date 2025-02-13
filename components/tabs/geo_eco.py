@@ -21,24 +21,26 @@ from components.visualisations import (
 
 def create_geo_eco_tab():
     """Function to create layout and visualations in the geo eco tab"""
-    return dbc.Container(
-        [
-            # Add Store component for data
-            dcc.Store(id="geo-eco-data"),
-            dcc.Store(id="sankey-data"),
-            dbc.Row(
-                [
-                    dbc.Col(
-                        create_filter_slider(),
-                        width=12,
-                    ),
-                ],
-                className="mb-3",
-            ),
-            html.Div(id="geo-eco-plots"),
-            create_year_slider(min_year=1990, max_year=2021, default=2021),
-        ],
-        fluid=True,
+    return dcc.Loading(
+        dbc.Container(
+            [
+                # Add Store component for data
+                dcc.Store(id="geo-eco-data"),
+                dcc.Store(id="sankey-data"),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            create_filter_slider(),
+                            width=12,
+                        ),
+                    ],
+                    className="mb-3",
+                ),
+                html.Div(id="geo-eco-plots"),
+                create_year_slider(min_year=1990, max_year=2021, default=2021),
+            ],
+            fluid=True,
+        )
     )
 
 
