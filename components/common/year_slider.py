@@ -5,8 +5,7 @@ from dash import Input, Output, State, callback, dcc, html
 def create_year_slider(min_year=1980, max_year=2021, default=2021):
     """Generate marks for the slider using a dictionary comprehension"""
     marks = {
-        str(year): str(year)
-        for year in range(min_year, max_year + 1, 10)  # Increased interval 
+        str(year): str(year) for year in range(min_year, max_year + 1, 10)  # Increased interval
     }
 
     return dbc.Container(
@@ -43,7 +42,7 @@ def create_year_slider(min_year=1980, max_year=2021, default=2021):
                                 max=max_year,
                                 value=default,
                                 marks=marks,
-                                step=1,  
+                                step=1,
                                 tooltip={"placement": "bottom", "always_visible": True},
                                 included=False,
                             ),
@@ -56,7 +55,7 @@ def create_year_slider(min_year=1980, max_year=2021, default=2021):
     )
 
 
-#callback functions 
+# callback functions
 @callback(
     Output("animation-interval", "disabled"),
     Output("play-button", "children"),

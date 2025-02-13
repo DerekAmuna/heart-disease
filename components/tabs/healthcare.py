@@ -16,14 +16,16 @@ logger = logging.getLogger(__name__)
 
 def create_healthcare_tab():
     """Function to display the layout for the healthcare tab with visualizations."""
-    return html.Div(
-        [
-            dcc.Store(id="healthcare-data"),
-            dcc.Store(id="risk-data"),
-            create_filter_slider(),
-            html.Div(id="healthcare-plots"),
-            create_year_slider(),
-        ]
+    return dcc.Loading(
+        html.Div(
+            [
+                dcc.Store(id="healthcare-data"),
+                dcc.Store(id="risk-data"),
+                create_filter_slider(),
+                html.Div(id="healthcare-plots"),
+                create_year_slider(),
+            ]
+        )
     )
 
 
@@ -68,11 +70,15 @@ def create_healthcare_plots(data, risk_data, gender, metric, top_n):
                                 dbc.Card(
                                     [
                                         dbc.CardHeader(
-                                            html.H4("Obesity vs Death Rate", className="text-center")
+                                            html.H4(
+                                                "Obesity vs Death Rate", className="text-center"
+                                            )
                                         ),
                                         dbc.CardBody(
                                             create_scatter_plot(
-                                                data=df.drop_nulls(subset=["obesity%", metric_col]),
+                                                data=df.drop_nulls(
+                                                    subset=["obesity%", metric_col]
+                                                ),
                                                 x_metric="obesity%",
                                                 y_metric=metric_col,
                                                 top_n=top_n,
@@ -94,7 +100,8 @@ def create_healthcare_plots(data, risk_data, gender, metric, top_n):
                                     [
                                         dbc.CardHeader(
                                             html.H4(
-                                                "Hypertension Control by Country", className="text-center"
+                                                "Hypertension Control by Country",
+                                                className="text-center",
                                             )
                                         ),
                                         dbc.CardBody(
@@ -146,7 +153,10 @@ def create_healthcare_plots(data, risk_data, gender, metric, top_n):
                                 dbc.Card(
                                     [
                                         dbc.CardHeader(
-                                            html.H4("Male vs Female Comparison", className="text-center")
+                                            html.H4(
+                                                "Male vs Female Comparison",
+                                                className="text-center",
+                                            )
                                         ),
                                         dbc.CardBody(
                                             create_scatter_plot(

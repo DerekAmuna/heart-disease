@@ -10,20 +10,24 @@ from sentence_transformers import SentenceTransformer
 from langchain_pinecone import PineconeVectorStore
 from pinecone import Pinecone
 import os
-from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
-
+from langchain.prompts import (
+    ChatPromptTemplate,
+    SystemMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+)
 
 
 class SentenceTransformerEmbeddings:
     def __init__(self, model_name: str):
-        self.model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+        self.model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
     def embed_query(self, text: str):
         # Use the encode method of SentenceTransformer
         return self.model.encode(text).tolist()
 
+
 class ChatbotComponent:
-    def __init__(self, open_api_key,  pinecone_api, csv_file=None, data_dict=None):
+    def __init__(self, open_api_key, pinecone_api, csv_file=None, data_dict=None):
         self.open_api_key = open_api_key
         self.pinecone_api = pinecone_api
         self.qa_chain = self._initialize_rag(csv_file, data_dict)
@@ -63,11 +67,7 @@ class ChatbotComponent:
         )
 
         # Initialize OpenAI model
-        llm = ChatOpenAI(
-            model_name="gpt-4",
-            temperature=0,
-            api_key=self.open_api_key
-        )
+        llm = ChatOpenAI(model_name="gpt-4", temperature=0, api_key=self.open_api_key)
 
         # Define the system prompt
         system_prompt = (
@@ -78,19 +78,19 @@ class ChatbotComponent:
         )
 
         # Create a ChatPromptTemplate with the system and human messages
-        prompt = ChatPromptTemplate.from_messages([
-            SystemMessagePromptTemplate.from_template(system_prompt),
-            HumanMessagePromptTemplate.from_template("{question}")
-        ])
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                SystemMessagePromptTemplate.from_template(system_prompt),
+                HumanMessagePromptTemplate.from_template("{question}"),
+            ]
+        )
 
         # Create the RetrievalQA chain with the prompt
         qa_chain = RetrievalQA.from_chain_type(
             llm=llm,
             retriever=docsearch.as_retriever(),
             chain_type="stuff",
-            chain_type_kwargs={
-                "prompt": prompt  # Pass the ChatPromptTemplate here
-            }
+            chain_type_kwargs={"prompt": prompt},  # Pass the ChatPromptTemplate here
         )
 
         return qa_chain
@@ -99,111 +99,123 @@ class ChatbotComponent:
         return self.qa_chain.run(query)
 
     def create_layout(self):
-        return html.Div([
-            html.Button(
-                '💬 Chat',
-                id='chat-button',
-                n_clicks=0,
-                style={
-                    'position': 'fixed',
-                    'bottom': '20px',
-                    'right': '20px',
-                    'background': '#007bff',
-                    'color': 'white',
-                    'border': 'none',
-                    'padding': '10px 15px',
-                    'border-radius': '20px',
-                    'cursor': 'pointer'
-                }
-            ),
-            html.Div(
-                id='chat-container',
-                children=[
-                    html.Div([
-                        html.Img(
-                            src='https://cdn-icons-png.flaticon.com/512/4712/4712109.png',
-                            style={'width': '50px', 'border-radius': '50%'}
-                        ),
-                        html.Span(
-                            "Heart Disease",
-                            style={'font-weight': 'bold', 'margin-left': '10px'}
-                        ),
-                        html.Span(
-                            "🟢 Online",
-                            style={'color': 'green', 'margin-left': '10px'}
-                        )
-                    ], style={'display': 'flex', 'align-items': 'center', 'margin-bottom': '10px'}),
-                    html.Div(
-                        id='chat-history',
-                        children=[],
-                        style={
-                            'border': '1px solid #ccc',
-                            'padding': '10px',
-                            'height': '300px',
-                            'overflowY': 'scroll',
-                            'background': '#f9f9f9',
-                            'border-radius': '10px'
-                        }
-                    ),
-                    html.Div([
-                        dcc.Input(
-                            id='user-input',
-                            type='text',
-                            placeholder='Enter your message...',
+        return html.Div(
+            [
+                html.Button(
+                    "💬 Chat",
+                    id="chat-button",
+                    n_clicks=0,
+                    style={
+                        "position": "fixed",
+                        "bottom": "20px",
+                        "right": "20px",
+                        "background": "#007bff",
+                        "color": "white",
+                        "border": "none",
+                        "padding": "10px 15px",
+                        "border-radius": "20px",
+                        "cursor": "pointer",
+                    },
+                ),
+                html.Div(
+                    id="chat-container",
+                    children=[
+                        html.Div(
+                            [
+                                html.Img(
+                                    src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png",
+                                    style={"width": "50px", "border-radius": "50%"},
+                                ),
+                                html.Span(
+                                    "Heart Disease",
+                                    style={"font-weight": "bold", "margin-left": "10px"},
+                                ),
+                                html.Span(
+                                    "🟢 Online", style={"color": "green", "margin-left": "10px"}
+                                ),
+                            ],
                             style={
-                                'flex': '1',
-                                'padding': '10px',
-                                'border': '1px solid #ccc',
-                                'border-radius': '5px'
-                            }
+                                "display": "flex",
+                                "align-items": "center",
+                                "margin-bottom": "10px",
+                            },
                         ),
-                        html.Button(
-                            '➤',
-                            id='send-button',
-                            n_clicks=0,
+                        html.Div(
+                            id="chat-history",
+                            children=[],
                             style={
-                                'background': '#007bff',
-                                'color': 'white',
-                                'border': 'none',
-                                'padding': '10px 15px',
-                                'border-radius': '5px',
-                                'cursor': 'pointer'
-                            }
-                        )
-                    ], style={'display': 'flex', 'margin-top': '10px'}),
-                ],
-                style={
-                    'display': 'none',
-                    'position': 'fixed',
-                    'bottom': '70px',
-                    'right': '20px',
-                    'width': '400px',
-                    'padding': '20px',
-                    'border': '1px solid #ddd',
-                    'border-radius': '10px',
-                    'box-shadow': '0px 0px 10px rgba(0,0,0,0.1)',
-                    'background': 'white'
-                }
-            ),
-        ], style={'position': 'relative'})
+                                "border": "1px solid #ccc",
+                                "padding": "10px",
+                                "height": "300px",
+                                "overflowY": "scroll",
+                                "background": "#f9f9f9",
+                                "border-radius": "10px",
+                            },
+                        ),
+                        html.Div(
+                            [
+                                dcc.Input(
+                                    id="user-input",
+                                    type="text",
+                                    placeholder="Enter your message...",
+                                    style={
+                                        "flex": "1",
+                                        "padding": "10px",
+                                        "border": "1px solid #ccc",
+                                        "border-radius": "5px",
+                                    },
+                                ),
+                                html.Button(
+                                    "➤",
+                                    id="send-button",
+                                    n_clicks=0,
+                                    style={
+                                        "background": "#007bff",
+                                        "color": "white",
+                                        "border": "none",
+                                        "padding": "10px 15px",
+                                        "border-radius": "5px",
+                                        "cursor": "pointer",
+                                    },
+                                ),
+                            ],
+                            style={"display": "flex", "margin-top": "10px"},
+                        ),
+                    ],
+                    style={
+                        "display": "none",
+                        "position": "fixed",
+                        "bottom": "70px",
+                        "right": "20px",
+                        "width": "400px",
+                        "padding": "20px",
+                        "border": "1px solid #ddd",
+                        "border-radius": "10px",
+                        "box-shadow": "0px 0px 10px rgba(0,0,0,0.1)",
+                        "background": "white",
+                    },
+                ),
+            ],
+            style={"position": "relative"},
+        )
 
     def register_callbacks(self, app):
         @app.callback(
-            Output('chat-container', 'style'),
-            Input('chat-button', 'n_clicks'),
-            State('chat-container', 'style')
+            Output("chat-container", "style"),
+            Input("chat-button", "n_clicks"),
+            State("chat-container", "style"),
         )
         def toggle_chatbot(n_clicks, current_style):
             if n_clicks % 2 == 1:
-                return {**current_style, 'display': 'block'}
-            return {**current_style, 'display': 'none'}
+                return {**current_style, "display": "block"}
+            return {**current_style, "display": "none"}
 
         @app.callback(
-            Output('chat-history', 'children'),
-            Input('send-button', 'n_clicks'),
-            State('user-input', 'value'),
-            State('chat-history', 'children'),
-            prevent_initial_call=True
+            Output("chat-history", "children"),
+            Input("send-button", "n_clicks"),
+            State("user-input", "value"),
+            State("chat-history", "children"),
+            prevent_initial_call=True,
         )
         def update_chat(n_clicks, user_message, chat_history):
             if not user_message:
@@ -211,26 +223,28 @@ class ChatbotComponent:
 
             chatbot_response = self.ask_question(user_message)
 
-            new_chat = html.Div([
-                html.Div(
-                    f"You: {user_message}",
-                    style={
-                        'background': '#007bff',
-                        'color': 'white',
-                        'padding': '10px',
-                        'border-radius': '10px',
-                        'margin': '5px 0'
-                    }
-                ),
-                html.Div(
-                    f"Response: {chatbot_response}",
-                    style={
-                        'background': '#e9ecef',
-                        'padding': '10px',
-                        'border-radius': '10px',
-                        'margin': '5px 0'
-                    }
-                )
-            ])
+            new_chat = html.Div(
+                [
+                    html.Div(
+                        f"You: {user_message}",
+                        style={
+                            "background": "#007bff",
+                            "color": "white",
+                            "padding": "10px",
+                            "border-radius": "10px",
+                            "margin": "5px 0",
+                        },
+                    ),
+                    html.Div(
+                        f"Response: {chatbot_response}",
+                        style={
+                            "background": "#e9ecef",
+                            "padding": "10px",
+                            "border-radius": "10px",
+                            "margin": "5px 0",
+                        },
+                    ),
+                ]
+            )
 
             return chat_history + [new_chat] if chat_history else [new_chat]

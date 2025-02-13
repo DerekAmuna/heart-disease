@@ -20,10 +20,10 @@ from components.chatbot import ChatbotComponent
 #  FontAwesome for icons
 FA = "https://use.fontawesome.com/releases/v5.15.4/css/all.css"
 
-csv_file = os.getenv('csv_file')
-data_dict = os.getenv('data_dict')
-open_api_key = os.getenv('open_api_key')
-PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
+csv_file = os.getenv("csv_file")
+data_dict = os.getenv("data_dict")
+open_api_key = os.getenv("open_api_key")
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 print(csv_file)
 
 # Configure logging
@@ -41,10 +41,10 @@ app = dash.Dash(
 application = app.server
 
 chatbot = ChatbotComponent(
-open_api_key=open_api_key,
+    open_api_key=open_api_key,
     csv_file=csv_file,
     data_dict=data_dict,
-    pinecone_api = PINECONE_API_KEY
+    pinecone_api=PINECONE_API_KEY,
 )
 
 
@@ -112,7 +112,6 @@ app.layout = html.Div(
             ],
             className="g-0",
         ),
-
         chatbot.create_layout(),
     ]
 )
@@ -168,6 +167,7 @@ def toggle_navbar_collapse(n, is_open):
         return not is_open
     return is_open
 
+
 # Register chatbot callbacks
 chatbot.register_callbacks(app)
 
@@ -179,4 +179,3 @@ if __name__ == "__main__":
         dev_tools_hot_reload=True,
         dev_tools_ui=True,
     )
-
