@@ -125,4 +125,4 @@ The application is configured for AWS Elastic Beanstalk deployment with:
 
 
 
-App URL : [Heart Disease Visualisation](https://Heartdiseasedev-env-1.eba-kzx3p4pv.us-east-1.elasticbeanstalk.com)
+App URL : [Heart Disease Visualisation](http://Heartdiseasedev-env-1.eba-kzx3p4pv.us-east-1.elasticbeanstalk.com)
