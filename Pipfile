@@ -26,6 +26,7 @@ sentence-transformers = "*"
 pinecone-client = "*"
 openai = "*"
 tiktoken = "*"
+langchain-community = "*"
 
 [dev-packages]
 pre-commit = "*"
