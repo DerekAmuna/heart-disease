@@ -58,121 +58,127 @@ def create_healthcare_plots(data, risk_data, gender, metric, top_n):
     logger.debug(f"first load view htn {hypertension.head()}")
     risk_data = pl.DataFrame(risk_data)
 
-    return dbc.Container(
-        [
-            dbc.Row(
+    return dcc.Loading(
+        dbc.Container(
+            html.Div(
                 [
-                    dbc.Col(
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(
-                                    html.H4("Obesity vs Death Rate", className="text-center")
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                dbc.Card(
+                                    [
+                                        dbc.CardHeader(
+                                            html.H4("Obesity vs Death Rate", className="text-center")
+                                        ),
+                                        dbc.CardBody(
+                                            create_scatter_plot(
+                                                data=df.drop_nulls(subset=["obesity%", metric_col]),
+                                                x_metric="obesity%",
+                                                y_metric=metric_col,
+                                                top_n=top_n,
+                                                hue="WB_Income",
+                                            ),
+                                            style={"height": "350px", "overflow": "auto"},
+                                        ),
+                                    ],
+                                    className="mb-3 shadow-sm",
                                 ),
-                                dbc.CardBody(
-                                    create_scatter_plot(
-                                        data=df.drop_nulls(subset=["obesity%", metric_col]),
-                                        x_metric="obesity%",
-                                        y_metric=metric_col,
-                                        top_n=top_n,
-                                        hue="WB_Income",
-                                    ),
-                                    style={"height": "350px", "overflow": "auto"},
+                                xs=12,
+                                sm=12,
+                                md=6,
+                                lg=6,
+                                xl=6,
+                            ),
+                            dbc.Col(
+                                dbc.Card(
+                                    [
+                                        dbc.CardHeader(
+                                            html.H4(
+                                                "Hypertension Control by Country", className="text-center"
+                                            )
+                                        ),
+                                        dbc.CardBody(
+                                            create_corr_matrix(
+                                                risk_data  # data_2019.select(['obesity%','t_htn_ctrl','t_high_bp_30-79','pacemaker_1m','t_htn_diag','t_htn_rx_30-79', metric_col])
+                                            ),
+                                            style={"height": "350px", "overflow": "auto"},
+                                        ),
+                                    ],
+                                    className="mb-3 shadow-sm",
                                 ),
-                            ],
-                            className="mb-3 shadow-sm",
-                        ),
-                        xs=12,
-                        sm=12,
-                        md=6,
-                        lg=6,
-                        xl=6,
+                                xs=12,
+                                sm=12,
+                                md=6,
+                                lg=6,
+                                xl=6,
+                            ),
+                        ],
+                        className="mb-3",
                     ),
-                    dbc.Col(
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(
-                                    html.H4(
-                                        "Hypertension Control by Country", className="text-center"
-                                    )
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                dbc.Card(
+                                    [
+                                        dbc.CardHeader(
+                                            html.H4("High Blood Pressure", className="text-center")
+                                        ),
+                                        dbc.CardBody(
+                                            create_scatter_plot(
+                                                data=hypertension,
+                                                x_metric="t_high_bp_30-79",
+                                                y_metric=metric_col,
+                                                hue="WB_Income",
+                                                top_n=50,
+                                            ),
+                                            style={"height": "350px", "overflow": "auto"},
+                                        ),
+                                    ],
+                                    className="mb-3 shadow-sm",
                                 ),
-                                dbc.CardBody(
-                                    create_corr_matrix(
-                                        risk_data  # data_2019.select(['obesity%','t_htn_ctrl','t_high_bp_30-79','pacemaker_1m','t_htn_diag','t_htn_rx_30-79', metric_col])
-                                    ),
-                                    style={"height": "350px", "overflow": "auto"},
+                                xs=12,
+                                sm=12,
+                                md=6,
+                                lg=6,
+                                xl=6,
+                            ),
+                            dbc.Col(
+                                dbc.Card(
+                                    [
+                                        dbc.CardHeader(
+                                            html.H4("Male vs Female Comparison", className="text-center")
+                                        ),
+                                        dbc.CardBody(
+                                            create_scatter_plot(
+                                                data=df,
+                                                x_metric=get_metric_column("Female", metric),
+                                                y_metric=get_metric_column("Male", metric),
+                                                add_diagonal=True,
+                                                top_n=top_n,
+                                                hue="WB_Income",
+                                            ),
+                                            style={"height": "350px", "overflow": "auto"},
+                                        ),
+                                    ],
+                                    className="mb-3 shadow-sm",
                                 ),
-                            ],
-                            className="mb-3 shadow-sm",
-                        ),
-                        xs=12,
-                        sm=12,
-                        md=6,
-                        lg=6,
-                        xl=6,
-                    ),
-                ],
-                className="mb-3",
-            ),
-            dbc.Row(
-                [
-                    dbc.Col(
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(
-                                    html.H4("High Blood Pressure", className="text-center")
-                                ),
-                                dbc.CardBody(
-                                    create_scatter_plot(
-                                        data=hypertension,
-                                        x_metric="t_high_bp_30-79",
-                                        y_metric=metric_col,
-                                        hue="WB_Income",
-                                        top_n=50,
-                                    ),
-                                    style={"height": "350px", "overflow": "auto"},
-                                ),
-                            ],
-                            className="mb-3 shadow-sm",
-                        ),
-                        xs=12,
-                        sm=12,
-                        md=6,
-                        lg=6,
-                        xl=6,
-                    ),
-                    dbc.Col(
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(
-                                    html.H4("Male vs Female Comparison", className="text-center")
-                                ),
-                                dbc.CardBody(
-                                    create_scatter_plot(
-                                        data=df,
-                                        x_metric=get_metric_column("Female", metric),
-                                        y_metric=get_metric_column("Male", metric),
-                                        add_diagonal=True,
-                                        top_n=top_n,
-                                        hue="WB_Income",
-                                    ),
-                                    style={"height": "350px", "overflow": "auto"},
-                                ),
-                            ],
-                            className="mb-3 shadow-sm",
-                        ),
-                        xs=12,
-                        sm=12,
-                        md=6,
-                        lg=6,
-                        xl=6,
+                                xs=12,
+                                sm=12,
+                                md=6,
+                                lg=6,
+                                xl=6,
+                            ),
+                        ]
                     ),
                 ]
             ),
-        ],
-        fluid=True,
-        style={
-            "backgroundColor": "#f8f9fa",
-            "borderRadius": "8px",
-            "padding": "15px",
-        },
+            fluid=True,
+            style={
+                "backgroundColor": "#f8f9fa",
+                "borderRadius": "8px",
+                "padding": "15px",
+            },
+        ),
+        type="default",
+        color="#00AEF0",
     )

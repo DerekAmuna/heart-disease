@@ -23,16 +23,24 @@ def create_world_map_tab():
                         id="map-title",
                         style={"textAlign": "center", "marginBottom": "5px", "height": "30px"},
                     ),
-                    html.Div(
-                        [
-                            # Main choropleth map display
-                            dcc.Graph(
-                                id="chloropleth-map",
-                                style={"height": "calc(95vh - 160px)"},
-                                config={"displayModeBar": False},
+                    dbc.Col(
+                        dcc.Loading(
+                            html.Div(
+                                [
+                                    dcc.Graph(
+                                        id="chloropleth-map",
+                                        style={"height": "calc(95vh - 160px)"},
+                                        config={"displayModeBar": False},
+                                    ),
+                                    dcc.Tooltip(
+                                        id="graph-tooltip"
+                                    ),  # Tooltip for additional info on hover
+                                ],
+                                style={"position": "relative", "flex": "1"},
                             ),
-                            dcc.Tooltip(id="graph-tooltip"), # Tooltip for additional info on hover
-                        ],
+                            type="default",
+                            color="#00AEF0",
+                        ),
                         style={"position": "relative", "flex": "1"},
                     ),
                     html.Div(
@@ -158,7 +166,7 @@ def display_hover(hover_data, metric, gender, year, age):
                                 style={"marginBottom": "3px"},
                             )
                             for k, v in risk_factors.items()
-                            if k != "Year"  
+                            if k != "Year"
                         ],
                         style={"paddingLeft": "5px"},
                     ),

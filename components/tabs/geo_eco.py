@@ -70,116 +70,120 @@ def create_geo_eco_plots(data, sankey_data, metric, gender, top_n, year):
 
     # Create plots
 
-    return dbc.Container(
-        [
-            dbc.Row(
-                [
-                    dbc.Col(
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(
-                                    html.H4("GDP vs Death Rate", className="text-center")
-                                ),
-                                dbc.CardBody(
-                                    create_scatter_plot(
-                                        data=df.filter(pl.col("Year").eq(year)).drop_nulls(
-                                            subset=["gdp_pc", col]
-                                        ),
-                                        x_metric="gdp_pc",
-                                        y_metric=col,
-                                        # gender="Both",
-                                        hue="WB_Income",
-                                        top_n=top_n,
+    return dcc.Loading(
+        dbc.Container(
+            [
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            dbc.Card(
+                                [
+                                    dbc.CardHeader(
+                                        html.H4("GDP vs Death Rate", className="text-center")
                                     ),
-                                    style={"height": "350px", "overflow": "auto"},
-                                ),
-                            ],
-                            className="mb-3 shadow-sm",
-                        ),
-                        xs=12,
-                        sm=12,
-                        md=6,
-                        lg=6,
-                        xl=6,
-                    ),
-                    dbc.Col(
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(
-                                    html.H4(f"{metric} Distribution", className="text-center")
-                                ),
-                                dbc.CardBody(
-                                    create_histogram_plot(
-                                        col,
-                                        df.filter(pl.col("Year").eq(year)).drop_nulls(
-                                            subset=[col]
+                                    dbc.CardBody(
+                                        create_scatter_plot(
+                                            data=df.filter(pl.col("Year").eq(year)).drop_nulls(
+                                                subset=["gdp_pc", col]
+                                            ),
+                                            x_metric="gdp_pc",
+                                            y_metric=col,
+                                            # gender="Both",
+                                            hue="WB_Income",
+                                            top_n=top_n,
                                         ),
+                                        style={"height": "350px", "overflow": "auto"},
                                     ),
-                                    style={"height": "350px", "overflow": "auto"},
-                                ),
-                            ],
-                            className="mb-3 shadow-sm",
+                                ],
+                                className="mb-3 shadow-sm",
+                            ),
+                            xs=12,
+                            sm=12,
+                            md=6,
+                            lg=6,
+                            xl=6,
                         ),
-                        xs=12,
-                        sm=12,
-                        md=6,
-                        lg=6,
-                        xl=6,
-                    ),
-                ],
-                className="mb-3",
-            ),
-            dbc.Row(
-                [
-                    dbc.Col(
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(
-                                    html.H4(f"{metric} Distribution", className="text-center")
-                                ),
-                                dbc.CardBody(
-                                    create_bar_plot(
-                                        col,
-                                        df.filter(pl.col("Year").eq(year)).drop_nulls(
-                                            subset=[col]
+                        dbc.Col(
+                            dbc.Card(
+                                [
+                                    dbc.CardHeader(
+                                        html.H4(f"{metric} Distribution", className="text-center")
+                                    ),
+                                    dbc.CardBody(
+                                        create_histogram_plot(
+                                            col,
+                                            df.filter(pl.col("Year").eq(year)).drop_nulls(
+                                                subset=[col]
+                                            ),
                                         ),
-                                        top_n=top_n,
+                                        style={"height": "350px", "overflow": "auto"},
                                     ),
-                                    style={"height": "350px", "overflow": "auto"},
-                                ),
-                            ],
-                            className="mb-3 shadow-sm",
+                                ],
+                                className="mb-3 shadow-sm",
+                            ),
+                            xs=12,
+                            sm=12,
+                            md=6,
+                            lg=6,
+                            xl=6,
                         ),
-                        xs=12,
-                        sm=12,
-                        md=6,
-                        lg=6,
-                        xl=6,
-                    ),
-                    dbc.Col(
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(html.H4("Sankey Diagram", className="text-center")),
-                                dbc.CardBody(
-                                    create_sankey_diagram(sankey_data, metric, gender),
-                                    style={"height": "350px", "overflow": "auto"},
-                                ),
-                            ],
-                            className="mb-3 shadow-sm",
+                    ],
+                    className="mb-3",
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            dbc.Card(
+                                [
+                                    dbc.CardHeader(
+                                        html.H4(f"{metric} Distribution", className="text-center")
+                                    ),
+                                    dbc.CardBody(
+                                        create_bar_plot(
+                                            col,
+                                            df.filter(pl.col("Year").eq(year)).drop_nulls(
+                                                subset=[col]
+                                            ),
+                                            top_n=top_n,
+                                        ),
+                                        style={"height": "350px", "overflow": "auto"},
+                                    ),
+                                ],
+                                className="mb-3 shadow-sm",
+                            ),
+                            xs=12,
+                            sm=12,
+                            md=6,
+                            lg=6,
+                            xl=6,
                         ),
-                        xs=12,
-                        sm=12,
-                        md=6,
-                        lg=6,
-                        xl=6,
-                    ),
-                ]
-            ),
-        ],
-        fluid=True,
-        style={
-            "backgroundColor": "#f8f9fa",
-            "borderRadius": "8px",
-            "padding": "15px",
-        },
+                        dbc.Col(
+                            dbc.Card(
+                                [
+                                    dbc.CardHeader(html.H4("Sankey Diagram", className="text-center")),
+                                    dbc.CardBody(
+                                        create_sankey_diagram(sankey_data, metric, gender),
+                                        style={"height": "350px", "overflow": "auto"},
+                                    ),
+                                ],
+                                className="mb-3 shadow-sm",
+                            ),
+                            xs=12,
+                            sm=12,
+                            md=6,
+                            lg=6,
+                            xl=6,
+                        ),
+                    ]
+                ),
+            ],
+            fluid=True,
+            style={
+                "backgroundColor": "#f8f9fa",
+                "padding": "15px",
+                "borderRadius": "8px",
+            },
+        ),
+        type="default",
+        color="#00AEF0",
     )
