@@ -1,11 +1,13 @@
 import logging
 from functools import lru_cache
+from collections import OrderedDict
 
 import dash_bootstrap_components as dbc
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import polars as pl
 from dash import dcc, html
 from scipy import stats
 from scipy.stats import t
@@ -13,11 +15,7 @@ from statsmodels.nonparametric.smoothers_lowess import lowess
 
 from components.common import gender_metric_selector
 from components.common.gender_metric_selector import get_metric_column
-from components.data.data import (
-    UNIQUE_INCOMES,
-    UNIQUE_REGIONS,
-    data,
-)  # Import the DataFrame directly
+from components.data.data import UNIQUE_INCOMES, UNIQUE_REGIONS, data
 
 logger = logging.getLogger(__name__)
 
@@ -62,31 +60,31 @@ def get_title_text(metric):
     return mapping.get(metric, metric).replace("_", " ").title()
 
 
-def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5, add_diagonal=False):
+def create_scatter_plot(
+    x_metric, y_metric, data, size=None, hue=None, top_n=5, add_diagonal=False
+):
     """Create a scatter plot comparing two metrics with optional size and color encoding."""
-    print(f"Creating scatter plot: x={x_metric}, y={y_metric}, data shape={data.shape}")
-    print(f"Data columns: {data.columns.tolist()}")
-    print(f"Data values:\n{data[[x_metric, y_metric]].head()}")
+    # print(f"Creating scatter plot: x={x_metric}, y={y_metric}, data shape={data.shape}")
+    # print(f"Data columns: {data.columns.tolist()}")
+    # print(f"Data values:\n{data[[x_metric, y_metric]].head()}")
 
-    if data.empty or x_metric not in data.columns or y_metric not in data.columns:
-        print(
-            f"Data validation failed: empty={data.empty}, x_exists={x_metric in data.columns}, y_exists={y_metric in data.columns}"
-        )
+    if data.is_empty() or x_metric not in data.columns or y_metric not in data.columns:
         return create_no_data_figure("No data available for selected metrics")
 
-    plot_data = data.copy()
+    plot_data = data
 
     # Convert numeric columns
-    plot_data[x_metric] = pd.to_numeric(plot_data[x_metric], errors="coerce")
-    plot_data[y_metric] = pd.to_numeric(plot_data[y_metric], errors="coerce")
-    plot_data = plot_data.dropna(subset=[x_metric, y_metric])
+    plot_data = plot_data.with_columns(
+        [pl.col(x_metric).cast(pl.Float64), pl.col(y_metric).cast(pl.Float64)]
+    )
+    plot_data = plot_data.drop_nulls(subset=[x_metric, y_metric])
 
     print(f"After numeric conversion: shape={plot_data.shape}")
     print(f"Numeric values:\n{plot_data[[x_metric, y_metric]].head()}")
 
     # Take top N if specified
     if top_n:
-        plot_data = plot_data.nlargest(int(top_n), y_metric)
+        plot_data = plot_data.sort(y_metric, descending=True).limit(int(top_n))
         print(f"After top_n filter: shape={plot_data.shape}")
 
     fig = px.scatter(
@@ -137,6 +135,164 @@ def create_scatter_plot(x_metric, y_metric, data, size=None, hue=None, top_n=5, 
     return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
 
 
+def create_tooltip(country_name, metric, gender, age, selected_year=None):
+    """Create a tooltip with time series plot and risk factors for a country."""
+    # Get data for the country
+    df = data
+    df = df.filter(pl.col("Entity").eq(country_name))
+
+    if df.height == 0:
+        return create_no_data_figure("No data available for this country"), {}
+
+    # Get appropriate column based on metric and gender
+    col = get_metric_column(gender, metric)
+    df = df.with_columns(pl.col(col).cast(pl.Float64, strict=False))
+    is_percent = "percent" in metric.lower()
+
+    # Create time series plot for cardiovascular diseases
+    cv_df = df.filter(
+        (pl.col("cause").str.to_lowercase().eq("cardiovascular diseases"))
+        & (pl.col("age").eq(age))
+    )
+    cv_df = cv_df.drop_nulls(subset=[col])
+
+    if cv_df.height == 0:
+        return None, {"message": f"No data available for {metric} with age group: {age}"}
+
+    fig = go.Figure()
+
+    # Add main time series
+    cv_df_pd = cv_df.sort("Year").to_pandas()
+    fig.add_trace(
+        go.Scatter(
+            x=cv_df_pd["Year"],
+            y=cv_df_pd[col],
+            mode="lines+markers",
+            name="Actual",
+        )
+    )
+
+    # Add marker for selected year if provided
+    if selected_year:
+        year_data = cv_df.filter(pl.col("Year").eq(selected_year))
+        if year_data.height > 0:
+            year_value = year_data.select(pl.col(col)).row(0)[0]
+            fig.add_trace(
+                go.Scatter(
+                    x=[selected_year],
+                    y=[year_value],
+                    mode="markers",
+                    marker=dict(size=10, color="red"),
+                    name=f"{selected_year}",
+                )
+            )
+
+    fig.update_layout(
+        title=f"{country_name} {metric} Over Time",
+        xaxis_title="Year",
+        yaxis_title=metric,
+        height=300,
+        showlegend=False,
+        margin={"l": 60, "r": 30, "t": 50, "b": 50},
+    )
+
+    risk_factors = OrderedDict()
+
+    if selected_year:
+        # Add other causes
+        other_causes = df.filter(
+            (pl.col("Year").eq(selected_year))
+            & ~(pl.col("cause").str.to_lowercase().str.contains("cardiovascular diseases"))
+            & (pl.col("age").eq(age))
+        )
+        other_causes = other_causes.drop_nulls(subset=[col])
+
+        # Sort causes by value and add to risk factors
+        other_causes = other_causes.sort(col, descending=True)
+        for row in other_causes.iter_rows(named=True):
+            risk_factors[row["cause"]] = format_value(row[col], is_percent=is_percent)
+
+    return fig, risk_factors
+
+
+def create_trend_plot(data, metric, gender):
+    """Create a trend plot showing the metric over time for each cause."""
+    df = data
+
+    # Get appropriate column based on metric and gender
+    col = get_metric_column(gender, metric)
+    if not col or df.height == 0:
+        return create_no_data_figure("No data available for selected filters")
+
+    # Create figure
+    fig = go.Figure()
+
+    # Color mapping for causes
+    colors = {
+        "Cardiovascular diseases": "#1f77b4",
+        "Ischemic heart disease": "#ff7f0e",
+        "Lower extremity peripheral arterial disease": "#2ca02c",
+        "Other": "#d62728",
+        "Pulmonary Arterial Hypertension": "#9467bd",
+    }
+
+    # Add traces for each cause
+    for cause in df["cause"].unique():
+        cause_data = df.filter(pl.col("cause").eq(cause))
+        yearly_data = cause_data.group_by("Year").agg(pl.col(col).mean()).sort("Year")
+
+        # Split data at 2021.5
+        actual = yearly_data.filter(pl.col("Year") <= 2021.5)
+        projected = yearly_data.filter(pl.col("Year") > 2021.5)
+
+        color = colors.get(cause, "#17becf")
+
+        # Add actual data (solid line)
+        fig.add_trace(
+            go.Scatter(
+                x=actual["Year"],
+                y=actual[col],
+                name=cause,
+                mode="lines",
+                line=dict(color=color),
+            )
+        )
+
+        # Add projected data (dotted line)
+        if not projected.is_empty():
+            fig.add_trace(
+                go.Scatter(
+                    x=projected["Year"],
+                    y=projected[col],
+                    name=f"{cause} (Projected)",
+                    mode="lines",
+                    line=dict(
+                        color=color,
+                        dash="dot",
+                    ),
+                    showlegend=False,
+                )
+            )
+
+    fig.update_layout(
+        title=f"{metric} Trends Over Time",
+        xaxis_title="Year",
+        yaxis_title=metric,
+        height=600,
+        showlegend=True,
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=0.01,
+            bgcolor="rgba(255, 255, 255, 0.8)",
+        ),
+        hovermode="x unified",
+    )
+
+    return dcc.Graph(figure=fig, config={"displayModeBar": False})
+
+
 def format_value(value, is_percent=True, is_estimate=True, is_obesity=False):
     """Format a value for display.
 
@@ -169,94 +325,6 @@ def format_value(value, is_percent=True, is_estimate=True, is_obesity=False):
         return "N/A"
 
 
-def create_tooltip(country_name, metric, gender, age, selected_year=None):
-    """Create a tooltip with time series plot and risk factors for a country."""
-    # Get data for the country
-    df = data.copy()
-    df = df[df["Entity"] == country_name]
-
-    if df.empty:
-        return None, {"message": "No data available for this country"}
-
-    # Get appropriate column based on metric and gender
-    col = get_metric_column(gender, metric)
-    if not col:
-        return None, {"message": "Invalid metric selection"}
-
-    # Check if metric is a percent type
-    is_percent = "percent" in metric.lower()
-
-    # Create time series plot for cardiovascular diseases
-    cv_df = df[(df["cause"].str.lower() == "cardiovascular diseases") & (df["age"] == age)]
-    cv_df = cv_df.dropna(subset=[col])
-
-    if cv_df.empty:
-        return None, {"message": f"No data available for {metric} with age group: {age}"}
-
-    fig = go.Figure()
-    fig.add_trace(
-        go.Scatter(
-            x=cv_df["Year"],
-            y=cv_df[col],
-            mode="lines+markers",
-            name=metric,
-            line=dict(color="#1f77b4"),
-        )
-    )
-
-    # Add marker for selected year if provided
-    if selected_year:
-        year_data = cv_df[cv_df["Year"] == selected_year]
-        if not year_data.empty:
-            fig.add_trace(
-                go.Scatter(
-                    x=[selected_year],
-                    y=[year_data[col].iloc[0]],
-                    mode="markers",
-                    marker=dict(size=10, color="red"),
-                    name=f"Selected Year ({selected_year})",
-                )
-            )
-
-    fig.update_layout(
-        title=f"{metric} in {country_name}",
-        xaxis_title="Year",
-        yaxis_title=metric,
-        showlegend=False,
-        margin=dict(l=0, r=0, t=30, b=0),
-        height=200,
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-    )
-
-    # Get other causes data for the selected year
-    risk_factors = {"Year": selected_year if selected_year else "No year selected"}
-
-    if selected_year:
-        # Add obesity and GDP per capita
-        year_data = df[df["Year"] == selected_year].iloc[0]
-        if "obesity%" in year_data and pd.notna(year_data["obesity%"]):
-            risk_factors["Obesity Rate"] = format_value(
-                year_data["obesity%"], is_percent=True, is_obesity=True
-            )
-        if "gdp_pc" in year_data and pd.notna(year_data["gdp_pc"]):
-            risk_factors["GDP per capita"] = format_value(year_data["gdp_pc"], is_percent=False)
-
-        # Add other causes
-        other_causes = df[
-            (df["Year"] == selected_year)
-            & (df["cause"].str.lower() != "cardiovascular diseases")
-            & (df["age"] == age)
-        ]
-        other_causes = other_causes.dropna(subset=[col])
-
-        # Add each cause's value
-        for _, row in other_causes.iterrows():
-            risk_factors[row["cause"]] = format_value(row[col], is_percent=is_percent)
-
-    return fig, risk_factors
-
-
 def create_no_data_figure(message="No data available"):
     """Create an empty figure with a message when no data is available."""
     fig = go.Figure()
@@ -269,77 +337,32 @@ def create_no_data_figure(message="No data available"):
     return dcc.Graph(figure=fig, config={"displayModeBar": False})
 
 
-def create_bar_plot(metric, data, top_n=5, color=None):
-    """Create a bar plot for a given metric.
-
-    Args:
-        metric (str): Column to plot
-        data (pd.DataFrame): Data to plot
-        top_n (int, optional): Number of top entries to show. Defaults to 5.
-        color (str, optional): Column to use for color coding. Defaults to None.
-    """
-    df = data.nlargest(top_n, metric)
-
-    fig = px.bar(
-        df,
-        x="Entity",
-        y=metric,
-        hover_name="Entity",
-        labels={metric: get_title_text(metric)},
-        color=color,
-    )
-
-    layout = {
-        **BASE_LAYOUT,
-        "margin": {"l": 60, "r": 30, "t": 50, "b": 70},
-        "height": None,
-        "coloraxis_showscale": False,
-        "title": {
-            "text": f"Top {top_n} Countries by {get_title_text(metric)}",
-            "y": 0.95,
-            "x": 0.5,
-            "xanchor": "center",
-            "yanchor": "top",
-            "font": {"size": 14},
-        },
-    }
-
-    fig.update_layout(**layout)
-    fig.update_xaxes(tickangle=-45, showgrid=False, title=None)
-    fig.update_yaxes(**GRID_SETTINGS)
-
-    return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
-
-
 def create_line_plot(metric, data, top_n=5, n_metric=None):
     """Create a line plot for a given metric over time."""
-    filtered_data = data[data["Year"] >= 2000]
-    print(f"Line plot for {metric}")
-    print(f"Years in data: {sorted(filtered_data['Year'].unique())}")
-    print(f"Sample of data:\n{filtered_data[['Year', metric]].head()}")
+    filtered_data = data.filter(pl.col("Year").gt(2000))
 
-    # Get top N entities by metric value in the most recent year
     latest_year = filtered_data["Year"].max()
-    if n_metric and n_metric in filtered_data.columns:
-        sort_metric = n_metric
-    else:
-        sort_metric = metric
 
+    # Determine which metric to use for sorting
+    sort_metric = n_metric if n_metric else metric
+
+    # Get top entities based on latest year values
     top_entities = (
-        filtered_data[filtered_data["Year"] == latest_year]
-        .nlargest(top_n, sort_metric)["Entity"]
-        .tolist()
+        filtered_data.filter(pl.col("Year").eq(latest_year))
+        .sort(pl.col(sort_metric), descending=True)
+        .limit(top_n)
+        .get_column("Entity")
+        .to_list()
     )
-    filtered_data = filtered_data[filtered_data["Entity"].isin(top_entities)]
-    print(f"Unique years per entity:")
-    print(filtered_data.groupby("Entity")["Year"].nunique())
+
+    filtered_data = filtered_data.filter(pl.col("Entity").is_in(top_entities))
 
     fig = px.line(
-        filtered_data,
+        filtered_data.to_pandas(),
         x="Year",
         y=metric,
         color="Entity",
-        labels={metric: get_title_text(metric)},
+        title=f"Top {top_n} Countries by {metric}",
     )
 
     layout = {
@@ -350,9 +373,61 @@ def create_line_plot(metric, data, top_n=5, n_metric=None):
         "margin": {"l": 60, "r": 30, "t": 50, "b": 50},
         "height": None,
         "title": {
-            "text": f"{get_title_text(metric)} Over Time"
-            + (f" by {get_title_text(n_metric)}" if n_metric else ""),
+            "text": f"{get_title_text(metric)} Over Time",
             "y": 1,
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "top",
+            "font": {"size": 14},
+        },
+    }
+
+    fig.update_layout(**layout)
+    for axis in [fig.update_xaxes, fig.update_yaxes]:
+        axis(**GRID_SETTINGS)
+
+    return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
+
+
+def create_bar_plot(metric, data, top_n=5, color=None):
+    """Create a bar plot for a given metric.
+
+    Args:
+        metric (str): Column to plot
+        data (pd.DataFrame): Data to plot
+        top_n (int, optional): Number of top entries to show. Defaults to 5.
+        color (str, optional): Column to use for color coding. Defaults to None.
+    """
+    if isinstance(data, pd.DataFrame):
+        df = pl.from_pandas(data)
+    elif isinstance(data, (list, dict)):
+        df = pl.DataFrame(data)
+    else:
+        df = data
+    # df =data
+    if df.height == 0:
+        return create_no_data_figure("No data available")
+
+    # Get top N entries by metric value
+    df = df.sort(metric, descending=True).limit(top_n)
+
+    fig = px.bar(
+        data_frame=df.to_pandas(),
+        x="Entity",
+        y=metric,
+        color=color,
+        labels={metric: get_title_text(metric)},
+        title=f"Top {top_n} Countries by {get_title_text(metric)}",
+    )
+
+    layout = {
+        **BASE_LAYOUT,
+        "margin": {"l": 60, "r": 30, "t": 50, "b": 70},
+        "height": None,
+        "coloraxis_showscale": False,
+        "title": {
+            "text": f"Top {top_n} Countries by {get_title_text(metric)}",
+            "y": 0.95,
             "x": 0.5,
             "xanchor": "center",
             "yanchor": "top",
@@ -382,12 +457,14 @@ def create_chloropleth_map(filtered_data, metric, gender="Both"):
     # Convert list of dicts to DataFrame
     df = pd.DataFrame(filtered_data)
     if df.empty:
-        return go.Figure()
+        return create_no_data_figure("No data available for selected filters")
 
     # Get the appropriate column based on metric and gender
     metric_col = get_metric_column(gender, metric)
     if not metric_col:
-        return go.Figure()
+        return create_no_data_figure("No data available for selected filters")
+
+    df[metric_col] = pd.to_numeric(df[metric_col], errors="coerce")
 
     # Create figure
     # Calculate rounded max value for better scale
@@ -399,7 +476,7 @@ def create_chloropleth_map(filtered_data, metric, gender="Both"):
             locations=df["Entity"],
             locationmode="country names",
             z=df[metric_col],
-            text=df["Entity"],
+            text=None,
             colorscale="RdYlBu_r",  # Changed to a more intuitive red-yellow-blue scale
             autocolorscale=False,
             zmin=0,  # Start from 0 for better context
@@ -415,32 +492,6 @@ def create_chloropleth_map(filtered_data, metric, gender="Both"):
             ),
         )
     )
-
-    # projection types
-    #     ['airy', 'aitoff', 'albers', 'albers usa', 'august',
-    # 'azimuthal equal area', 'azimuthal equidistant', 'baker',
-    # 'bertin1953', 'boggs', 'bonne', 'bottomley', 'bromley',
-    # 'collignon', 'conic conformal', 'conic equal area', 'conic
-    # equidistant', 'craig', 'craster', 'cylindrical equal
-    # area', 'cylindrical stereographic', 'eckert1', 'eckert2',
-    # 'eckert3', 'eckert4', 'eckert5', 'eckert6', 'eisenlohr',
-    # 'equal earth', 'equirectangular', 'fahey', 'foucaut',
-    # 'foucaut sinusoidal', 'ginzburg4', 'ginzburg5',
-    # 'ginzburg6', 'ginzburg8', 'ginzburg9', 'gnomonic',
-    # 'gringorten', 'gringorten quincuncial', 'guyou', 'hammer',
-    # 'hill', 'homolosine', 'hufnagel', 'hyperelliptical',
-    # 'kavrayskiy7', 'lagrange', 'larrivee', 'laskowski',
-    # 'loximuthal', 'mercator', 'miller', 'mollweide', 'mt flat
-    # polar parabolic', 'mt flat polar quartic', 'mt flat polar
-    # sinusoidal', 'natural earth', 'natural earth1', 'natural
-    # earth2', 'nell hammer', 'nicolosi', 'orthographic',
-    # 'patterson', 'peirce quincuncial', 'polyconic',
-    # 'rectangular polyconic', 'robinson', 'satellite', 'sinu
-    # mollweide', 'sinusoidal', 'stereographic', 'times',
-    # 'transverse mercator', 'van der grinten', 'van der
-    # grinten2', 'van der grinten3', 'van der grinten4',
-    # 'wagner4', 'wagner6', 'wiechel', 'winkel tripel',
-    # 'winkel3']
 
     fig.update_layout(
         **COMMON_LAYOUT,
@@ -472,13 +523,17 @@ def create_chloropleth_map(filtered_data, metric, gender="Both"):
 
 def create_sankey_diagram(data, metric, gender):
     """Create a Sankey diagram showing flow between Region -> Income -> Metric Ranges."""
-    if not data:
+    df = pd.DataFrame(data)
+    # df = data
+    if df.empty:
         return create_no_data_figure("No data available")
 
     metric = get_metric_column(gender, metric)
-    df = pd.DataFrame(data)
-    df = df[df["Year"] == 2019]
-    df = df.dropna(subset=[metric, "region", "WB_Income"])
+
+    # df = data
+    logger.debug(msg=df.columns.tolist())
+    df[metric] = df[metric].astype(float)
+    print(df.dtypes)
 
     if df.empty:
         return create_no_data_figure("No data available")
@@ -565,106 +620,50 @@ def create_sankey_diagram(data, metric, gender):
         ),
     )
 
-    return dcc.Graph(figure=fig, config={"displayModeBar": False})
+    return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})
 
 
-def create_trend_plot(data, metric, year, gender):
-    """Create a trend plot showing the metric over time for each cause."""
-    df = data.copy()
+def create_histogram_plot(metric: str, data: pl.DataFrame, bins: int = 30) -> go.Figure:
+    """Create a histogram plot showing the distribution of a metric.
 
-    # Get appropriate column based on metric and gender
-    col = get_metric_column(gender, metric)
-    if not col or df.empty:
-        return create_no_data_figure("No data available for selected filters")
+    Args:
+        metric (str): Column name to plot
+        data (pl.DataFrame): Data to plot
+        bins (int, optional): Number of bins for histogram. Defaults to 30.
 
-    # Create figure
-    fig = go.Figure()
+    Returns:
+        go.Figure: Plotly figure object
+    """
+    if len(data) == 0:
+        return create_no_data_figure()
 
-    # Color mapping for causes
-    colors = {
-        "Cardiovascular diseases": "#1f77b4",
-        "Ischemic heart disease": "#ff7f0e",
-        "Lower extremity peripheral arterial disease": "#2ca02c",
-        "Other": "#d62728",
-        "Pulmonary Arterial Hypertension": "#9467bd",
-    }
+    title = get_title_text(metric)
 
-    # Add traces for each cause
-    for cause in df["cause"].unique():
-        cause_data = df[df["cause"] == cause]
+    # Convert to pandas for plotly compatibility
+    df = data.select([metric]).to_pandas()
 
-        # Group by year to get mean values
-        yearly_data = cause_data.groupby("Year")[col].mean().reset_index()
+    # Create histogram
+    fig = px.histogram(df, x=metric, nbins=bins, title=title, labels={metric: title}, opacity=0.75)
 
-        # Get color for cause (default to gray if not in mapping)
-        color = colors.get(cause, "#17becf")
-
-        # Add actual data
-        fig.add_trace(
-            go.Scatter(
-                x=yearly_data["Year"],
-                y=yearly_data[col],
-                name=cause,
-                mode="lines+markers",
-                line=dict(color=color),
-            )
-        )
-
-        # Fit LOWESS to existing data
-        lowess_data = lowess(
-            yearly_data[col], yearly_data["Year"], frac=0.5, it=1, return_sorted=True
-        )
-
-        # Project trend to 2030
-        last_years = lowess_data[-5:]  # Use last 5 years for projection
-        slope = np.polyfit(last_years[:, 0], last_years[:, 1], deg=1)[0]
-        future_years = np.arange(yearly_data["Year"].max() + 1, 2031)
-        projection = slope * (future_years - yearly_data["Year"].max()) + lowess_data[-1, 1]
-
-        # Add LOWESS trend
-        fig.add_trace(
-            go.Scatter(
-                x=lowess_data[:, 0],
-                y=lowess_data[:, 1],
-                name=f"{cause} (Trend)",
-                mode="lines",
-                line=dict(
-                    dash="dot",
-                    color=color,
-                ),
-                showlegend=False,
-            )
-        )
-
-        # Add projection
-        fig.add_trace(
-            go.Scatter(
-                x=future_years,
-                y=projection,
-                name=f"{cause} (Projection)",
-                mode="lines",
-                line=dict(
-                    dash="dash",
-                    color=color,
-                ),
-                showlegend=False,
-            )
-        )
-
+    # Update layout
     fig.update_layout(
-        title=f"{metric} Trends Over Time",
-        xaxis_title="Year",
-        yaxis_title=metric,
-        height=600,
-        showlegend=True,
-        legend=dict(
-            yanchor="top",
-            y=0.99,
-            xanchor="left",
-            x=0.01,
-            bgcolor="rgba(255, 255, 255, 0.8)",
-        ),
-        hovermode="x unified",
+        **BASE_LAYOUT,
+        **COMMON_LAYOUT,
+        # showlegend=False,
+        height=350,
+        margin=dict(l=40, r=40, t=40, b=40),
+        xaxis=dict(title=title, **GRID_SETTINGS),
+        yaxis=dict(title="Count", **GRID_SETTINGS),
     )
 
-    return dcc.Graph(figure=fig, config={"displayModeBar": False})
+    # Add mean line
+    mean_val = df[metric].mean()
+    fig.add_vline(
+        x=mean_val,
+        line_dash="dash",
+        line_color="red",
+        annotation_text=f"Mean: {format_value(mean_val)}",
+        annotation_position="top right",
+    )
+
+    return dcc.Graph(figure=fig, style={"height": "100%"}, config={"displayModeBar": False})

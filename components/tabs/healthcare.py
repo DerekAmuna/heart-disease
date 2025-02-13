@@ -2,18 +2,14 @@ import logging
 
 import dash_bootstrap_components as dbc
 import pandas as pd
+import polars as pl
 from dash import Input, Output, callback, dcc, html
 
 from components.common.filter_slider import create_filter_slider
 from components.common.gender_metric_selector import get_metric_column
 from components.common.year_slider import create_year_slider
-from components.data.data import data, get_hpt_data
-from components.visualisations import (
-    create_bar_plot,
-    create_line_plot,
-    create_sankey_diagram,
-    create_scatter_plot,
-)
+from components.visualisations import create_bar_plot, create_scatter_plot
+from components.data.data import data_2019
 
 logger = logging.getLogger(__name__)
 
@@ -23,10 +19,9 @@ def create_healthcare_tab():
     return html.Div(
         [
             dcc.Store(id="healthcare-data"),
+            dcc.Store(id='htn-data'),
             create_filter_slider(),
-            # html.Br(),
             html.Div(id="healthcare-plots"),
-            # html.Br(),
             create_year_slider(),
         ]
     )
@@ -38,9 +33,8 @@ def create_healthcare_tab():
     Input("gender-dropdown", "value"),
     Input("metric-dropdown", "value"),
     Input("year-slider", "value"),
-    Input("top-filter-slider", "value"),
 )
-def create_healthcare_plots(data, gender, metric, year, top_n):
+def create_healthcare_plots(data,gender, metric, year):
     """Create healthcare-related visualizations in a grid layout.
 
     Returns:
@@ -49,18 +43,18 @@ def create_healthcare_plots(data, gender, metric, year, top_n):
     if not data or not metric or not gender:
         return html.Div("Please select metric and gender")
 
-    df = pd.DataFrame(data)
+    # Convert data to Polars DataFrame
+    df = pl.DataFrame(data)
     logger.debug(f"first load view {df.head()}")
-    if df.empty:
+    if df.is_empty():
         return html.Div("No data available for the selected filters")
 
-    metric_col = get_metric_column(metric=metric, gender=gender)
+    metric_col = get_metric_column(gender, metric)
     if not metric_col:
         return html.Div("No metric data available")
 
-    # Get sankey data directly
-    logger.debug(f"Creating plots for {metric_col}, \n {df.head()}")
-    hpt = get_hpt_data()
+    hypertension = data_2019
+    logger.debug(f"first load view htn {hypertension.head()}")
 
     return dbc.Container(
         [
@@ -74,11 +68,10 @@ def create_healthcare_plots(data, gender, metric, year, top_n):
                                 ),
                                 dbc.CardBody(
                                     create_scatter_plot(
-                                        "obesity%",
-                                        metric_col,
-                                        df.dropna(subset=["obesity%", metric_col]),
-                                        hue="WB_Income",
-                                        top_n=50,
+                                        data=df.drop_nulls(subset=["obesity%", metric_col]),
+                                        x_metric="obesity%",
+                                        y_metric=metric_col,
+                                        # gender="Both"
                                     ),
                                     style={"height": "350px", "overflow": "auto"},
                                 ),
@@ -102,7 +95,7 @@ def create_healthcare_plots(data, gender, metric, year, top_n):
                                 dbc.CardBody(
                                     create_bar_plot(
                                         "t_htn_ctrl",
-                                        hpt.dropna(subset=["t_htn_ctrl"]),
+                                        hypertension,
                                         top_n=20,
                                         color="WB_Income",
                                     ),
@@ -130,9 +123,9 @@ def create_healthcare_plots(data, gender, metric, year, top_n):
                                 ),
                                 dbc.CardBody(
                                     create_scatter_plot(
-                                        "t_high_bp_30-79",
-                                        metric_col,
-                                        hpt.dropna(subset=["t_high_bp_30-79", metric_col]),
+                                        data=hypertension,
+                                        x_metric="t_high_bp_30-79",
+                                        y_metric=metric_col,
                                         hue="WB_Income",
                                         top_n=50,
                                     ),
@@ -155,11 +148,9 @@ def create_healthcare_plots(data, gender, metric, year, top_n):
                                 ),
                                 dbc.CardBody(
                                     create_scatter_plot(
-                                        get_metric_column("Female", metric),
-                                        get_metric_column("Male", metric),
-                                        df[df["Year"] == year],
-                                        hue="WB_Income",
-                                        top_n=top_n,
+                                        data=df.filter(pl.col("Year").eq(year)),
+                                        x_metric=get_metric_column("Female", metric),
+                                        y_metric=get_metric_column("Male", metric),
                                         add_diagonal=True,
                                     ),
                                     style={"height": "350px", "overflow": "auto"},

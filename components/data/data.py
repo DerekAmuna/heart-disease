@@ -4,6 +4,9 @@ import os
 from functools import lru_cache
 
 import pandas as pd
+import polars as pl
+from cachetools import TTLCache, cached
+from cachetools.keys import hashkey
 from dash import Input, Output, callback
 
 from components.common.gender_metric_selector import get_metric_column
@@ -11,28 +14,38 @@ from components.common.gender_metric_selector import get_metric_column
 logger = logging.getLogger(__name__)
 
 
-@lru_cache(maxsize=128)
-def load_data():
-    """Load data with caching."""
-    logger.debug("Cache info for load_data: %s", (load_data.cache_info()))
-    data_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-        "data",
-        "heart_processed.csv",
+def make_hashable(value):
+    """Convert unhashable types to hashable ones for caching."""
+    if isinstance(value, list):
+        return tuple(sorted(value))
+    return value
+
+
+def cache_key(*args, **kwargs):
+    """Create a hashable key for caching."""
+    return hashkey(
+        *(make_hashable(arg) for arg in args), **{k: make_hashable(v) for k, v in kwargs.items()}
     )
-    df = pd.read_csv(data_path)
 
-    # Pre-process data once during loading
-    df["Year"] = pd.to_numeric(df["Year"], downcast="integer")
 
-    # Convert numeric columns to efficient types
-    for col in df.select_dtypes(include=["float64"]).columns:
-        if col != "WB_Income":  # Skip WB_Income as it contains mixed types
-            df[col] = pd.to_numeric(df[col], downcast="float")
+@cached(cache=TTLCache(maxsize=128, ttl=300), key=cache_key)
+def load_data():
+    """Load data with caching using Polars."""
+    # logger.debug("Cache info for load_data: %s", load_data.cache_info())
+    data_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "heart_processed.csv"
+    )
+    df = pl.read_csv(data_path)
+    # Pre-process data once during loading: convert Year to integer
+    df = df.with_columns(pl.col("Year").cast(pl.Int32))
 
-    # Handle WB_Income column - convert NaN to string 'Unknown'
-    df["WB_Income"] = df["WB_Income"].fillna("Unknown")
-    df["WB_Income"] = df["WB_Income"].astype(str)
+    # Convert numeric columns to efficient types, skipping WB_Income
+    schema = df.schema
+    float_cols = [col for col, typ in schema.items() if typ == pl.Float64 and col != "WB_Income"]
+    for col in float_cols:
+        df = df.with_columns(pl.col(col).cast(pl.Float32))
+    # Handle WB_Income column
+    df = df.with_columns(pl.col("WB_Income").fill_null("Unknown").cast(pl.Utf8))
 
     logger.info("Loaded data shape: %s", df.shape)
     return df
@@ -42,8 +55,8 @@ def load_data():
 data = load_data()
 
 # Pre-calculate unique values for filters
-UNIQUE_REGIONS = sorted(data["region"].dropna().unique())
-UNIQUE_INCOMES = sorted(data["WB_Income"].dropna().unique())
+UNIQUE_REGIONS = sorted(data["region"].drop_nulls().unique())
+UNIQUE_INCOMES = sorted(data["WB_Income"].drop_nulls().unique())
 UNIQUE_ENTITIES = sorted(data["Entity"].unique())
 UNIQUE_AGES = sorted(data["age"].unique())
 YEAR_RANGE = (int(data["Year"].min()), int(data["Year"].max()))
@@ -51,30 +64,42 @@ METRICS = sorted(data["cause"].unique())
 
 # Pre-calculate region to countries mapping
 REGION_COUNTRIES = {
-    region: sorted(data[data["region"] == region]["Entity"].unique()) for region in UNIQUE_REGIONS
+    region: sorted(data.filter(pl.col("region") == region)["Entity"].unique())
+    for region in UNIQUE_REGIONS
 }
 
 
-@lru_cache(maxsize=32)
-def filter_data(year=None, regions=None, income=None, gender="Both", metric=None, age=None):
-    """Base filter function with caching for common filter combinations."""
-    filtered = pd.DataFrame(data)
-
+@cached(cache=TTLCache(maxsize=32, ttl=300), key=cache_key)
+def filter_data(
+    year=None, regions=None, income=None, gender="Both", metric=None, age=None, cause=None
+):
+    """Base filter function for filtering data based on various criteria."""
+    filtered = data
     if year:
-        filtered = filtered[filtered["Year"] == year]
+        filtered = data.filter(pl.col("Year") == year)
     if regions and regions != ["All"]:
-        filtered = filtered[filtered["region"].isin(regions)]
+        filtered = filtered.filter(pl.col("region").is_in(regions))
     if income and income != "All":
-        filtered = filtered[filtered["WB_Income"] == str(income)]
+        filtered = filtered.filter(pl.col("WB_Income") == str(income))
     if age:
-        filtered = filtered[filtered["age"] == age]
+        filtered = filtered.filter(pl.col("age") == age)
+    if cause:
+        filtered = filtered.filter(pl.col("cause") == cause)
 
     if metric and gender:
         col = get_metric_column(gender, metric)
         if col:
-            filtered = filtered.dropna(subset=[col])
-
+            filtered = filtered.drop_nulls(subset=[col])
+    logger.debug(msg=f"columns: {filtered.columns}")
     return filtered
+
+
+data_2019 = (
+    filter_data(year=2019, age="Age-standardized", cause="Cardiovascular diseases")
+    .with_columns(pl.col("t_htn_ctrl").cast(pl.Float64, strict=False))
+    .with_columns(pl.col("t_high_bp_30-79").cast(pl.Float64, strict=False))
+)
+print(data_2019.head())
 
 
 @callback(
@@ -84,50 +109,37 @@ def filter_data(year=None, regions=None, income=None, gender="Both", metric=None
     Input("income-dropdown", "value"),
     Input("gender-dropdown", "value"),
     Input("metric-dropdown", "value"),
-    Input("top-filter-slider", "value"),
 )
-def get_geo_eco_data(year, regions, income, gender, metric, top_n):
+@cached(cache=TTLCache(maxsize=32, ttl=300), key=cache_key)
+def get_geo_eco_data(year, regions, income, gender, metric):
     """Get filtered data for geo-economic visualizations."""
-    print("Geo eco inputs:", year, regions, income, gender, metric, top_n)
 
     if not year or not gender or not metric:
         return []
 
-    # Get all gender columns for the metric
-    cols = []
-    for g in ["Both", "Female", "Male"]:
-        col = get_metric_column(g, metric)
-        if col:
-            cols.append(col)
+    cols = [get_metric_column(g, metric) for g in ["Both", "Female", "Male"]]
+    cols = [col for col in cols if col]
 
-    df = filter_data(None, regions, income, gender, metric)
-    print("Filtered data shape:", df.shape)
-    print(f"Years in data: {sorted(df['Year'].unique())}")
-    print(f"Available columns: {df.columns.tolist()}")
+    df = filter_data(year, regions, income, gender, metric)
 
     if cols:
         keep_cols = [
-            "Entity",
-            "Year",
-            "Code",
-            "gdp_pc",
-            "WB_Income",
-            "Population",
-            "region",
-            "cause",
+        "Entity",
+        "Year",
+        "Code",
+        "gdp_pc",
+        "WB_Income",
+        "Population",
+        "region",
+        "cause",
         ] + cols
-        df = df[keep_cols]
-        # Convert numeric columns
-        for num_col in cols + ["gdp_pc", "Population"]:
-            df[num_col] = pd.to_numeric(df[num_col], errors="coerce")
-        print("Pre dropna:", df.shape)
-        df = df.dropna(subset=cols + ["gdp_pc", "Population"])
-        print("Post dropna:", df.shape)
-        print("Final data shape:", df.shape)
-        print("Final columns:", df.columns.tolist())
-        print(f"Sample data:\n{df[cols + ['gdp_pc', 'Year']].head()}")
+        df = df.select(keep_cols)
+        df = df.with_columns(
+            [pl.col(col).cast(pl.Float32) for col in cols + ["gdp_pc", "Population"]]
+        )
+        df = df.drop_nulls(subset=cols + ["gdp_pc", "Population"])
 
-    return df.to_dict("records")
+    return df.to_dicts()
 
 
 @callback(
@@ -146,38 +158,36 @@ def get_world_map_data(year, regions, income, gender, metric, age):
 
     df = filter_data(year, regions, income, gender, metric, age)
     col = get_metric_column(gender, metric)
+    df = df.with_columns(pl.col(col).cast(pl.Float64, strict=False))
 
     if col:
-        df = df[["Entity", "Code", col, "region", "WB_Income", "cause"]]
-        df = df[df["cause"].str.lower() == "cardiovascular diseases"]
+        df = df.select(["Entity", "Code", col, "region", "WB_Income", "cause"])
+        df = df.filter(pl.col("cause").str.to_lowercase() == "cardiovascular diseases")
 
-    return df.to_dict("records")
+    return df.to_dicts()
 
 
 @callback(
     Output("trends-data", "data"),
     Input("metric-dropdown", "value"),
     Input("gender-dropdown", "value"),
-    Input("country-dropdown", "value"),
-    Input("region-dropdown", "value"),
-    Input("income-dropdown", "value"),
 )
-def get_trends_data(metric, gender, countries, regions, income):
+def get_trends_data(metric, gender):
     """Get filtered data for trends visualization."""
-    if not metric or not gender:
-        return []
 
-    df = filter_data(None, regions, income, gender, metric) # No year filter for trends
+    data_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "trends.csv"
+    )
+    df = pl.read_csv(data_path)
 
-    # Filter by countries if specified
-    if countries:
-        df = df[df["Entity"].isin(countries)]
 
-    # Sum across ages for each year, entity, and cause
-    df = df.groupby(["Year", "Entity", "cause", "region", "WB_Income"]).sum().reset_index()
-    logger.debug(f"Trend data shape: {df.shape}")
+    metric = get_metric_column(gender, metric)
 
-    return df.to_dict("records")
+    df = df.select(["cause", "age", "Year", metric])
+    # Pre-process data once during loading: convert Year to integer
+    df = df.with_columns(pl.col("Year").cast(pl.Int32))
+
+    return df.to_dicts()
 
 
 @callback(
@@ -194,10 +204,10 @@ def get_healthcare_data(year, regions, income, gender, metric):
         return []
 
     df = filter_data(
-        year, regions, income, gender="Both", metric=metric
+        year, regions, income, gender=gender, metric=metric
     )  # Use Both to get all gender data
-    df = df[df["cause"].str.lower() == "cardiovascular diseases"]
-    df = df[df["age"].str.contains("Age-standardized", case=False, na=False)]
+    df = df.filter(pl.col("cause").str.to_lowercase() == "cardiovascular diseases")
+    df = df.filter(pl.col("age").str.contains("Age-standardized"))
 
     # Keep required columns
     required_cols = ["Entity", "Code", "region", "WB_Income", "Year", "cause"]
@@ -210,35 +220,40 @@ def get_healthcare_data(year, regions, income, gender, metric):
     available_cols = required_cols + val_cols + [c for c in optional_cols if c in df.columns]
 
     # Only keep rows where required columns are not null
-    df = df[available_cols].dropna(subset=required_cols)
+
+    df = df.select(available_cols).drop_nulls(subset=required_cols)
+
 
     logger.debug(f"Healthcare data shape: {df.shape}")
     logger.debug(df.head())
-    return df.to_dict("records")
+    return df.to_dicts()
 
 
+@callback(
+    Output("sankey-data", "data"),
+    Input("region-dropdown", "value"),
+    Input("income-dropdown", "value"),
+    Input("gender-dropdown", "value"),
+    Input("metric-dropdown", "value"),
+)
 def get_sankey_data(regions, income, gender, metric):
     """Get unfiltered data for Sankey diagram visualization."""
-    df = filter_data(regions=regions, income=income, gender=gender, metric=metric)
+    df = filter_data(
+        year=2019,
+        regions=regions,
+        income=income,
+        gender=gender,
+        metric=metric,
+        cause="Cardiovascular diseases",
+        age="Age-standardized",
+    )
     col = get_metric_column(gender, metric)
 
     if col and col in df.columns:
-        df = df[df["age"].str.contains("Age-standardized", case=False, na=False)]
         required_cols = ["Entity", "Code", "region", "WB_Income", "Year", "cause"]
-        df = df[required_cols + [col]].dropna(subset=required_cols + [col])
-        df = df[df["cause"].str.lower() == "cardiovascular diseases"]
+        df = df.select(required_cols + [col]).drop_nulls(subset=required_cols + [col])
         logger.debug(f"Sankey data shape: {df.shape}")
-        return df.to_dict("records")
+        logger.debug(msg=df.head())
+        return df.to_dicts()
 
     return []
-
-
-def get_hpt_data():
-    df = (
-        data[data["Year"] == 2019]
-        .dropna(subset=["t_htn_ctrl", "t_high_bp_30-79"])
-        .drop_duplicates(subset=["Entity", "Year", "t_htn_ctrl", "t_high_bp_30-79"])
-    )
-
-    logger.debug(msg=df.head())
-    return df
