@@ -42,7 +42,6 @@ def update_trend_plots(trends_data, metric, gender):
     if not trends_data or not metric or not gender:
         return html.Div("No Data")
 
-
     df = pl.DataFrame(trends_data)
 
     return dcc.Loading(

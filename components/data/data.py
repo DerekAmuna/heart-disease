@@ -188,7 +188,6 @@ def get_trends_data(metric, gender):
     )
     df = pl.read_csv(data_path)
 
-
     metric = get_metric_column(gender, metric)
 
     df = df.select(["cause", "age", "Year", metric])
@@ -238,7 +237,6 @@ def get_healthcare_data(year, regions, income, gender, metric, age, country):
     # Only keep rows where required columns are not null
 
     df = df.select(available_cols).drop_nulls(subset=required_cols)
-
 
     logger.debug(f"Healthcare data shape: {df.shape}")
     logger.debug(df.head())

@@ -24,22 +24,26 @@ def create_world_map_tab():
                         style={"textAlign": "center", "marginBottom": "5px", "height": "30px"},
                     ),
                     dbc.Col(
-                        dcc.Loading(
-                            html.Div(
-                                [
+                        html.Div(
+                            [
+                                dcc.Loading(
                                     dcc.Graph(
                                         id="chloropleth-map",
                                         style={"height": "calc(95vh - 160px)"},
                                         config={"displayModeBar": False},
                                     ),
+                                    type="default",
+                                    color="#00AEF0",
+                                ),
+                                dcc.Loading(
                                     dcc.Tooltip(
                                         id="graph-tooltip"
                                     ),  # Tooltip for additional info on hover
-                                ],
-                                style={"position": "relative", "flex": "1"},
-                            ),
-                            type="default",
-                            color="#00AEF0",
+                                    type="default",
+                                    color="#00AEF0",
+                                ),
+                            ],
+                            style={"position": "relative", "flex": "1"},
                         ),
                         style={"position": "relative", "flex": "1"},
                     ),
