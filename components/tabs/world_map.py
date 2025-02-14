@@ -35,20 +35,17 @@ def create_world_map_tab():
                                     type="default",
                                     color="#00AEF0",
                                 ),
-                                dcc.Loading(
-                                    dcc.Tooltip(
-                                        id="graph-tooltip"
-                                    ),  # Tooltip for additional info on hover
-                                    type="default",
-                                    color="#00AEF0",
+                                dcc.Tooltip(
+                                    id="graph-tooltip",
+                                    style={"position": "absolute", "zIndex": 1000}
                                 ),
                             ],
-                            style={"position": "relative", "flex": "1"},
+                            style={"position": "relative", "width": "100%", "height": "100%"},
                         ),
-                        style={"position": "relative", "flex": "1"},
+                        style={"position": "relative", "width": "100%", "height": "100%"},
                     ),
                     html.Div(
-                        create_year_slider(default=2000),
+                        create_year_slider(),
                         style={"height": "50px", "marginTop": "2px"},
                     ),
                 ],
