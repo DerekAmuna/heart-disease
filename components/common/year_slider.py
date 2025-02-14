@@ -27,7 +27,7 @@ def create_year_slider(min_year=1980, max_year=2021, default=2021):
                             ),
                             dcc.Interval(
                                 id="animation-interval",
-                                interval=1000,  # 1 second between frames
+                                interval=5000,  # 5 second between frames
                                 disabled=True,
                             ),
                         ],
