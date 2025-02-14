@@ -100,7 +100,7 @@ def create_healthcare_plots(data, risk_data, gender, metric, top_n):
                                     [
                                         dbc.CardHeader(
                                             html.H4(
-                                                "Hypertension Control by Country",
+                                                "Risk Factor Correlation",
                                                 className="text-center",
                                             )
                                         ),
