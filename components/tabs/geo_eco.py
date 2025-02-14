@@ -137,7 +137,7 @@ def create_geo_eco_plots(data, sankey_data, metric, gender, top_n, year):
                             dbc.Card(
                                 [
                                     dbc.CardHeader(
-                                        html.H4(f"{metric} Distribution", className="text-center")
+                                        html.H4(f"{metric} Top {top_n} Countries", className="text-center")
                                     ),
                                     dbc.CardBody(
                                         create_bar_plot(
