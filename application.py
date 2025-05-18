@@ -40,12 +40,12 @@ app = dash.Dash(
 )
 application = app.server
 
-chatbot = ChatbotComponent(
-    open_api_key=open_api_key,
-    csv_file=csv_file,
-    data_dict=data_dict,
-    pinecone_api=PINECONE_API_KEY,
-)
+# chatbot = ChatbotComponent(
+#     open_api_key=open_api_key,
+#     csv_file=csv_file,
+#     data_dict=data_dict,
+#     pinecone_api=PINECONE_API_KEY,
+# )
 
 
 navbar = dbc.Navbar(
@@ -112,7 +112,7 @@ app.layout = html.Div(
             ],
             className="g-0",
         ),
-        chatbot.create_layout(),
+        # chatbot.create_layout(),
     ]
 )
 
@@ -169,7 +169,7 @@ def toggle_navbar_collapse(n, is_open):
 
 
 # Register chatbot callbacks
-chatbot.register_callbacks(app)
+# chatbot.register_callbacks(app)
 
 if __name__ == "__main__":
     app.run_server(
