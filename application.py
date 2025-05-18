@@ -176,6 +176,6 @@ if __name__ == "__main__":
         # debug=True,
         host="0.0.0.0",
         port=int(os.environ.get("PORT", 8080)),
-        dev_tools_hot_reload=True,
-        dev_tools_ui=True,
+        # dev_tools_hot_reload=True,
+        # dev_tools_ui=True,
     )
