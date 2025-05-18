@@ -27,6 +27,7 @@ pinecone-client = "*"
 openai = "*"
 tiktoken = "*"
 langchain-community = "*"
+torch = "*"
 
 [dev-packages]
 pre-commit = "*"
