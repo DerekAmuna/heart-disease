@@ -4,17 +4,15 @@ FROM python:3.12-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy Pipfile and Pipfile.lock
-COPY Pipfile Pipfile.lock ./
+# Copy requirements.txt
+COPY requirements.txt ./
 
-# Install pipenv and then project dependencies
-RUN pip install pipenv && \
-    pipenv install --system --deploy --ignore-pipfile
+# Install project dependencies
+RUN pip install -r requirements.txt
 
 # Copy the rest of the application code into the container
 COPY . .
 
-# Make port 8080 available to the world outside this container
 EXPOSE 8080
 
 # Run application.py when the container launches
