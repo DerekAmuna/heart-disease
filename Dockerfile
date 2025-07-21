@@ -1,19 +1,25 @@
-# Use an official Python runtime as a parent image
-FROM python:3.12-slim
+# Stage 1: Build Frontend
+FROM node:20-alpine AS frontend
+WORKDIR /app/frontend
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build
 
-# Set the working directory in the container
+# Stage 2: Build Backend
+FROM golang:1.24-alpine AS backend
 WORKDIR /app
+COPY backend/go.mod backend/go.sum ./
+RUN go mod download
+COPY backend/ ./
+COPY data/ ./data/
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/server .
 
-# Copy requirements.txt
-COPY requirements.txt ./
-
-# Install project dependencies
-RUN pip install -r requirements.txt
-
-# Copy the rest of the application code into the container
-COPY . .
-
+# Stage 3: Final Image
+FROM alpine:latest
+WORKDIR /app
+COPY --from=backend /app/server .
+COPY --from=frontend /app/frontend/dist ./public
+COPY --from=backend /app/data ./data
 EXPOSE 8080
-
-# Run application.py when the container launches
-CMD ["gunicorn", "application:application", "--bind", "0.0.0.0:8080"]
+CMD ["/app/server"]
