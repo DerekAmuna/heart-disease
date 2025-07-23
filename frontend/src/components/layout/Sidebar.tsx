@@ -1,35 +1,36 @@
-import * as React from 'react'
-import { Button } from '@/components/ui/button'
-import { X, Menu } from 'lucide-react'
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 export type SidebarProps = {
   /** Whether the sidebar is currently open */
-  isOpen: boolean
+  isOpen: boolean;
   /** Toggle handler to open/close the sidebar */
-  onToggle: () => void
+  onToggle: () => void;
   /** Content to render inside the sidebar (e.g., filter panels) */
-  children?: React.ReactNode
-}
+  children?: React.ReactNode;
+};
 
 /**
  * Sidebar component skeleton.
  * Renders a collapsible side panel with a toggle button.
  * TODO: Populate with filter controls and dynamic content.
  */
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, children }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  isOpen,
+  onToggle,
+  children,
+}) => {
   return (
     <>
       {/* Overlay behind sidebar when open */}
       {isOpen && (
-        <div
-          className="fixed inset-0 z-10 bg-black/50"
-          onClick={onToggle}
-        />
+        <div className="fixed inset-0 z-10 bg-black/50" onClick={onToggle} />
       )}
 
       <aside
         className={`fixed inset-y-0 left-0 z-20 flex w-64 flex-col bg-card p-4 shadow-lg transition-transform duration-200 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+          isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Header with close button */}
@@ -56,8 +57,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, children }) 
         </div>
       </aside>
     </>
-  )
-}
+  );
+};
 
-Sidebar.displayName = 'Sidebar'
-export default Sidebar
+Sidebar.displayName = "Sidebar";
+export default Sidebar;
