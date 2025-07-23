@@ -19,7 +19,7 @@ COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 COPY backend/ ./
 COPY data/ ./data/
-RUN CGO_ENABLED=0 GOOS=linux go build -o /app/server .
+RUN GIN_MODE=release CGO_ENABLED=0 GOOS=linux go build -o /app/server .
 
 # Stage 3: Final Image
 FROM alpine:latest
@@ -27,5 +27,6 @@ WORKDIR /app
 COPY --from=backend /app/server .
 COPY --from=frontend /app/frontend/dist ./public
 COPY --from=backend /app/data ./data
+ENV GIN_MODE=release
 EXPOSE 8080
 CMD ["/app/server"]
