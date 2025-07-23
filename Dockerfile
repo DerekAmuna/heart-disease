@@ -1,10 +1,16 @@
 # Stage 1: Build Frontend
-FROM node:20-alpine AS frontend
+# FROM node:20-alpine AS frontend
+# WORKDIR /app/frontend
+# COPY frontend/package.json frontend/package-lock.json ./
+# RUN npm install
+# COPY frontend/ ./
+# RUN npm run build
+FROM oven/bun:1-alpine AS frontend
 WORKDIR /app/frontend
-COPY frontend/package.json frontend/package-lock.json ./
-RUN npm install
+COPY frontend/package.json frontend/bun.lockb* ./
+RUN bun install --frozen-lockfile
 COPY frontend/ ./
-RUN npm run build
+RUN bun run build
 
 # Stage 2: Build Backend
 FROM golang:1.24-alpine AS backend

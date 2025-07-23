@@ -1,11 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"runtime"
+	"strings"
 	"time"
-	"fmt"
 
 	"heart-disease/backend/data"
 
@@ -14,12 +15,12 @@ import (
 )
 
 func main() {
-	heartData, err := data.LoadHeartData("../data/heart_processed.csv")
+	heartData, err := data.LoadHeartData("data/heart_processed.csv")
 	if err != nil {
 		log.Fatalf("Failed to load heart data: %v", err)
 	}
 
-	trendsData, err := data.LoadTrendsData("../data/trends.csv")
+	trendsData, err := data.LoadTrendsData("data/trends.csv")
 	if err != nil {
 		log.Fatalf("Failed to load trends data: %v", err)
 	}
@@ -55,7 +56,7 @@ func main() {
 			},
 			"memory": map[string]interface{}{
 				"allocated_bytes":    memStats.Alloc,
-				"allocated_mb":       fmt.Sprintf("%.2f",float64(memStats.Alloc) / 1024 / 1024),
+				"allocated_mb":       fmt.Sprintf("%.2f", float64(memStats.Alloc)/1024/1024),
 				"total_allocated_mb": fmt.Sprintf("%.2f", float64(memStats.TotalAlloc)/1024/1024),
 				"system_memory_mb":   fmt.Sprintf("%.2f", float64(memStats.Sys)/1024/1024),
 				"heap_allocated_mb":  fmt.Sprintf("%.2f", float64(memStats.HeapAlloc)/1024/1024),
@@ -71,17 +72,27 @@ func main() {
 				"goroutines": runtime.NumGoroutine(),
 				"go_version": runtime.Version(),
 			},
-			"timestamp": time.Now().Unix(),
+			"timestamp": time.Now().Format("2006-01-02 15:04:05Z"),
 		}
 
 		c.JSON(http.StatusOK, stats)
 	})
 
 	// Serve static files
-	r.Static("/static", "./public")
+	r.Static("/assets", "./public/assets")
+	r.StaticFile("/favicon.ico", "./public/favicon.ico")
+
+	r.GET("/", func(c *gin.Context) {
+		c.File("./public/index.html")
+	})
 
 	// Fallback to index.html for SPA routes
 	r.NoRoute(func(c *gin.Context) {
+		// Don't serve index.html for API routes
+		if strings.HasPrefix(c.Request.URL.Path, "/api/") {
+			c.JSON(404, gin.H{"error": "API endpoint not found"})
+			return
+		}
 		c.File("./public/index.html")
 	})
 

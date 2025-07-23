@@ -8,8 +8,6 @@ import GeoEcoTab from "../tabs/GeoEcoTab";
 import HealthcareTab from "../tabs/HealthcareTab";
 import TrendsTab from "../tabs/TrendsTab";
 
-type LayoutProps = {};
-
 /**
  * Layout component:
  * - Renders a top bar with a mobile menu button and navigation tabs.
