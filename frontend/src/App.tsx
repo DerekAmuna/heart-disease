@@ -1,9 +1,13 @@
-import React from "react";
-import Layout from "./components/layout/Layout";
-import "./App.css";
+import React from 'react';
+import TempLayout from '@/components/layout/TempLayout';
+import './App.css';
 
 function App() {
-  return <Layout />;
+  return (
+    <div className="App">
+      <TempLayout />
+    </div>
+  );
 }
 
 export default App;
