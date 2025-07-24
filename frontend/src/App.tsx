@@ -1,6 +1,8 @@
+
 import React from 'react';
 import TempLayout from '@/components/layout/TempLayout';
 import './App.css';
+
 
 function App() {
   return (
